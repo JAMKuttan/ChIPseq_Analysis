@@ -7,19 +7,17 @@
 # -----------------------------------------------------------------------------
 
 # A unique identifier for the workflow package, text/underscores only
-name: 'rnaseq_bicf'
+name: 'chipseq_analysis_bicf'
 # Who wrote this?
-author: 'Brandi Cantarel'
+author: 'Beibei Chen'
 # A contact email address for questions
 email: 'biohpc-help@utsouthwestern.edu'
 # A more informative title for the workflow package
-title: 'BICF RNASeq Analysis Workflow'
+title: 'BICF ChIP-seq Analysis Workflow'
 # A summary of the workflow package in plain text
 description: |
-  This is a workflow package for the BioHPC/BICF RNASeq workflow system.
-  It implements a simple RNASeq analysis workflow using TrimGalore, HiSAT,FeatureCounts,
-  StringTie and statistical analysis using EdgeR and Ballgown, plus a simple R Shiny
-  visualization application.
+  This is a workflow package for the BioHPC/BICF ChIP-seq workflow system.
+  It implements a simple ChIP-seq analysis workflow using deepTools, Diffbind, ChipSeeker MAnorm and MEME-CHIP, visualization application.
 
 # -----------------------------------------------------------------------------
 # DOCUMENTATION
