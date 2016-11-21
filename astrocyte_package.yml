@@ -17,7 +17,7 @@ title: 'BICF ChIP-seq Analysis Workflow'
 # A summary of the workflow package in plain text
 description: |
   This is a workflow package for the BioHPC/BICF ChIP-seq workflow system.
-  It implements a simple ChIP-seq analysis workflow using deepTools, Diffbind, ChipSeeker MAnorm and MEME-CHIP, visualization application.
+  It implements a simple ChIP-seq analysis workflow using deepTools, Diffbind, ChipSeeker MAnorm and HOMER, visualization application.
 
 # -----------------------------------------------------------------------------
 # DOCUMENTATION
@@ -40,6 +40,7 @@ documentation_files:
 # Specify versioned module names to ensure reproducability.
 workflow_modules:
   - 'deeptools/2.3.5'
+  - 'homer/4.7'
 # A list of parameters used by the workflow, defining how to present them,
 # options etc in the web interface. For each parameter:
 #
@@ -86,7 +87,7 @@ workflow_parameters:
   - id: design
     type: file
     required: true
-    regex: ".*txt"
+    regex: ".*csv"
     description: |
       A design file listing pairs of sample name and sample group.
       Columns must include: SampleID,SampleName,SampleGroup,FullPathToFqR1,FullPathToFqR2

@@ -75,6 +75,18 @@ process peakanno {
    """
 }
 
+//Run deeptools for QC and other plots
+//Since this problem also need all input files, need to build another channel?
+process deeptools {
+   publishDir "$baseDir/output", mode: 'copy'
+   input: 
+   file peak_file from input
+   file bam_file from imput
+   output:
+   set
+
+}
+
 //Need to do it with more than 1 condition
 process diffbind {
    publishDir "$baseDir/output", mode: 'copy'
