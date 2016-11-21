@@ -1,14 +1,9 @@
 #!/usr/bin/env nextflow
 	
 // Default parameter values to run tests
-params.fastqs="$baseDir/../test_data/*.fastq.gz"
+params.bams="$baseDir/../test_data/*.fastq.gz"
 params.design="$baseDir/../test_data/design.pe.txt"
 params.genome="/project/shared/bicf_workflow_ref/GRCh38/"
-params.markdups="mark"
-params.stranded="0"
-params.pairs="pe"
-params.geneset = 'h.all.v5.1.symbols.gmt'
-params.align = 'hisat'
 
 design_file = file(params.design)
 fastqs=file(params.fastqs)
