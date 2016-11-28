@@ -100,10 +100,9 @@ process diffbind {
    file "*"
    """
    module load R/3.2.1-intel
-   cp design.txt design.shiny.txt
-   cp geneset.gmt geneset.shiny.gmt
-   Rscript  $baseDir/scripts/dea.R
-   perl $baseDir/scripts/concat_edgeR.pl *.edgeR.txt
+   #cp design.txt design.shiny.txt
+   #cp geneset.gmt geneset.shiny.gmt
+   Rscript  $baseDir/scripts/runDiffBind.R
  """
 }
 

@@ -16,7 +16,7 @@ dba.plotPCA(data, DBA_TISSUE, label=DBA_CONDITION)
 dev.off()
 
 #Save peak reads count
-normcount <- dba.peakset(dta, bRetrieve=T)
+normcount <- dba.peakset(data, bRetrieve=T)
 write.table(as.data.frame(normcount),"diffbind.normcount.txt",sep="\t",quote=F,row.names=F)
 
 #Retriving the differentially bound sites
