@@ -2,14 +2,14 @@
 	
 // Default parameter values to run tests
 params.bams="$baseDir/../test/*.bam"
-params.design="$baseDir/../test/design.csv"
-params.genome="/project/shared/bicf_workflow_ref/GRCh37/"
+params.design="$baseDir/../test/samplesheet.csv"
+#params.genome="/project/shared/bicf_workflow_ref/GRCh37/"
 
 design_file = file(params.design)
 bams=file(params.bams)
-gtf_file = file("$params.genome/gencode.gtf")
-genenames = file("$params.genome/genenames.txt")
-geneset = file("$params.genome/gsea_gmt/$params.geneset")
+#gtf_file = file("$params.genome/gencode.gtf")
+#genenames = file("$params.genome/genenames.txt")
+#geneset = file("$params.genome/gsea_gmt/$params.geneset")
 
 
 // Pair handling, helper function taken from rnatoy
@@ -26,17 +26,21 @@ fastqs.each {
 def prefix = []
 new File(params.design).withReader { reader ->
     def hline = reader.readLine()
-    def header = hline.split("\t")
-    prefixidx = header.findIndexOf{it == 'SampleID'};
-    oneidx = header.findIndexOf{it == 'FullPathToFqR1'};
-    twoidx = header.findIndexOf{it == 'FullPathToFqR2'};
-    if (twoidx == -1) {
-       twoidx = oneidx
+    def header = hline.split(",")
+    prefixidx = header.findIndexOf{it == 'Condition'};
+    peakidx = header.findIndexOf{it == 'Peaks'};
+    bamipidx = header.findIndexOf{it == 'bamReads'};
+    bamctrlidx = header.findIndexOf{it == 'bamControl'};
+    if (bamctrlidx == -1) {
+       error "Must provide control BAM file"
        }      
+    if (peakidx == -1) {
+       error "Must provide peak file"
+       }
     while (line = reader.readLine()) {
-    	   def row = line.split("\t")
-	   if (fileMap.get(row[oneidx]) != null) {
-	      prefix << tuple(row[prefixidx],fileMap.get(row[oneidx]),fileMap.get(row[twoidx]))
+    	   def row = line.split(",")
+	   if (fileMap.get(row[bamipidx]) != null) {
+	      prefix << tuple(row[prefixidx],fileMap.get(row[peakidx]),fileMap.get(row[bamipidx]),fileMap.get(row[bamctrlidx]))
 	   }
 	  
 } 
