@@ -57,9 +57,9 @@ def run_signal(files, labels, genome):
   #work_pool.join()
   
   cm_command = "computeMatrix scale-regions -R "+gene_bed+" -a 3000 -b 3000 --regionBodyLength 5000 --skipZeros -S *.bw -o samples.deeptools_generegionscalematrix.gz"
-  p = subprocess.Popen(cm_command, shell=True)
-  p.communicate()
-  hm_command = "plotHeatmap -m samples.deeptools_generetionscalematrix.gz -out samples.deeptools_readsHeatmap.png"
+  #p = subprocess.Popen(cm_command, shell=True)
+  #p.communicate()
+  hm_command = "plotHeatmap -m samples.deeptools_generegionscalematrix.gz -out samples.deeptools_readsHeatmap.png"
   p = subprocess.Popen(hm_command, shell=True)
   p.communicate()  
 
