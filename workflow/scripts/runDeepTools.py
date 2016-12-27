@@ -50,22 +50,26 @@ def run_signal(files, labels, genome):
   gene_bed = "/project/BICF/BICF_Core/bchen4/chipseq_analysis/test/genome/"+genome+"/gene.bed"
   bw_commands = []
   for f in files:
-    bw_commands.append("bamCoverage -b "+f+" -o "+f.replace("bam","bw"))
-  work_pool = Pool(min(len(files), 12))
-  work_pool.map(bam2bw_wrapper, bw_commands)
-  work_pool.close()
-  work_pool.join()
+    bw_commands.append("bamCoverage -bs 10 -b "+f+" -o "+f.replace("bam","bw"))
+  #work_pool = Pool(min(len(files), 12))
+  #work_pool.map(bam2bw_wrapper, bw_commands)
+  #work_pool.close()
+  #work_pool.join()
   
-  #cm_command = "computeMatrix scale-regions "
+  cm_command = "computeMatrix scale-regions -R "+gene_bed+" -a 3000 -b 3000 --regionBodyLength 5000 --skipZeros -S *.bw -o samples.deeptools_generegionscalematrix.gz"
+  p = subprocess.Popen(cm_command, shell=True)
+  p.communicate()
+  hm_command = "plotHeatmap -m samples.deeptools_generetionscalematrix.gz -out samples.deeptools_readsHeatmap.png"
+  p = subprocess.Popen(hm_command, shell=True)
+  p.communicate()  
 
 def run(dfile,genome):
-  #Get annotation address
-  tss_bed = "/project/BICF/BICF_Core/bchen4/chipseq_analysis/test/genome/"+genome+"/tss.bed"
   #parse dfile, suppose data files are the same folder as design file
   dfile = pd.read_csv(dfile)
   #QC: multiBamSummary and plotCorrelation
-  run_qc(dfile['bamReads'], dfile['bamControl'], dfile['SampleID']) 
-  
+  #run_qc(dfile['bamReads'], dfile['bamControl'], dfile['SampleID']) 
+  #signal plots
+  run_signal(dfile['bamReads'],dfile['SampleID'],genome)
 
 def main():
   argparser = prepare_argparser()

@@ -2,7 +2,7 @@ library("DiffBind")
 
 #build dba object from sample sheet and do analysis
 data <- dba(sampleSheet="samplesheet.csv")
-data <- dba.count(data, summits=250)
+data <- dba.count(data)
 data <- dba.contrast(data, minMembers = 2, categories=DBA_CONDITION)
 data <- dba.analyze(data)
 
