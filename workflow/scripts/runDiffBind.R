@@ -24,11 +24,15 @@ write.table(as.data.frame(normcount),"diffbind.normcount.txt",sep="\t",quote=F,r
 for (i in c(1:length(data$contrasts)))
 {
  contrast_name = paste(data$contrasts[[i]]$name1,"vs",
- contrast_bed_name = paste(data$contrasts[[i]]$name1,"vs",
+ #contrast_bed_name = paste(data$contrasts[[i]]$name1,"vs",
                       data$contrasts[[i]]$name2,"diffbind.bed",sep="_")
  report <- dba.report(data, contrast=i, th=1, bCount=TRUE)
- write.table(as.data.frame(report),contrast_name,sep="\t",quote=F,row.names=F)
- write.table(as.data.frame(report),contrast_bed_name,sep="\t",quote=F,row.names=F, col.names=F)
+ report <- as.data.frame(report)
+ print(head(report))
+ colnames(report)[1:5]<-c("chrom","peak_start","peak_stop","peak_width","peak_strand")
+ print(head(report))
+ write.table(report,contrast_name,sep="\t",quote=F,row.names=F)
+ #write.table(as.data.frame(report),contrast_bed_name,sep="\t",quote=F,row.names=F, col.names=F)
 
 }
 

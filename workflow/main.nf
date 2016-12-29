@@ -23,9 +23,9 @@ process peakanno {
 //   set peak_id, file("${pattern}_annotation.xls"), file("${pattern}_peakTssDistribution.png") into peakanno
      script:
      """
+     module load python/2.7.x-anaconda
      module load R/3.2.1-intel
      module load deeptools/2.5.3
-     module load python/2.7.x-anaconda
      python $baseDir/scripts/process.py
      #Rscript /project/BICF/BICF_Core/bchen4/chipseq_analysis/workflow/scripts/runchipseeker.R     
 """
