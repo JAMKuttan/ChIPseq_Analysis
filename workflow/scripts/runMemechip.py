@@ -39,8 +39,10 @@ def main():
 def run(infile, genome, limit, output)
   infile = pybedtools.BedTool(infile)
   #genome = twobitreader.TwoBitFile(genome)
-  output = open(args.outfile,"w")
+  output = open(output+".fa","w")
   rowcount = 1
+  if limit ==-1:
+    limit = len(infile)
   for record in infile:
     while rowcount <=limit:
       rowcount += 1
@@ -56,7 +58,7 @@ def run(infile, genome, limit, output)
         SeqIO.write(newfa,output+".fa","fasta")
     output.close()
   #Call memechip
-  meme_command = "meme-chip -oc "+output+" -meme-minw 5 -meme-maxw 15 -meme-nmotifs 10"
+  meme_command = "meme-chip -oc "+output+"_memechip"+" -meme-minw 5 -meme-maxw 15 -meme-nmotifs 10 "+output+".fa"
   p = subprocess.Popen(meme_command, shell=True)
   p.communicate()
  

@@ -51,10 +51,10 @@ def run_signal(files, labels, genome):
   bw_commands = []
   for f in files:
     bw_commands.append("bamCoverage -bs 10 -b "+f+" -o "+f.replace("bam","bw"))
-  #work_pool = Pool(min(len(files), 12))
-  #work_pool.map(bam2bw_wrapper, bw_commands)
-  #work_pool.close()
-  #work_pool.join()
+  work_pool = Pool(min(len(files), 12))
+  work_pool.map(bam2bw_wrapper, bw_commands)
+  work_pool.close()
+  work_pool.join()
   
   cm_command = "computeMatrix scale-regions -R "+gene_bed+" -a 3000 -b 3000 --regionBodyLength 5000 --skipZeros -S *.bw -o samples.deeptools_generegionscalematrix.gz"
   #p = subprocess.Popen(cm_command, shell=True)
