@@ -36,7 +36,7 @@ def main():
   args = argparser.parse_args()
   run(args.infile, args.genome, args.limit, args.output)
 
-def run(infile, genome, limit, output)
+def run(infile, genome, limit, output):
   infile = pybedtools.BedTool(infile)
   #genome = twobitreader.TwoBitFile(genome)
   output = open(output+".fa","w")
