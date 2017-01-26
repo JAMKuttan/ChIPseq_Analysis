@@ -8,7 +8,8 @@ from re import sub
 import string
 import argparse as ap
 import logging
-#import twobitreader
+import twobitreader
+import subprocess
 import pybedtools
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -17,7 +18,7 @@ logging.basicConfig(level=10)
 
 
 def prepare_argparser():
-  description = "Scan potential sgRNA in given fasta"
+  description = "Run memechip command"
   epilog = "For command line options of each command, type %(prog)% COMMAND -h"
   argparser = ap.ArgumentParser(description=description, epilog = epilog)
   argparser.add_argument("-i","--input",dest = "infile",type=str,required=True, help="input BED file")
@@ -38,9 +39,10 @@ def main():
 
 def run(infile, genome, limit, output):
   infile = pybedtools.BedTool(infile)
-  #genome = twobitreader.TwoBitFile(genome)
-  output = open(output+".fa","w")
+  genome = twobitreader.TwoBitFile(genome)
+  outfile = open(output+".fa","w")
   rowcount = 1
+  limit = int(limit)
   if limit ==-1:
     limit = len(infile)
   for record in infile:
@@ -56,7 +58,7 @@ def run(infile, genome, limit, output):
         newfa_name = record.name#"_".join(record.fields)
         newfa = SeqRecord(Seq(seq),newfa_name,description="")
         SeqIO.write(newfa,output+".fa","fasta")
-    output.close()
+    outfile.close()
   #Call memechip
   meme_command = "meme-chip -oc "+output+"_memechip"+" -meme-minw 5 -meme-maxw 15 -meme-nmotifs 10 "+output+".fa"
   p = subprocess.Popen(meme_command, shell=True)
