@@ -40,7 +40,8 @@ documentation_files:
 # Specify versioned module names to ensure reproducability.
 workflow_modules:
   - 'deeptools/2.3.5'
-  - 'homer/4.7'
+  - 'meme/4.11.1-gcc-openmpi'
+
 # A list of parameters used by the workflow, defining how to present them,
 # options etc in the web interface. For each parameter:
 #

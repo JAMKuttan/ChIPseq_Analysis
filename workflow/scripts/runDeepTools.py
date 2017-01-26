@@ -24,22 +24,22 @@ def prepare_argparser():
 
 def run_qc(files, controls, labels):
   mbs_command = "multiBamSummary bins --bamfiles "+' '.join(files)+" -out sample_mbs.npz"
-  #p = subprocess.Popen(mbs_command, shell=True)
+  p = subprocess.Popen(mbs_command, shell=True)
   #logging.debug(mbs_command)
-  #p.communicate()
-  pcor_command = "plotCorrelation -in sample_mbs.npz --corMethod spearman --skipZeros --plotTitle \"Spearman Correlation of Read Counts\" --whatToPlot heatmap --colorMap RdYlBu --plotNumbers --outFileCorMatrix experiment.deeptools.spearmanCorr_readCounts.tab -o experiment.deeptools.heatmap_spearmanCorr_readCounts_v2.png --labels "+" ".join(labels)
+  p.communicate()
+  pcor_command = "plotCorrelation -in sample_mbs.npz --corMethod spearman --skipZeros --plotTitle \"Spearman Correlation of Read Counts\" --whatToPlot heatmap --colorMap RdYlBu --plotNumbers  -o experiment.deeptools.heatmap_spearmanCorr_readCounts_v2.png --labels "+" ".join(labels)
   #logging.debug(pcor_command)
-  #p = subprocess.Popen(pcor_command, shell=True)
-  #p.communicate()
+  p = subprocess.Popen(pcor_command, shell=True)
+  p.communicate()
   #plotCoverage
   pcov_command = "plotCoverage -b "+" ".join(files)+" --plotFile experiment.deeptools_coverage.png -n 1000000 --plotTitle \"sample coverage\" --ignoreDuplicates --minMappingQuality 10"
   p = subprocess.Popen(pcov_command, shell=True)
   p.communicate()
   #draw fingerprints plots
-  #for treat,ctrl,name in zip(files,controls,labels):
-  #  fp_command = "plotFingerprint -b "+treat+" "+ctrl+" --labels "+name+" control --plotFile "+name+".deeptools_fingerprints.png"
-  #  p = subprocess.Popen(fp_command, shell=True)
-  #  p.communicate()
+  for treat,ctrl,name in zip(files,controls,labels):
+    fp_command = "plotFingerprint -b "+treat+" "+ctrl+" --labels "+name+" control --plotFile "+name+".deeptools_fingerprints.png"
+    p = subprocess.Popen(fp_command, shell=True)
+    p.communicate()
 
 def bam2bw_wrapper(command):
   p = subprocess.Popen(command, shell=True)
@@ -57,8 +57,8 @@ def run_signal(files, labels, genome):
   work_pool.join()
   
   cm_command = "computeMatrix scale-regions -R "+gene_bed+" -a 3000 -b 3000 --regionBodyLength 5000 --skipZeros -S *.bw -o samples.deeptools_generegionscalematrix.gz"
-  #p = subprocess.Popen(cm_command, shell=True)
-  #p.communicate()
+  p = subprocess.Popen(cm_command, shell=True)
+  p.communicate()
   hm_command = "plotHeatmap -m samples.deeptools_generegionscalematrix.gz -out samples.deeptools_readsHeatmap.png"
   p = subprocess.Popen(hm_command, shell=True)
   p.communicate()  
@@ -67,7 +67,7 @@ def run(dfile,genome):
   #parse dfile, suppose data files are the same folder as design file
   dfile = pd.read_csv(dfile)
   #QC: multiBamSummary and plotCorrelation
-  #run_qc(dfile['bamReads'], dfile['bamControl'], dfile['SampleID']) 
+  run_qc(dfile['bamReads'], dfile['bamControl'], dfile['SampleID']) 
   #signal plots
   run_signal(dfile['bamReads'],dfile['SampleID'],genome)
 
