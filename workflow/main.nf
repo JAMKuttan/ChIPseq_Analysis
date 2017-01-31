@@ -2,6 +2,7 @@
 	
 // Default parameter values to run tests
 // params.bams="$baseDir/../test/*.bam"
+   params.testpath="/project/BICF/BICF_Core/bchen4/chipseq_analysis/test/"
    params.design="/project/BICF/BICF_Core/bchen4/chipseq_analysis/test/samplesheet.csv"
    params.genome="/project/shared/bicf_workflow_ref/GRCh37/"
 
@@ -23,9 +24,11 @@ process run_chipseq_analysis {
      script:
      """
      module load python/2.7.x-anaconda
-     module load meme/4.11.1-gcc-openmpi 
-     cat $params.design
-     python $baseDir/scripts/process.py -i params.design -g params.genome --top-peak 100
+     module load meme/4.11.1-gcc-openmpi
+     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
+     module load deeptools/2.3.5 
+     module load meme/4.11.1-gcc-openmpi     
+     python $baseDir/scripts/process.py -i ${params.design} -g hg19 --top-peak 200
 """
 }
 
