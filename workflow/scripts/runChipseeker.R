@@ -7,11 +7,22 @@ args = commandArgs(trailingOnly=TRUE)
 #}
 
 library(ChIPseeker)
+if args[3]=="hg19"
+{ 
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-#library(clusterProfiler)
+}
+if args[3]=="mm10"
+{ 
+library(TxDb.Hsapiens.UCSC.mm10.knownGene)
+txdb <- TxDb.Hsapiens.UCSC.mm10.knownGene
+}
+if args[3]=="hg38"
+{ 
+library(TxDb.Hsapiens.UCSC.hg38.knownGene)
+txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
+}
 
-#files = list.files(".")
 files<-as.list(unlist(strsplit(args[1],",")))
 names(files)<-as.list(unlist(strsplit(args[2],",")))
 print(files)
@@ -37,10 +48,4 @@ for(index in c(1:length(peakAnnoList)))
 
 
 }
-#promoter <- getPromoters(TxDb=txdb, upstream=3000, downstream=3000)
-#tagMatrixList <- lapply(files, getTagMatrix, windows=promoter)
-
-#plotAvgProf(tagMatrixList, xlim=c(-3000, 3000), facet="row")
-
-#overlappeakfiles <- as.list(list.files("overlappeaks/"))
 
