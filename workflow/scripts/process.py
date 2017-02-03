@@ -57,7 +57,7 @@ def main():
 #BC##  logging.debug(chipseeker_command)
   p = subprocess.Popen(chipseeker_command, shell=True)
   p.communicate()
-  overlapping_peaks = glob.glob('*diffbind.xls')
+  overlapping_peaks = glob.glob('*diffbind.bed')
   overlapping_peak_names = []
   for pn in overlapping_peaks:
     overlapping_peak_names.append(pn.split("_diffbind")[0].replace("!","non"))

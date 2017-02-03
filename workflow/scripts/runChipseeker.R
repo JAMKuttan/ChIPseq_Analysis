@@ -7,25 +7,26 @@ args = commandArgs(trailingOnly=TRUE)
 #}
 
 library(ChIPseeker)
-if args[3]=="hg19"
+if(args[2]=="hg19")
 { 
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 }
-if args[3]=="mm10"
+if(args[2]=="mm10")
 { 
 library(TxDb.Hsapiens.UCSC.mm10.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.mm10.knownGene
 }
-if args[3]=="hg38"
+if(args[2]=="hg38")
 { 
 library(TxDb.Hsapiens.UCSC.hg38.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
 }
 
-files<-as.list(unlist(strsplit(args[1],",")))
-names(files)<-as.list(unlist(strsplit(args[2],",")))
-print(files)
+design<-read.csv(args[1])
+files<-as.list(as.character(design$Peaks))
+names(files)<-design$SampleID
+
 
 peakAnnoList <- lapply(files, annotatePeak, TxDb=txdb, tssRegion=c(-3000, 3000), verbose=FALSE)
 for(index in c(1:length(peakAnnoList)))
