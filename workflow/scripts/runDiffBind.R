@@ -38,7 +38,7 @@ for (i in c(1:length(data$contrasts)))
  colnames(report)[1:5]<-c("chrom","peak_start","peak_stop","peak_width","peak_strand")
  #print(head(report))
  write.table(report,contrast_name,sep="\t",quote=F,row.names=F)
- write.table(report,contrast_bed_name,sep="\t",quote=F,row.names=F, col.names=F)
+ write.table(report[,c(1:3)],contrast_bed_name,sep="\t",quote=F,row.names=F, col.names=F)
 }
 #Write new design file
 newdesign = data.frame(SampleID=new_SampleID, Peaks=new_Peaks)

@@ -34,21 +34,21 @@ process processdesign {
      """
 }
 
-//process run_deeptools {
-//   publishDir "$baseDir/output", mode: 'copy'
-//   input:
-//     file deeptools_design_file from deeptools_design
-//   file annotation Tdx
-//   output:
-//     stdout result
-//     script:
-//     """
-//     module load python/2.7.x-anaconda
-//     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
-//     module load deeptools/2.3.5 
-//     python $baseDir/scripts/runDeepTools.py -i $deeptools_design_file -g ${params.genomepath}}
-//"""
-//}
+process run_deeptools {
+   publishDir "$baseDir/output", mode: 'copy'
+   input:
+     file deeptools_design_file from deeptools_design
+   file annotation Tdx
+   output:
+     stdout result
+     script:
+     """
+     module load python/2.7.x-anaconda
+     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
+     module load deeptools/2.3.5 
+     python $baseDir/scripts/runDeepTools.py -i $deeptools_design_file -g ${params.genomepath}}
+"""
+}
 
 
 process run_diffbind {
@@ -67,35 +67,35 @@ process run_diffbind {
      Rscript $baseDir/scripts/runDiffBind.R $diffbind_design_file
 """
 }
-//
-//process run_chipseeker_diffpeak {
+
+process run_chipseeker_diffpeak {
+   publishDir "$baseDir/output", mode: 'copy'
+   input:
+     file diffpeak_design_file from diffpeaksdesign_chipseeker
+     file diffpeaks from diffpeaks_chipseeker
+   output:
+     stdout result
+   script:
+     """
+     module load python/2.7.x-anaconda
+     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
+     Rscript $baseDir/scripts/runChipseeker.R $diffpeak_design_file hg19
+"""
+}
+
+process run_chipseeker_originalpeak {
 //   publishDir "$baseDir/output", mode: 'copy'
-//   input:
-//     file diffpeak_design_file from diffpeaksdesign_chipseeker
-//     file diffpeaks from diffpeaks_chipseeker
-//   output:
-//     stdout result
-//   script:
-//     """
-//     module load python/2.7.x-anaconda
-//     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
-//     Rscript $baseDir/scripts/runChipseeker.R $diffpeak_design_file hg19
-//"""
-//}
-//
-//process run_chipseeker_originalpeak {
-////   publishDir "$baseDir/output", mode: 'copy'
-//   input:
-//     file design_file from chipseeker_design
-//   output:
-//     stdout result1
-//   script:
-//     """
-//     module load python/2.7.x-anaconda
-//     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
-//     Rscript $baseDir/scripts/runChipseeker.R $design_file ${species}
-//"""
-//}
+   input:
+     file design_file from chipseeker_design
+   output:
+     stdout result1
+   script:
+     """
+     module load python/2.7.x-anaconda
+     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
+     Rscript $baseDir/scripts/runChipseeker.R $design_file ${species}
+"""
+}
 
 process run_meme_original {
    publishDir "$baseDir/output", mode: 'copy'

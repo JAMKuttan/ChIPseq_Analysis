@@ -53,25 +53,33 @@ def run_wrapper(args):
 
 def run(infile, genome, limit, output):
   infile = pybedtools.BedTool(infile)
+  logging.debug(len(infile))
   genome = twobitreader.TwoBitFile(genome)
   outfile = open(output+".fa","w")
   rowcount = 0
   limit = int(limit)
+  logging.debug(limit)
   if limit ==-1:
     limit = len(infile)
   for record in infile:
-    rowcount += 1    
+    rowcount += 1   
+    #logging.debug(record) 
     if rowcount <=limit:
-     # logging.debug(rowcount)
+      #logging.debug(rowcount)
       try:
+        #logging.debug(record.chrom)
         seq = genome[record.chrom][record.start:record.stop]
       except:
         pass
       else:
         if record.strand == "-":
           seq = rc(seq)
-        newfa_name = record.name#"_".join(record.fields)
+        if len(record.fields)>=4:
+          newfa_name = record.name
+        else:
+          newfa_name = "_".join(record.fields)
         newfa = SeqRecord(Seq(seq),newfa_name,description="")
+        #logging.debug(seq)
         SeqIO.write(newfa,outfile,"fasta")
   outfile.close()
   #Call memechip
