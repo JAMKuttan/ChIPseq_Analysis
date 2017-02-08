@@ -1,36 +1,37 @@
 #!/usr/bin/env nextflow
-	
-// Default parameter values to run tests
-// params.bams="$baseDir/../test/*.bam"
-   params.testpath="/project/BICF/BICF_Core/bchen4/chipseq_analysis/test/"
-   params.design="/project/BICF/BICF_Core/bchen4/chipseq_analysis/test/samplesheet.csv"
-   params.genomepath="/project/BICF/BICF_Core/bchen4/chipseq_analysis/test/genome/hg19/"
+   params.design="$baseDir/../test/samplesheet.csv"
+   params.bams = "$baseDir/../test/*.bam"
+   params.peaks = "$baseDir/../test/*/broadPeak"
+   params.genomepath="/project/shared/bicf_workflow_ref/hg19/"
    species = "hg19"
    toppeakcount = 200
-// design_file = file(params.design)
-// bams=file(params.bams)
-//gtf_file = file("$params.genome/gencode.gtf")
-//genenames = file("$params.genome/genenames.txt")
-//geneset = file("$params.genome/gsea_gmt/$params.geneset")
+   design_file = file(params.design)
+   deeptools_design = Channel.fromPath(params.design)
+   diffbind_design = Channel.fromPath(params.design)
+   chipseeker_design = Channel.fromPath(params.design)
+   meme_design = Channel.fromPath(params.design)
+   index_bams = Channel.fromPath(params.bams)
+   deeptools_bams = Channel.fromPath(params.bams) 
+   deeptools_peaks = Channel.fromPath(params.peaks) 
+   chipseeker_peaks = Channel.fromPath(params.peaks) 
+   diffbind_bams = Channel.fromPath(params.bams) 
+   diffbind_peaks = Channel.fromPath(params.peaks) 
+   meme_peaks = Channel.fromPath(params.peaks) 
 
-
-process processdesign {
+process bamindex {
    publishDir "$baseDir/output/", mode: 'copy'
-//   input:
-//   file design_file from input
-//   file annotation Tdx
+   input:
+     file index_bam_files from index_bams
    output:
-     file "new_design" into deeptools_design
-     file "new_design" into diffbind_design
-     file "new_design" into chipseeker_design
-     file "new_design" into meme_design
- 
+     file "*bai" into deeptools_bamindex
+     file "*bai" into diffbind_bamindex
 
-     script:
+   script:
      """
      module load python/2.7.x-anaconda
      source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
-     python $baseDir/scripts/preprocessDesign.py -i ${params.design} 
+     module load samtools/intel/1.3
+     samtools index ${index_bam_files} 
      """
 }
 
@@ -38,23 +39,28 @@ process run_deeptools {
    publishDir "$baseDir/output", mode: 'copy'
    input:
      file deeptools_design_file from deeptools_design
-   file annotation Tdx
+     file deeptools_bam_files from deeptools_bams.toList()
+     file deeptools_peak_files from deeptools_peaks.toList()
+     file deeptools_bam_indexes from deeptools_bamindex.toList()
    output:
      stdout result
      script:
      """
      module load python/2.7.x-anaconda
      source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
-     module load deeptools/2.3.5 
-     python $baseDir/scripts/runDeepTools.py -i $deeptools_design_file -g ${params.genomepath}}
+     module load deeptools/2.3.5
+     python $baseDir/scripts/runDeepTools.py -i ${params.design} -g ${params.genomepath}}
 """
 }
 
 
 process run_diffbind {
-//   publishDir "$baseDir/output", mode: 'copy'
+   publishDir "$baseDir/output", mode: 'copy'
    input:
      file diffbind_design_file from diffbind_design
+     file diffbind_bam_files from diffbind_bams.toList()
+     file diffbind_peak_files from diffbind_peaks.toList()
+       file diffbind_ban_indexes from diffbind_bamindex.toList()
    output:
      file "diffpeak.design" into diffpeaksdesign_chipseeker
      file "diffpeak.design" into diffpeaksdesign_meme
@@ -74,7 +80,7 @@ process run_chipseeker_diffpeak {
      file diffpeak_design_file from diffpeaksdesign_chipseeker
      file diffpeaks from diffpeaks_chipseeker
    output:
-     stdout result
+     stdout result_chipseeker
    script:
      """
      module load python/2.7.x-anaconda
@@ -84,9 +90,10 @@ process run_chipseeker_diffpeak {
 }
 
 process run_chipseeker_originalpeak {
-//   publishDir "$baseDir/output", mode: 'copy'
+   publishDir "$baseDir/output", mode: 'copy'
    input:
      file design_file from chipseeker_design
+     file chipseeker_peak_files from chipseeker_peaks
    output:
      stdout result1
    script:
@@ -101,6 +108,7 @@ process run_meme_original {
    publishDir "$baseDir/output", mode: 'copy'
    input:
      file design_meme from meme_design
+     file meme_peak_files from meme_peaks
    output:
      stdout result_meme_original
    script:

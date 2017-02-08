@@ -40,7 +40,7 @@ def main():
   #run(args.infile, args.genome, args.limit, args.output)
   #get Pool ready
   dfile = pd.read_csv(args.infile)
-  meme_arglist =  zip(dfile['Peaks'].tolist(),[args.genome+"hg19.2bit"]*dfile.shape[0],[str(args.limit)]*dfile.shape[0],dfile['SampleID'].tolist())  
+  meme_arglist =  zip(dfile['Peaks'].tolist(),[args.genome+"genome.2bit"]*dfile.shape[0],[str(args.limit)]*dfile.shape[0],dfile['SampleID'].tolist())  
   work_pool = Pool(min(12,dfile.shape[0]))
   resultList =  work_pool.map(run_wrapper, meme_arglist)
   work_pool.close()
