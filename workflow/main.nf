@@ -1,7 +1,8 @@
 #!/usr/bin/env nextflow
    params.design="$baseDir/../test/samplesheet.csv"
    params.bams = "$baseDir/../test/*.bam"
-   params.peaks = "$baseDir/../test/*/broadPeak"
+   params.bais = "$baseDir/../test/*.bai"
+   params.peaks = "$baseDir/../test/*.broadPeak"
    params.genomepath="/project/shared/bicf_workflow_ref/hg19/"
    species = "hg19"
    toppeakcount = 200
@@ -16,24 +17,26 @@
    chipseeker_peaks = Channel.fromPath(params.peaks) 
    diffbind_bams = Channel.fromPath(params.bams) 
    diffbind_peaks = Channel.fromPath(params.peaks) 
-   meme_peaks = Channel.fromPath(params.peaks) 
+   meme_peaks = Channel.fromPath(params.peaks)
+   deeptools_bamindex = Channel.fromPath(params.bais)
+   diffbind_bamindex = Channel.fromPath(params.bais) 
 
-process bamindex {
-   publishDir "$baseDir/output/", mode: 'copy'
-   input:
-     file index_bam_files from index_bams
-   output:
-     file "*bai" into deeptools_bamindex
-     file "*bai" into diffbind_bamindex
-
-   script:
-     """
-     module load python/2.7.x-anaconda
-     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
-     module load samtools/intel/1.3
-     samtools index ${index_bam_files} 
-     """
-}
+//process bamindex {
+//   publishDir "$baseDir/output/", mode: 'copy'
+//   input:
+//     file index_bam_files from index_bams
+//   output:
+//     file "*bai" into deeptools_bamindex
+//     file "*bai" into diffbind_bamindex
+//
+//   script:
+//     """
+//     module load python/2.7.x-anaconda
+//     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
+//     module load samtools/intel/1.3
+//     samtools index $index_bam_files
+//     """
+//}
 
 process run_deeptools {
    publishDir "$baseDir/output", mode: 'copy'
@@ -60,12 +63,12 @@ process run_diffbind {
      file diffbind_design_file from diffbind_design
      file diffbind_bam_files from diffbind_bams.toList()
      file diffbind_peak_files from diffbind_peaks.toList()
-       file diffbind_ban_indexes from diffbind_bamindex.toList()
+     file diffbind_bam_indexes from diffbind_bamindex.toList()
    output:
      file "diffpeak.design" into diffpeaksdesign_chipseeker
      file "diffpeak.design" into diffpeaksdesign_meme
-     file "*diffbind.bed" into diffpeaks_meme
-     file "*diffbind.bed" into diffpeaks_chipseeker
+     file "*_diffbind.bed" into diffpeaks_meme
+     file "*_diffbind.bed" into diffpeaks_chipseeker
    script:
      """
      module load python/2.7.x-anaconda
@@ -93,7 +96,7 @@ process run_chipseeker_originalpeak {
    publishDir "$baseDir/output", mode: 'copy'
    input:
      file design_file from chipseeker_design
-     file chipseeker_peak_files from chipseeker_peaks
+     file chipseeker_peak_files from chipseeker_peaks.toList()
    output:
      stdout result1
    script:
@@ -108,7 +111,7 @@ process run_meme_original {
    publishDir "$baseDir/output", mode: 'copy'
    input:
      file design_meme from meme_design
-     file meme_peak_files from meme_peaks
+     file meme_peak_files from meme_peaks.toList()
    output:
      stdout result_meme_original
    script:
