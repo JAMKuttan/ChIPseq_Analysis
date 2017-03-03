@@ -1,8 +1,8 @@
 #!/usr/bin/env nextflow
-   params.design="$baseDir/../test/samplesheet.csv"
-   params.bams = "$baseDir/../test/*.bam"
-   params.bais = "$baseDir/../test/*.bai"
-   params.peaks = "$baseDir/../test/*.broadPeak"
+   params.design="$baseDir/../test_data/samplesheet.csv"
+   params.bams = "$baseDir/../test_data/*.bam"
+   params.bais = "$baseDir/../test_data/*.bai"
+   params.peaks = "$baseDir/../test_data/*.broadPeak"
    params.genomepath="/project/shared/bicf_workflow_ref/hg19/"
    species = "hg19"
    toppeakcount = 200
@@ -32,7 +32,7 @@
 //   script:
 //     """
 //     module load python/2.7.x-anaconda
-//     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
+//     module load R/3.3.2-gccmkl
 //     module load samtools/intel/1.3
 //     samtools index $index_bam_files
 //     """
@@ -50,7 +50,7 @@ process run_deeptools {
      script:
      """
      module load python/2.7.x-anaconda
-     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
+     module load R/3.3.2-gccmkl
      module load deeptools/2.3.5
      python $baseDir/scripts/runDeepTools.py -i ${params.design} -g ${params.genomepath}}
 """
@@ -72,7 +72,7 @@ process run_diffbind {
    script:
      """
      module load python/2.7.x-anaconda
-     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
+     module load R/3.3.2-gccmkl
      Rscript $baseDir/scripts/runDiffBind.R $diffbind_design_file
 """
 }
@@ -87,7 +87,7 @@ process run_chipseeker_diffpeak {
    script:
      """
      module load python/2.7.x-anaconda
-     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
+     module load R/3.3.2-gccmkl
      Rscript $baseDir/scripts/runChipseeker.R $diffpeak_design_file hg19
 """
 }
@@ -102,7 +102,7 @@ process run_chipseeker_originalpeak {
    script:
      """
      module load python/2.7.x-anaconda
-     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
+     module load R/3.3.2-gccmkl
      Rscript $baseDir/scripts/runChipseeker.R $design_file ${species}
 """
 }
@@ -117,7 +117,7 @@ process run_meme_original {
    script:
      """
      module load python/2.7.x-anaconda
-     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
+     module load R/3.3.2-gccmkl
      module load meme/4.11.1-gcc-openmpi
      python $baseDir/scripts/runMemechip.py -i $design_meme -g ${params.genomepath} -l ${toppeakcount}
 """
@@ -133,7 +133,7 @@ process run_meme_diffpeak {
    script:
      """
      module load python/2.7.x-anaconda
-     source activate /project/shared/bicf_workflow_ref/chipseq_bchen4/
+     module load R/3.3.2-gccmkl
      module load meme/4.11.1-gcc-openmpi
      python $baseDir/scripts/runMemechip.py -i $diffpeak_design -g ${params.genomepath} -l ${toppeakcount}
 """
