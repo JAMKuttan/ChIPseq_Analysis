@@ -46,7 +46,7 @@ process run_deeptools {
      file deeptools_peak_files from deeptools_peaks.toList()
      file deeptools_bam_indexes from deeptools_bamindex.toList()
    output:
-     stdout result
+     file "*deeptools*" into deeptools_output
      script:
      """
      module load python/2.7.x-anaconda
@@ -83,7 +83,7 @@ process run_chipseeker_diffpeak {
      file diffpeak_design_file from diffpeaksdesign_chipseeker
      file diffpeaks from diffpeaks_chipseeker
    output:
-     stdout result_chipseeker
+     file "*chipseeker*" into chipseeker_diffpeak_output
    script:
      """
      module load python/2.7.x-anaconda
@@ -98,7 +98,7 @@ process run_chipseeker_originalpeak {
      file design_file from chipseeker_design
      file chipseeker_peak_files from chipseeker_peaks.toList()
    output:
-     stdout result1
+     file "*chipseeker*" into chipseeker_originalpeak_output
    script:
      """
      module load python/2.7.x-anaconda
@@ -113,7 +113,7 @@ process run_meme_original {
      file design_meme from meme_design
      file meme_peak_files from meme_peaks.toList()
    output:
-     stdout result_meme_original
+     file "*meme*" into meme_original_output
    script:
      """
      module load python/2.7.x-anaconda
@@ -129,7 +129,7 @@ process run_meme_diffpeak {
      file peaks_meme from diffpeaks_meme
      file diffpeak_design from diffpeaksdesign_meme
    output:
-     stdout result_meme
+     file "*meme*" into meme_diffpeak_output
    script:
      """
      module load python/2.7.x-anaconda
