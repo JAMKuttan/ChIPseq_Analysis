@@ -82,6 +82,12 @@ workflow_parameters:
     description: |
       Bam files of all samples
 
+  - id: bais
+    type: files
+    required: true
+    description: |
+      Bam index files of all samples
+
   - id: peaks
     type: files
     required: true
@@ -96,7 +102,7 @@ workflow_parameters:
       A design file listing pairs of sample name and sample group. Must be in csv format
       Columns must include: SampleID,Tissue, Factor, Condition, Replicate, Peaks, bamReads, bamControl, ControlID, PeakCaller
 
-  - id: genome
+  - id: genomepath
     type: select
     choices:
       - [ '/project/shared/bicf_workflow_ref/GRCh38', 'hg38']
@@ -106,7 +112,7 @@ workflow_parameters:
     description: |
       Reference genome for annotation
 
-  - id: toppeak
+  - id: toppeakcount
     type: integer
     required: true
     description: |
