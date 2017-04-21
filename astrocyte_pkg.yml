@@ -82,17 +82,11 @@ workflow_parameters:
     description: |
       Bam files of all samples
 
-  - id: bais
-    type: files
-    required: true
-    description: |
-      Bam index files of all samples
-
   - id: peaks
     type: files
     required: true
     description: |
-      Peak files of all samples. Bed format
+      Peak files of all samples. Peaks should be sorted. Bed format
 
   - id: design
     type: files
@@ -105,9 +99,9 @@ workflow_parameters:
   - id: genomepath
     type: select
     choices:
-      - [ '/project/shared/bicf_workflow_ref/GRCh38', 'hg38']
-      - [ '/project/shared/bicf_workflow_ref/GRCh37', 'hg19']
-      - [ '/project/shared/bicf_workflow_ref/GRCm38', 'mm10']
+      - [ '/project/shared/bicf_workflow_ref/GRCh38', 'human GRCh38']
+      - [ '/project/shared/bicf_workflow_ref/GRCh37', 'human GRCh37']
+      - [ '/project/shared/bicf_workflow_ref/GRCm38', 'mouse GRCm38']
     required: true
     description: |
       Reference genome for annotation
