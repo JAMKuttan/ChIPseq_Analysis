@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
    params.design="$baseDir/../test_data/samplesheet.csv"
    params.bams = "$baseDir/../test_data/*.bam"
-   params.bais = "$baseDir/../test_data/*.bai"
+//   params.bais = "$baseDir/../test_data/*.bai"
    params.peaks = "$baseDir/../test_data/*.broadPeak"
    params.genomepath="/project/shared/bicf_workflow_ref/GRCh37"
    toppeakcount = 200
@@ -17,25 +17,25 @@
    diffbind_bams = Channel.fromPath(params.bams) 
    diffbind_peaks = Channel.fromPath(params.peaks) 
    meme_peaks = Channel.fromPath(params.peaks)
-   deeptools_bamindex = Channel.fromPath(params.bais)
-   diffbind_bamindex = Channel.fromPath(params.bais) 
+//   deeptools_bamindex = Channel.fromPath(params.bais)
+//   diffbind_bamindex = Channel.fromPath(params.bais) 
 
-//process bamindex {
-//   publishDir "$baseDir/output/", mode: 'copy'
-//   input:
-//     file index_bam_files from index_bams
-//   output:
-//     file "*bai" into deeptools_bamindex
-//     file "*bai" into diffbind_bamindex
-//
-//   script:
-//     """
-//     module load python/2.7.x-anaconda
-//     module load R/3.3.2-gccmkl
-//     module load samtools/intel/1.3
-//     samtools index $index_bam_files
-//     """
-//}
+process bamindex {
+   publishDir "$baseDir/output/", mode: 'copy'
+   input:
+     file index_bam_files from index_bams
+   output:
+     file "*bai" into deeptools_bamindex
+     file "*bai" into diffbind_bamindex
+
+   script:
+     """
+     module load python/2.7.x-anaconda
+     module load R/3.3.2-gccmkl
+     module load samtools/intel/1.3
+     samtools index $index_bam_files
+     """
+}
 
 process run_deeptools {
    publishDir "$baseDir/output", mode: 'copy'
@@ -102,7 +102,7 @@ process run_chipseeker_originalpeak {
      """
      module load python/2.7.x-anaconda
      module load R/3.3.2-gccmkl
-     Rscript $baseDir/scripts/runChipseeker.R $design_file ${species}
+     Rscript $baseDir/scripts/runChipseeker.R $design_file ${params.genomepath}
 """
 }
 

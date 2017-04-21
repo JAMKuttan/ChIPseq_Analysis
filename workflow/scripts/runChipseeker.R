@@ -8,7 +8,8 @@ args = commandArgs(trailingOnly=TRUE)
 
 library(ChIPseeker)
 #Parse the genome path and get genome version
-genome = unlist(strsplit(args[2],"[/]"))[-1]
+path_elements = unlist(strsplit(args[2],"[/]"))
+genome = path_elements[length(path_elements)]
 
 if(genome=="GRCh37")
 { 
