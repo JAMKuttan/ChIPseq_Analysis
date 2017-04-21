@@ -3,8 +3,7 @@
    params.bams = "$baseDir/../test_data/*.bam"
    params.bais = "$baseDir/../test_data/*.bai"
    params.peaks = "$baseDir/../test_data/*.broadPeak"
-   params.genomepath="/project/shared/bicf_workflow_ref/hg19/"
-   species = "hg19"
+   params.genomepath="/project/shared/bicf_workflow_ref/GRCh37"
    toppeakcount = 200
    design_file = file(params.design)
    deeptools_design = Channel.fromPath(params.design)
@@ -88,7 +87,7 @@ process run_chipseeker_diffpeak {
      """
      module load python/2.7.x-anaconda
      module load R/3.3.2-gccmkl
-     Rscript $baseDir/scripts/runChipseeker.R $diffpeak_design_file hg19
+     Rscript $baseDir/scripts/runChipseeker.R $diffpeak_design_file ${params.genomepath}
 """
 }
 
