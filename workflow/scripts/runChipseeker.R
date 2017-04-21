@@ -7,17 +7,20 @@ args = commandArgs(trailingOnly=TRUE)
 #}
 
 library(ChIPseeker)
-if(args[2]=="hg19")
+#Parse the genome path and get genome version
+genome = unlist(strsplit(args[2],"[/]"))[-1]
+
+if(genome=="GRCh37")
 { 
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 }
-if(args[2]=="mm10")
+if(genome=="GRCm38")
 { 
 library(TxDb.Hsapiens.UCSC.mm10.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.mm10.knownGene
 }
-if(args[2]=="hg38")
+if(genome=="GRCh38")
 { 
 library(TxDb.Hsapiens.UCSC.hg38.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
