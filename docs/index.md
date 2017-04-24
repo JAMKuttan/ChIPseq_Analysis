@@ -1,1 +1,57 @@
-#this is temp documentation
+# Astrocyte ChIPseq analysis Workflow Package
+
+This SOP describes the analysis pipeline of downstream analysis of ChIP-seq sequencing data. This pipeline includes (1) Quality control, (2) Peak annotation, (3) Differential peak analysis, and (4) motif analysis. BAM files and SORTED peak BED files selected as input. For each file this workflow:
+
+    1) Annotate all peaks using ChipSeeker
+    2) Qulity control and signal profiling with Deeptools 
+    3) Find differential expressed peaks using DiffBind
+    4) Annotate all differentially expressed peaks
+    5) Using MEME-ChIP in motif finding for both original peaks and differently expressed peaks
+
+
+##Workflow Parameters
+
+    bam - Choose all ChIP-seq alignment files for analysis.
+    genome - Choose a genomic reference (genome).
+    peaks - Choose all the peak files for analysis. All peaks should be sorted by the user
+    toppeak - The number of top peaks used for motif analysis. Default is all
+    design - This file contains the experiment design information. CSV format
+
+ The following columns are necessary, must be named as in template and can be in any order:
+
+    SampleID
+        The id of the sample. This will be the header in output files, please make sure it is concise
+    Tissue
+        Tissue of the sample
+    Factor
+        Factor of the experiment
+    Condition
+	    This is the group that will be used for pairwise differential expression analysis
+	Replicate
+	    Replicate id
+    Peaks
+        The file name of the peak file for this sample
+    bamReads
+        The file name of the IP BAM for this sample
+    bamControl
+        The file name of the control BAM for this sample
+    ContorlID
+        The id of the control sample
+    PeakCaller
+        The peak caller used
+	
+
+### Test Data
+
+
+### Credits
+This example worklow is derived from original scripts kindly contributed by the Bioinformatic Core Facility (BICF), Department of Bioinformatics
+
+### References
+
+* ChipSeeker: http://bioconductor.org/packages/release/bioc/html/ChIPseeker.html
+* DiffBind: http://bioconductor.org/packages/release/bioc/html/DiffBind.html
+* Deeptools: https://deeptools.github.io/
+* MEME-ChIP: http://meme-suite.org/doc/meme-chip.html
+
+
