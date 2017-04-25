@@ -11,7 +11,6 @@ import logging
 import twobitreader
 import subprocess
 import pandas as pd
-import pybedtools
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
