@@ -117,6 +117,7 @@ process run_meme_original {
      """
      module load python/2.7.x-anaconda
      module load R/3.3.2-gccmkl
+     module add deeptools/2.3.5
      module load meme/4.11.1-gcc-openmpi
      python $baseDir/scripts/runMemechip.py -i $design_meme -g ${params.genomepath} -l ${toppeakcount}
 """
@@ -133,6 +134,7 @@ process run_meme_diffpeak {
      """
      module load python/2.7.x-anaconda
      module load R/3.3.2-gccmkl
+     module add deeptools/2.3.5
      module load meme/4.11.1-gcc-openmpi
      python $baseDir/scripts/runMemechip.py -i $diffpeak_design -g ${params.genomepath} -l ${toppeakcount}
 """
