@@ -81,12 +81,15 @@ workflow_parameters:
     required: true
     description: |
       Bam files of all samples
+    regex: ".*(bam|BAM)"
 
   - id: peaks
     type: files
     required: true
     description: |
       Peak files of all samples. Peaks should be sorted. Bed format
+    regex: ".*(narrowPeak|broadPeak|bed|BED)"
+
 
   - id: design
     type: files
