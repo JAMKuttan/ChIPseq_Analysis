@@ -9,7 +9,6 @@ import string
 import argparse as ap
 import logging
 import twobitreader
-import pybedtools
 import subprocess
 import pandas as pd
 from Bio import SeqIO
@@ -52,7 +51,7 @@ def run_wrapper(args):
 
 
 def run(infile, genome, limit, output):
-  infile = pybedtools.BedTool(infile)
+  infile = open(infile).readlines()
   logging.debug(len(infile))
   genome = twobitreader.TwoBitFile(genome)
   outfile = open(output+".fa","w")
@@ -65,19 +64,20 @@ def run(infile, genome, limit, output):
     rowcount += 1   
     #logging.debug(record) 
     if rowcount <=limit:
-      #logging.debug(rowcount)
+      seqbuf = record.rstrip().split("\t")
       try:
         #logging.debug(record.chrom)
-        seq = genome[record.chrom][record.start:record.stop]
+        seq = genome[seqbuf[0]][int(seqbuf[1]):int(seqbuf[2])]
       except:
         pass
       else:
-        if record.strand == "-":
-          seq = rc(seq)
-        if len(record.fields)>=4:
-          newfa_name = record.name
+        if len(seqbuf)>=5: 
+          if seqbuf[5] == "-":
+            seq = rc(seq)
+        if len(seqbuf)>=4:
+          newfa_name = seqbuf[3]
         else:
-          newfa_name = "_".join(record.fields)
+          newfa_name = "_".join(seqbuf)
         newfa = SeqRecord(Seq(seq),newfa_name,description="")
         #logging.debug(seq)
         SeqIO.write(newfa,outfile,"fasta")

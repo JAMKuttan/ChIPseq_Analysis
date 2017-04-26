@@ -114,7 +114,7 @@ workflow_parameters:
     required: true
     description: |
       The number of top peaks to use for motif discovery.
-
+    default: 200
 
 # -----------------------------------------------------------------------------
 # SHINY APP CONFIGURATION
