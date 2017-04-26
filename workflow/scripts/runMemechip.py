@@ -9,6 +9,7 @@ import string
 import argparse as ap
 import logging
 import twobitreader
+import pybedtools
 import subprocess
 import pandas as pd
 from Bio import SeqIO
