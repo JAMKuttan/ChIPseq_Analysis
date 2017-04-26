@@ -112,9 +112,9 @@ workflow_parameters:
   - id: toppeakcount
     type: integer
     required: true
-    description: |
-      The number of top peaks to use for motif discovery. This program won't sort peak BED files for you, so please make sure your peak files are already sorted. Default : -1, use all the peaks
     default: -1
+    description: |
+      The number of top peaks to use for motif discovery. This program will nott sort peak BED files for you, so please make sure your peak files are already sorted.If want all peaks to be used, use -1.
 
 # -----------------------------------------------------------------------------
 # SHINY APP CONFIGURATION

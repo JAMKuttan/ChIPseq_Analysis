@@ -58,7 +58,7 @@ def run(infile, genome, limit, output):
   rowcount = 0
   limit = int(limit)
   logging.debug(limit)
-  if limit ==-1:
+  if limit < 0:
     limit = len(infile)
   for record in infile:
     rowcount += 1   
