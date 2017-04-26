@@ -1,10 +1,9 @@
 #!/usr/bin/env nextflow
    params.design="$baseDir/../test_data/samplesheet.csv"
    params.bams = "$baseDir/../test_data/*.bam"
-//   params.bais = "$baseDir/../test_data/*.bai"
    params.peaks = "$baseDir/../test_data/*.broadPeak"
    params.genomepath="/project/shared/bicf_workflow_ref/GRCh37"
-   toppeakcount = 200
+   toppeakcount = -1
    design_file = file(params.design)
    deeptools_design = Channel.fromPath(params.design)
    diffbind_design = Channel.fromPath(params.design)
@@ -17,8 +16,6 @@
    diffbind_bams = Channel.fromPath(params.bams) 
    diffbind_peaks = Channel.fromPath(params.peaks) 
    meme_peaks = Channel.fromPath(params.peaks)
-//   deeptools_bamindex = Channel.fromPath(params.bais)
-//   diffbind_bamindex = Channel.fromPath(params.bais) 
 
 process bamindex {
    publishDir "$baseDir/output/", mode: 'copy'
