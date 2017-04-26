@@ -17,7 +17,7 @@ This SOP describes the analysis pipeline of downstream analysis of ChIP-seq sequ
     toppeak - The number of top peaks used for motif analysis. Default is all
     design - This file contains the experiment design information. CSV format
 
- The following columns are necessary, must be named as in template and can be in any order:
+ The following columns are necessary, must be named as in template. An design file template can be downloaded [HERE](https://git.biohpc.swmed.edu/bchen4/chipseq_analysis/raw/master/docs/design_example.csv)
 
     SampleID
         The id of the sample. This will be the header in output files, please make sure it is concise
@@ -40,8 +40,6 @@ This SOP describes the analysis pipeline of downstream analysis of ChIP-seq sequ
     PeakCaller
         The peak caller used
 	
-
-### Test Data
 
 
 ### Credits
