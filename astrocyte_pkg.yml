@@ -87,7 +87,7 @@ workflow_parameters:
     type: files
     required: true
     description: |
-      Peak files of all samples. Peaks should be sorted. Bed format
+      Peak files of all samples. Peaks should be sorted by user using either p_value or intensity of the signals.Bed format.
     regex: ".*(narrowPeak|broadPeak|bed|BED)"
 
 
@@ -113,8 +113,8 @@ workflow_parameters:
     type: integer
     required: true
     description: |
-      The number of top peaks to use for motif discovery.
-    default: 200
+      The number of top peaks to use for motif discovery. This program won't sort peak BED files for you, so please make sure your peak files are already sorted. Default : -1, use all the peaks
+    default: -1
 
 # -----------------------------------------------------------------------------
 # SHINY APP CONFIGURATION
