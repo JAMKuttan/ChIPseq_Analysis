@@ -29,7 +29,7 @@ def prepare_argparser():
   argparser.add_argument("-l","--limit",dest = "limit",type=int,default=-1, help="Top limit of peaks")
   return(argparser)
 
-def rc():
+def rc(seq):
   comps = {'A':"T",'C':"G",'G':"C",'T':"A","N":"N"}
   return ''.join([comps[x] for x in seq.upper()[::-1]])
 

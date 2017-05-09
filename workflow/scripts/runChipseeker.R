@@ -18,8 +18,8 @@ txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 }
 if(genome=="GRCm38")
 { 
-library(TxDb.Hsapiens.UCSC.mm10.knownGene)
-txdb <- TxDb.Hsapiens.UCSC.mm10.knownGene
+library(TxDb.Mmusculus.UCSC.mm10.knownGene)
+txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
 }
 if(genome=="GRCh38")
 { 
