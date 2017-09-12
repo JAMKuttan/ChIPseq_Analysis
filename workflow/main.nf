@@ -9,7 +9,7 @@ params.singleEnd = false
 
 Channel
     .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
-    .ifEmpty { error "Cannot find any reads matching: ${params.reads}\nIf this is single-end data, please specify."" }
+    .ifEmpty { error "Cannot find any reads matching: ${params.reads}\nIf this is single-end data, please specify."}
     .set { read_pairs }
 
 process qc_fastq {
@@ -26,6 +26,7 @@ process qc_fastq {
 
     script:
     """
+    module load python/3.6.1-2-anaconda
     module load fastqc/0.11.5
     $baseDir/scripts/qc_fastq.py -f $reads
     """
