@@ -15,8 +15,7 @@ Channel
 process qc_fastq {
     tag "$name"
 
-    publishDir "$baseDir/output/$name/qc_fastq", mode: 'copy'
-
+    publishDir "$baseDir/output/$name/$task.process", mode: 'copy'
 
     input:
     set val(name), file(reads) from read_pairs
@@ -30,4 +29,4 @@ process qc_fastq {
     module load fastqc/0.11.5
     $baseDir/scripts/qc_fastq.py -f $reads
     """
-    }
+}
