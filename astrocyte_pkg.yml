@@ -17,7 +17,8 @@ title: 'BICF ChIP-seq Analysis Workflow'
 # A summary of the workflow package in plain text
 description: |
   This is a workflow package for the BioHPC/BICF ChIP-seq workflow system.
-  It implements a simple ChIP-seq analysis workflow using deepTools, Diffbind, ChipSeeker and MEME-ChIP, visualization application.
+  It implements a simple ChIP-seq analysis workflow and
+  visualization application.
 
 # -----------------------------------------------------------------------------
 # DOCUMENTATION
@@ -91,7 +92,11 @@ workflow_parameters:
       - [ 'true', 'True']
       - [ 'false', 'False']
     description: |
-      In single-end sequencing, the sequencer reads a fragment from only one end to the other, generating the sequence of base pairs. In paired-end reading it starts at one read, finishes this direction at the specified read length, and then starts another round of reading from the opposite end of the fragment.
+      In single-end sequencing, the sequencer reads a fragment from only one
+      end to the other, generating the sequence of base pairs. In paired-end
+      reading it starts at one read, finishes this direction at the specified
+      read length, and then starts another round of reading from the opposite
+      end of the fragment.
 
 # -----------------------------------------------------------------------------
 # SHINY APP CONFIGURATION
@@ -109,8 +114,8 @@ vizapp_cran_packages:
   - shiny
   - shinyFiles
 
-# # List of any Bioconductor packages, not provided by the modules, that must be made
-# available to the vizapp
+# List of any Bioconductor packages, not provided by the modules, 
+# that must be made available to the vizapp
 vizapp_bioc_packages:
   - qusage
 #  - ballgown

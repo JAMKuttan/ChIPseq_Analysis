@@ -3,7 +3,7 @@
 // Path to an input file, or a pattern for multiple inputs
 // Note - $baseDir is the location of this workflow file main.nf
 
-params.reads = "$baseDir/../test_data/*_{1,2}.fastq.gz"
+params.reads = "$baseDir/../test_data/*_R{1,2}.fastq.gz"
 params.singleEnd = false
 
 
