@@ -36,7 +36,7 @@ documentation_files:
 # Remember - The workflow file is always named 'workflow/main.nf'
 #            The workflow must publish all final output into $baseDir
 
-# A list of clueter environment modules that this workflow requires to run.
+# A list of cluster environment modules that this workflow requires to run.
 # Specify versioned module names to ensure reproducability.
 workflow_modules:
   - 'fastqc/0.11.5'

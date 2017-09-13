@@ -21,7 +21,8 @@ process qc_fastq {
     set val(name), file(reads) from read_pairs
 
     output:
-    file "*_fastqc.{zip,html}" into fastqc_results
+    file "*_fastqc.{zip,html}" into qc_fastq_results
+    file "qc.log" into qc_fastq_log
 
     script:
     """
