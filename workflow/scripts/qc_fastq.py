@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: latin-1 -*-
+
 '''QC check of raw .fastq files using FASTQC.'''
 
 import os
@@ -23,19 +23,6 @@ LOGGER.propagate = False
 LOGGER.setLevel(logging.INFO)
 
 
-def check_tools():
-    '''Checks for required componenets on user system'''
-
-    LOGGER.info('Checking for required libraries and components on this system')
-
-    fastqc_path = shutil.which("fastqc")
-    if fastqc_path:
-        LOGGER.info('Found fastqc: %s', fastqc_path)
-    else:
-        print("Please install 'fastqc' before using the tool")
-        sys.exit()
-
-
 def get_args():
     '''Define arguments.'''
     parser = argparse.ArgumentParser(
@@ -49,6 +36,19 @@ def get_args():
 
     args = parser.parse_args()
     return args
+
+
+def check_tools():
+    '''Checks for required componenets on user system'''
+
+    LOGGER.info('Checking for required libraries and components on this system')
+
+    fastqc_path = shutil.which("fastqc")
+    if fastqc_path:
+        LOGGER.info('Found fastqc: %s', fastqc_path)
+    else:
+        print("Please install 'fastqc' before using the tool")
+        sys.exit()
 
 
 def check_qual_fastq(fastq):
