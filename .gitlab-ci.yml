@@ -1,8 +1,5 @@
-before_script:
-  - sh test_data/fetch_test_data.sh
-
 test:
   script:
-  - module add astrocyte/0.1.0
+  - module add  python/3.6.1-2-anaconda
   - cd ..
-  - astrocyte_cli test chipseq_analysis
+  - pytest
