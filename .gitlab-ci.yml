@@ -1,6 +1,6 @@
 before_script:
   - module add  python/3.6.1-2-anaconda
-  - pip install pytest-pythonpath
+  - pip install --user pytest-pythonpath
   - cd ..
 
 test:
