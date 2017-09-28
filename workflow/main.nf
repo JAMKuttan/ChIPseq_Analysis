@@ -3,31 +3,48 @@
 // Path to an input file, or a pattern for multiple inputs
 // Note - $baseDir is the location of this workflow file main.nf
 
-params.reads = "$baseDir/../test_data/*_R{1,2}.fastq.gz"
-params.singleEnd = false
+// Define Input variables
+params.reads = "$baseDir/../test_data/*.fastq.gz"
+params.pairedEnd = false
+params.designFile = "$baseDir/../test_data/design_ENCSR238SGC_SE.txt"
 
-
+// Define List of Files
 Channel
-    .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
-    .ifEmpty { error "Cannot find any reads matching: ${params.reads}\nIf this is single-end data, please specify."}
-    .set { read_pairs }
+  .fromPath( params.reads )
+  .flatten()
+  .map { file -> [ file.getFileName().toString(), file.toString() ].join("\t")}
+  .collectFile( name: 'fileList.tsv', newLine: true )
+  .set { readsList }
 
-process qc_fastq {
-    tag "$name"
+// Define regular variables
+pairedEnd = params.pairedEnd
+designFile = params.designFile
 
-    publishDir "$baseDir/output/$name/$task.process", mode: 'copy'
+process checkDesignFile {
 
-    input:
-    set val(name), file(reads) from read_pairs
+  publishDir "$baseDir/output/design", mode: 'copy'
 
-    output:
-    file "*_fastqc.{zip,html}" into qc_fastq_results
-    file "qc.log" into qc_fastq_log
+  input:
 
-    script:
+  designFile
+  file readsList
+
+  output:
+
+  file("design.tsv") into designFilePaths
+
+  script:
+
+  if (pairedEnd) {
     """
-    module load python/3.6.1-2-anaconda
-    module load fastqc/0.11.5
-    $baseDir/scripts/qc_fastq.py -f $reads
+    echo $designFile
+    python $baseDir/scripts/check_design.py -d $designFile -f $readsList -p
     """
+  }
+  else {
+    """
+    python $baseDir/scripts/check_design.py -d $designFile -f $readsList
+    """
+  }
+
 }

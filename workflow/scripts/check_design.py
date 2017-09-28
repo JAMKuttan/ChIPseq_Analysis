@@ -35,7 +35,7 @@ def get_args():
 
     parser.add_argument('-p', '--paired',
                         help="True/False if paired-end or single end.",
-                        default=True,
+                        default=False,
                         action='store_true')
 
     args = parser.parse_args()
@@ -119,7 +119,7 @@ def main():
 
     # Read files
     design_file = pd.read_csv(args.design, sep='\t')
-    fastq_file = pd.read_csv(args.design, sep='\t', names=['name', 'path'])
+    fastq_file = pd.read_csv(args.fastq, sep='\t', names=['name', 'path'])
 
     # Check design file
     check_design_headers(design_file, args.paired)
@@ -127,7 +127,7 @@ def main():
     new_design = check_files(design_file, fastq_file, args.paired)
 
     # Write out new design file
-    new_design.to_csv('design.tsv', header=True, index=False)
+    new_design.to_csv('design.tsv', header=True, sep='\t', index=False)
 
 
 if __name__ == '__main__':
