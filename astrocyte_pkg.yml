@@ -17,7 +17,8 @@ title: 'BICF ChIP-seq Analysis Workflow'
 # A summary of the workflow package in plain text
 description: |
   This is a workflow package for the BioHPC/BICF ChIP-seq workflow system.
-  It implements a simple ChIP-seq analysis workflow using deepTools, Diffbind, ChipSeeker and MEME-ChIP, visualization application.
+  It implements a simple ChIP-seq analysis workflow and
+  visualization application.
 
 # -----------------------------------------------------------------------------
 # DOCUMENTATION
@@ -33,12 +34,13 @@ documentation_files:
 # NEXTFLOW WORKFLOW CONFIGURATION
 # -----------------------------------------------------------------------------
 
-# Remember - The workflow file is always named 'workflow/main.f'
+# Remember - The workflow file is always named 'workflow/main.nf'
 #            The workflow must publish all final output into $baseDir
 
-# A list of clueter environment modules that this workflow requires to run.
+# A list of cluster environment modules that this workflow requires to run.
 # Specify versioned module names to ensure reproducability.
 workflow_modules:
+  - 'fastqc/0.11.5'
   - 'deeptools/2.3.5'
   - 'meme/4.11.1-gcc-openmpi'
 
@@ -76,45 +78,25 @@ workflow_modules:
 
 workflow_parameters:
 
-  - id: bams
+  - id: reads
     type: files
     required: true
     description: |
-      Bam files of all samples
-    regex: ".*(bam|BAM)"
+      Fastq files of all  samples
+    regex: "*_{1,2}.fastq.gz"
 
-  - id: peaks
-    type: files
-    required: true
-    description: |
-      Peak files of all samples. Peaks should be sorted by user using either p_value or intensity of the signals.Bed format.
-    regex: ".*(narrowPeak|broadPeak|bed|BED)"
-
-
-  - id: design
-    type: files
-    required: true
-    regex: ".*(csv)"
-    description: |
-      A design file listing pairs of sample name and sample group. Must be in csv format
-      Columns must include: SampleID,Tissue, Factor, Condition, Replicate, Peaks, bamReads, bamControl, ControlID, PeakCaller
-
-  - id: genomepath
+  - id: singleEnd
     type: select
+    required: true
     choices:
-      - [ '/project/shared/bicf_workflow_ref/GRCh38', 'human GRCh38']
-      - [ '/project/shared/bicf_workflow_ref/GRCh37', 'human GRCh37']
-      - [ '/project/shared/bicf_workflow_ref/GRCm38', 'mouse GRCm38']
-    required: true
+      - [ 'true', 'True']
+      - [ 'false', 'False']
     description: |
-      Reference genome for annotation
-
-  - id: toppeakcount
-    type: integer
-    required: true
-    default: -1
-    description: |
-      The number of top peaks to use for motif discovery. This program will nott sort peak BED files for you, so please make sure your peak files are already sorted.If want all peaks to be used, use -1.
+      In single-end sequencing, the sequencer reads a fragment from only one
+      end to the other, generating the sequence of base pairs. In paired-end
+      reading it starts at one read, finishes this direction at the specified
+      read length, and then starts another round of reading from the opposite
+      end of the fragment.
 
 # -----------------------------------------------------------------------------
 # SHINY APP CONFIGURATION
@@ -132,11 +114,10 @@ vizapp_cran_packages:
   - shiny
   - shinyFiles
 
-# # List of any Bioconductor packages, not provided by the modules, that must be made
-# available to the vizapp
+# List of any Bioconductor packages, not provided by the modules, 
+# that must be made available to the vizapp
 vizapp_bioc_packages:
   - qusage
 #  - ballgown
 vizapp_github_packages:
   - js229/Vennerable
-
