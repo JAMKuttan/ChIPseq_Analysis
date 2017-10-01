@@ -17,10 +17,10 @@ For more details:
 
 ## SETTINGS
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.addHandler(logging.NullHandler())
-LOGGER.propagate = False
-LOGGER.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+logger.propagate = False
+logger.setLevel(logging.INFO)
 
 
 def get_args():
@@ -41,24 +41,24 @@ def get_args():
 def check_tools():
     '''Checks for required componenets on user system'''
 
-    LOGGER.info('Checking for required libraries and components on this system')
+    logger.info('Checking for required libraries and components on this system')
 
     fastqc_path = shutil.which("fastqc")
     if fastqc_path:
-        LOGGER.info('Found fastqc: %s', fastqc_path)
+        logger.info('Found fastqc: %s', fastqc_path)
     else:
-        print("Please install 'fastqc' before using the tool")
-        sys.exit()
+        logger.error('Missing fastqc')
+        raise Exception('Missing fastqc')
 
 
 def check_qual_fastq(fastq):
     '''Run fastqc on 1 or 2 files.'''
     qc_command = "fastqc -t -f fastq " + " ".join(fastq)
 
-    LOGGER.info("Running fastqc with %s", qc_command)
+    logger.info("Running fastqc with %s", qc_command)
 
     qual_fastq = subprocess.Popen(qc_command, shell=True)
-    qual_fastq .communicate()
+    out, err = qual_fastq.communicate()
 
 
 def main():
