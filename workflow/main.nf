@@ -58,11 +58,11 @@ rawReads = designFilePaths
   .map { row -> [ row.sample_id, [row.fastq_read1, row.fastq_read1], row.biosample, row.factor, row.treatment, row.replicate, row.control_id ] }
 }
 
-process fastQc {
+// Trim raw reads using trimgalore
+process trimReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$baseDir/output/", mode: 'copy',
-    saveAs: {filename -> filename.indexOf(".zip") > 0 ? "zips/$filename" : "$filename"}
+  publishDir "$baseDir/output/{task.process}/$sampleId-$replicate$/", mode: 'copy'
 
   input:
 
@@ -70,11 +70,11 @@ process fastQc {
 
   output:
 
-  file '*_fastqc.{zip,html}' into fastqc_results
+  set sampleId, file('*.fq.gz'), biosample, factor, treatment, replicate, controlId into trimmedReads
 
   script:
 
   """
-  python $baseDir/scripts/qc_fastq.py -f $reads
+  python $baseDir/scripts/trim_reads.py -f $reads
   """
 }

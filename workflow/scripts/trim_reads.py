@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+
+'''Trim low quality reads and remove sequences less than 35 base pairs.'''
+
+import os
+import subprocess
+import argparse
+import shutil
+import logging
+import sys
+import json
+
+EPILOG = '''
+For more details:
+        %(prog)s --help
+'''
+
+## SETTINGS
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+logger.propagate = False
+logger.setLevel(logging.INFO)
+
+
+def get_args():
+    '''Define arguments.'''
+    parser = argparse.ArgumentParser(
+        description=__doc__, epilog=EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+
+    parser.add_argument('-f', '--fastq',
+                        help="The fastq file to run triming on.",
+                        nargs='+',
+                        required=True)
+
+    args = parser.parse_args()
+    return args
+
+
+def check_tools():
+    '''Checks for required componenets on user system'''
+
+    logger.info('Checking for required libraries and components on this system')
+
+    trimgalore_path = shutil.which("trim_galore")
+    if fastqc_path:
+        logger.info('Found trimgalore: %s', fastqc_path)
+    else:
+        logger.error('Missing trimgalore')
+        raise Exception('Missing trimgalore')
+
+    cutadapt_path = shutil.which("cutadapt")
+    if fastqc_path:
+        logger.info('Found cutadapt: %s', fastqc_path)
+    else:
+        logger.error('Missing cutadapt')
+        raise Exception('Missing cutadapt')
+
+
+def trim_reads(fastq):
+    '''Run trim_galore on 1 or 2 files.'''
+    qc_command = "trim_galore --paired -q 25 --illumina --gzip --length 35 " \
+                + " ".join(fastq)
+
+    logger.info("Running trim_galore with %s", qc_command)
+
+    qual_fastq = subprocess.Popen(qc_command, shell=True)
+    out, err = qual_fastq.communicate()
+
+
+def main():
+    args = get_args()
+
+    # Create a file handler
+    handler = logging.FileHandler('trim.log')
+    LOGGER.addHandler(handler)
+
+    # Check if tools are present
+    check_tools()
+
+    # Run trim_reads
+    trim_reads(args.fastq)
+
+
+if __name__ == '__main__':
+    main()
