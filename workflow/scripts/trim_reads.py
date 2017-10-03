@@ -34,6 +34,11 @@ def get_args():
                         nargs='+',
                         required=True)
 
+    parser.add_argument('-p', '--paired',
+                        help="True/False if paired-end or single end.",
+                        default=False,
+                        action='store_true')
+
     args = parser.parse_args()
     return args
 
@@ -58,10 +63,15 @@ def check_tools():
         raise Exception('Missing cutadapt')
 
 
-def trim_reads(fastq):
+def trim_reads(fastq, paired):
     '''Run trim_galore on 1 or 2 files.'''
-    qc_command = "trim_galore --paired -q 25 --illumina --gzip --length 35 " \
-                + " ".join(fastq)
+
+    if paired: # paired-end data
+        qc_command = "trim_galore --paired -q 25 --illumina --gzip --length 35 " \
+                    + " ".join(fastq)
+    else:
+        qc_command = "trim_galore -q 25 --illumina --gzip --length 35 " \
+                    + " ".join(fastq)
 
     logger.info("Running trim_galore with %s", qc_command)
 
@@ -80,7 +90,7 @@ def main():
     check_tools()
 
     # Run trim_reads
-    trim_reads(args.fastq)
+    trim_reads(args.fastq, args.paired)
 
 
 if __name__ == '__main__':
