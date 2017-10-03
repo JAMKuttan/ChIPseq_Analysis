@@ -8,7 +8,6 @@ import argparse
 import shutil
 import logging
 import sys
-import json
 
 EPILOG = '''
 For more details:
@@ -67,11 +66,13 @@ def trim_reads(fastq, paired):
     '''Run trim_galore on 1 or 2 files.'''
 
     if paired: # paired-end data
-        trim_command = "trim_galore --paired -q 25 --illumina --gzip --length 35 " \
-                    + " ".join(fastq)
+        trim_params = '--paired -q 25 --illumina --gzip --length 35'
+        trim_command = "trim_galore %s %s %s " \
+                    % (trim_params, fastq[0], fastq[1])
     else:
-        trim_command = "trim_galore -q 25 --illumina --gzip --length 35 " \
-                    + " ".join(fastq)
+        trim_params = '-q 25 --illumina --gzip --length 35'
+        trim_command = "trim_galore %s %s " \
+                    % (trim_params, fastq[0])
 
     logger.info("Running trim_galore with %s", trim_command)
 
