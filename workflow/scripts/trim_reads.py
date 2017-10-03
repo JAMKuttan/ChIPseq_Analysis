@@ -74,7 +74,7 @@ def main():
 
     # Create a file handler
     handler = logging.FileHandler('trim.log')
-    LOGGER.addHandler(handler)
+    logger.addHandler(handler)
 
     # Check if tools are present
     check_tools()
