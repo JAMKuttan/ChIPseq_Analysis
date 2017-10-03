@@ -45,14 +45,14 @@ def check_tools():
 
     trimgalore_path = shutil.which("trim_galore")
     if trimgalore_path:
-        logger.info('Found trimgalore: %s', fastqc_path)
+        logger.info('Found trimgalore: %s', trimgalore_path)
     else:
         logger.error('Missing trimgalore')
         raise Exception('Missing trimgalore')
 
     cutadapt_path = shutil.which("cutadapt")
     if cutadapt_path:
-        logger.info('Found cutadapt: %s', fastqc_path)
+        logger.info('Found cutadapt: %s', cutadapt_path)
     else:
         logger.error('Missing cutadapt')
         raise Exception('Missing cutadapt')
