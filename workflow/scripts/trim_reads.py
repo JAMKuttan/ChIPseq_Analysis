@@ -43,7 +43,7 @@ def get_args():
 
 
 def check_tools():
-    '''Checks for required componenets on user system'''
+    '''Checks for required componenets on user system.'''
 
     logger.info('Checking for required libraries and components on this system')
 
