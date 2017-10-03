@@ -40,6 +40,8 @@ documentation_files:
 # A list of cluster environment modules that this workflow requires to run.
 # Specify versioned module names to ensure reproducability.
 workflow_modules:
+  - 'python/3.6.1-2-anaconda'
+  - 'trimgalore/0.4.1'
   - 'fastqc/0.11.5'
   - 'deeptools/2.3.5'
   - 'meme/4.11.1-gcc-openmpi'
@@ -114,7 +116,7 @@ vizapp_cran_packages:
   - shiny
   - shinyFiles
 
-# List of any Bioconductor packages, not provided by the modules, 
+# List of any Bioconductor packages, not provided by the modules,
 # that must be made available to the vizapp
 vizapp_bioc_packages:
   - qusage

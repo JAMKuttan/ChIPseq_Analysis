@@ -62,7 +62,7 @@ rawReads = designFilePaths
 process trimReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$baseDir/output/{task.process}/$sampleId-$replicate$/", mode: 'copy'
+  publishDir "$baseDir/output/{task.process}/$sampleId-$replicate/", mode: 'copy'
 
   input:
 
@@ -71,10 +71,19 @@ process trimReads {
   output:
 
   set sampleId, file('*.fq.gz'), biosample, factor, treatment, replicate, controlId into trimmedReads
+  file '*trimming_report.txt' into trimgalore_results
 
   script:
 
-  """
-  python $baseDir/scripts/trim_reads.py -f $reads
-  """
+  if (pairedEnd) {
+    """
+    python $baseDir/scripts/trim_reads.py -f $reads -p
+    """
+  }
+  else {
+    """
+    python $baseDir/scripts/check_design.py -f $reads
+    """
+  }
+
 }
