@@ -44,14 +44,14 @@ def check_tools():
     logger.info('Checking for required libraries and components on this system')
 
     trimgalore_path = shutil.which("trim_galore")
-    if fastqc_path:
+    if trimgalore_path:
         logger.info('Found trimgalore: %s', fastqc_path)
     else:
         logger.error('Missing trimgalore')
         raise Exception('Missing trimgalore')
 
     cutadapt_path = shutil.which("cutadapt")
-    if fastqc_path:
+    if cutadapt_path:
         logger.info('Found cutadapt: %s', fastqc_path)
     else:
         logger.error('Missing cutadapt')
