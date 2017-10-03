@@ -67,16 +67,16 @@ def trim_reads(fastq, paired):
     '''Run trim_galore on 1 or 2 files.'''
 
     if paired: # paired-end data
-        qc_command = "trim_galore --paired -q 25 --illumina --gzip --length 35 " \
+        trim_command = "trim_galore --paired -q 25 --illumina --gzip --length 35 " \
                     + " ".join(fastq)
     else:
-        qc_command = "trim_galore -q 25 --illumina --gzip --length 35 " \
+        trim_command = "trim_galore -q 25 --illumina --gzip --length 35 " \
                     + " ".join(fastq)
 
-    logger.info("Running trim_galore with %s", qc_command)
+    logger.info("Running trim_galore with %s", trim_command)
 
-    qual_fastq = subprocess.Popen(qc_command, shell=True)
-    out, err = qual_fastq.communicate()
+    trim = subprocess.Popen(trim_command, shell=True)
+    out, err = trim.communicate()
 
 
 def main():
