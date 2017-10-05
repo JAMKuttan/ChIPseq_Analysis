@@ -7,6 +7,18 @@
 params.reads = "$baseDir/../test_data/*.fastq.gz"
 params.pairedEnd = false
 params.designFile = "$baseDir/../test_data/design_ENCSR238SGC_SE.txt"
+params.genome = 'GRCh38'
+params.genomes = []
+params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
+
+// Check inputs
+if( params.bwaIndex ){
+  bwaIndex = Channel
+    .fromPath(params.bwaIndex)
+    .ifEmpty { exit 1, "BWA index not found: ${params.bwaIndex}" }
+} else {
+  exit 1, "No reference genome specified."
+}
 
 // Define List of Files
 readsList = Channel
@@ -55,14 +67,14 @@ if (pairedEnd) {
 } else {
 rawReads = designFilePaths
   .splitCsv(sep: '\t', header: true)
-  .map { row -> [ row.sample_id, [row.fastq_read1, row.fastq_read1], row.biosample, row.factor, row.treatment, row.replicate, row.control_id ] }
+  .map { row -> [ row.sample_id, [row.fastq_read1], row.biosample, row.factor, row.treatment, row.replicate, row.control_id ] }
 }
 
 // Trim raw reads using trimgalore
 process trimReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$baseDir/output/{task.process}/$sampleId-$replicate/", mode: 'copy'
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
 
   input:
 
@@ -77,12 +89,42 @@ process trimReads {
 
   if (pairedEnd) {
     """
-    python $baseDir/scripts/trim_reads.py -f $reads -p
+    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} ${reads[1]} -p
     """
   }
   else {
     """
-    python $baseDir/scripts/check_design.py -f $reads
+    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]}
+    """
+  }
+
+}
+
+// Align trimmed reads using bwa
+process alignReads {
+
+  tag "$sampleId-$replicate"
+  publishDir "$baseDir/output/{task.process}", mode: 'copy'
+
+  input:
+
+  set sampleId, reads, biosample, factor, treatment, replicate, controlId from trimmedReads
+  file index from bwaIndex.first()
+
+  output:
+
+  set sampleId, file('*.bam'), biosample, factor, treatment, replicate, controlId into mappedReads
+
+  script:
+
+  if (pairedEnd) {
+    """
+    python $baseDir/scripts/map_reads.py -f ${reads[0]} ${reads[1]} -r ${index}/genome.fa -p
+    """
+  }
+  else {
+    """
+    python $baseDir/scripts/map_reads.py -f ${reads[0]} -r ${index}/genome.fa
     """
   }
 
