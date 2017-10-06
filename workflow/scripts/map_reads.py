@@ -160,6 +160,8 @@ def align_pe(fastq, sai, reference, fastq_basename):
 def main():
     args = get_args()
     paired = args.paired
+    fastq = args.fastq
+    reference = args.reference
 
     # Create a file handler
     handler = logging.FileHandler('map.log')
@@ -170,8 +172,8 @@ def main():
 
     # Run Suffix Array generation
     sai = []
-    for fastq in args.fastq:
-        sai_filename = generate_sa(fastq, args.reference)
+    for fq in fastq:
+        sai_filename = generate_sa(fq, reference)
         sai.append(sai_filename)
 
     # Run alignment for either PE or SE
@@ -182,13 +184,13 @@ def main():
             strip_extensions(fastq[1], STRIP_EXTENSIONS))
         fastq_basename = fastq_r1_basename + fastq_r2_basename
 
-        align_pe(fastq, sai, fastq_basename)
+        align_pe(fastq, sai, reference, fastq_basename)
 
     else:
         fastq_basename = os.path.basename(
             strip_extensions(fastq[0], STRIP_EXTENSIONS))
 
-        align_se(fastq, sai, fastq_basename)
+        align_se(fastq, sai, reference, fastq_basename)
 
     bam_mapstats_filename = '%s.raw.srt.bam.flagstat.qc' % (fastq_basename)
     with open(raw_bam_mapstats_filename, 'w') as fh:
