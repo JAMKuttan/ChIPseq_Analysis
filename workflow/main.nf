@@ -48,7 +48,7 @@ process checkDesignFile {
 
   if (pairedEnd) {
     """
-    python $baseDir/scripts/check_design.py -d $designFile -f $readsList -p
+    python3 $baseDir/scripts/check_design.py -d $designFile -f $readsList -p
     """
   }
   else {
