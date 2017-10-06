@@ -159,6 +159,7 @@ def align_pe(fastq, sai, reference, fastq_basename):
 
 def main():
     args = get_args()
+    paired = args.paired
 
     # Create a file handler
     handler = logging.FileHandler('map.log')
