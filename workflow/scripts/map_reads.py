@@ -6,6 +6,7 @@ import os
 import subprocess
 import argparse
 import shutil
+import shlex
 import logging
 import sys
 from multiprocessing import cpu_count
@@ -74,7 +75,7 @@ def check_tools():
     logger.info('Checking for required libraries and components on this system')
 
     bwa_path = shutil.which("bwa")
-    if trimgalore_path:
+    if bwa_path:
         logger.info('Found bwa: %s', bwa_path)
     else:
         logger.error('Missing bwa')

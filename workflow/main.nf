@@ -119,12 +119,12 @@ process alignReads {
 
   if (pairedEnd) {
     """
-    python $baseDir/scripts/map_reads.py -f ${reads[0]} ${reads[1]} -r ${index}/genome.fa -p
+    python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa -p
     """
   }
   else {
     """
-    python $baseDir/scripts/map_reads.py -f ${reads[0]} -r ${index}/genome.fa
+    python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa
     """
   }
 
