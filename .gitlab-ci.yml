@@ -1,7 +1,10 @@
 before_script:
   - module add  python/3.6.1-2-anaconda
   - pip install --user pytest-pythonpath
+  - module load nextflow/0.24.1-SNAPSHOT
+  - ln -s /project/shared/bicf_workflow_ref/workflow_testdata/chipseq/*fastq.gz test_data/
 
 test:
   script:
+  - nextflow run workflow/main.nf
   - pytest
