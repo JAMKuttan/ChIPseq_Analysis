@@ -112,24 +112,27 @@ def align_se(fastq, sai, reference, fastq_basename):
     '''Use BWA to align SE data.'''
 
     sam_filename = "%s.sam" % (fastq_basename)
+    bam_filename = '%s.bam' % (fastq_basename)
 
     steps = [
         "bwa samse %s %s %s"
         % (reference, fastq[0], sai[0]),
         "samtools view -@%d -Su -" % (cpu_count()),
         "samtools sort -@%d -o %s"
-        % (cpu_count(), fastq_basename)]
+        % (cpu_count(), bam_filename)]
 
     out, err = utils.run_pipe(steps)
     if err:
         logger.error("samse/samtools error: %s" % (err))
 
+    return bam_filename
 
 def align_pe(fastq, sai, reference, fastq_basename):
     '''Use BWA to align PE data.'''
 
     sam_filename = "%s.sam" % (fastq_basename)
     badcigar_filename = "%s.badReads" % (fastq_basename)
+    bam_filename = '%s.bam' % (fastq_basename)
 
     # Remove read pairs with bad CIGAR strings and sort by position
     steps = [
@@ -150,11 +153,13 @@ def align_pe(fastq, sai, reference, fastq_basename):
         "grep -v -F -f %s" % (badcigar_filename),
         "samtools view -@%d -Su -" % (cpu_count()),
         "samtools sort -@%d -o %s"
-        % (cpu_count(), fastq_basename)]
+        % (cpu_count(), bam_filename)]
 
     out, err = utils.run_pipe(steps)
     if err:
         logger.error("samtools error: %s" % (err))
+
+    return bam_filename
 
 
 def main():
@@ -184,18 +189,18 @@ def main():
             strip_extensions(fastq[1], STRIP_EXTENSIONS))
         fastq_basename = fastq_r1_basename + fastq_r2_basename
 
-        align_pe(fastq, sai, reference, fastq_basename)
+        bam_filename = align_pe(fastq, sai, reference, fastq_basename)
 
     else:
         fastq_basename = os.path.basename(
             strip_extensions(fastq[0], STRIP_EXTENSIONS))
 
-        align_se(fastq, sai, reference, fastq_basename)
+        bam_filename = align_se(fastq, sai, reference, fastq_basename)
 
     bam_mapstats_filename = '%s.raw.srt.bam.flagstat.qc' % (fastq_basename)
     with open(bam_mapstats_filename, 'w') as fh:
         subprocess.check_call(
-            shlex.split("samtools flagstat %s" % (bam_mapstats_filename)),
+            shlex.split("samtools flagstat %s" % (bam_filename)),
             stdout=fh)
 
     # Remove sai files
