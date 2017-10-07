@@ -193,9 +193,9 @@ def main():
         align_se(fastq, sai, reference, fastq_basename)
 
     bam_mapstats_filename = '%s.raw.srt.bam.flagstat.qc' % (fastq_basename)
-    with open(raw_bam_mapstats_filename, 'w') as fh:
+    with open(bam_mapstats_filename, 'w') as fh:
         subprocess.check_call(
-            shlex.split("%s flagstat %s" % (samtools, bam_mapstats_filename)),
+            shlex.split("samtools flagstat %s" % (bam_mapstats_filename)),
             stdout=fh)
 
     # Remove sai files
