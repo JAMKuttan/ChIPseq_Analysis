@@ -2,19 +2,17 @@
 
 '''Trim low quality reads and remove sequences less than 35 base pairs.'''
 
-import os
 import subprocess
 import argparse
 import shutil
 import logging
-import sys
 
 EPILOG = '''
 For more details:
         %(prog)s --help
 '''
 
-## SETTINGS
+# SETTINGS
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -65,7 +63,7 @@ def check_tools():
 def trim_reads(fastq, paired):
     '''Run trim_galore on 1 or 2 files.'''
 
-    if paired: # paired-end data
+    if paired:  # paired-end data
         trim_params = '--paired -q 25 --illumina --gzip --length 35'
         trim_command = "trim_galore %s %s %s " \
                     % (trim_params, fastq[0], fastq[1])

@@ -8,7 +8,6 @@ import argparse
 import shutil
 import shlex
 import logging
-import sys
 from multiprocessing import cpu_count
 import json
 import utils
@@ -18,7 +17,7 @@ For more details:
         %(prog)s --help
 '''
 
-## SETTINGS
+# SETTINGS
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -56,8 +55,7 @@ def get_args():
     return args
 
 
-
-## Functions
+# Functions
 
 
 def check_tools():
@@ -102,7 +100,6 @@ def generate_sa(fastq, reference):
 def align_se(fastq, sai, reference, fastq_basename):
     '''Use BWA to align SE data.'''
 
-    sam_filename = "%s.sam" % (fastq_basename)
     bam_filename = '%s.srt.bam' % (fastq_basename)
 
     steps = [
@@ -117,6 +114,7 @@ def align_se(fastq, sai, reference, fastq_basename):
         logger.error("samse/samtools error: %s" % (err))
 
     return bam_filename
+
 
 def align_pe(fastq, sai, reference, fastq_basename):
     '''Use BWA to align PE data.'''
@@ -173,7 +171,7 @@ def main():
         sai.append(sai_filename)
 
     # Run alignment for either PE or SE
-    if paired: # paired-end data
+    if paired:  # paired-end data
         fastq_r1_basename = os.path.basename(
             utils.strip_extensions(fastq[0], STRIP_EXTENSIONS))
         fastq_r2_basename = os.path.basename(

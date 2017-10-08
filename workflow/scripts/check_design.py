@@ -11,7 +11,7 @@ For more details:
         %(prog)s --help
 '''
 
-## SETTINGS
+# SETTINGS
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -57,7 +57,7 @@ def check_design_headers(design, paired):
 
     design_headers = list(design.columns.values)
 
-    if paired: # paired-end data
+    if paired:  # paired-end data
         design_template.extend(['fastq_read2'])
 
     # Check if headers
@@ -79,7 +79,8 @@ def check_controls(design):
 
     if len(missing_controls) > 0:
         logger.error('Missing control experiments: %s', list(missing_controls))
-        raise Exception("Missing control experiments: %s" % list(missing_controls))
+        raise Exception("Missing control experiments: %s" %
+                        list(missing_controls))
 
 
 def check_files(design, fastq, paired):
@@ -87,9 +88,9 @@ def check_files(design, fastq, paired):
 
     logger.info("Running file check.")
 
-    if paired: # paired-end data
+    if paired:  # paired-end data
         files = list(design['fastq_read1']) + list(design['fastq_read2'])
-    else: # single-end data
+    else:  # single-end data
         files = design['fastq_read1']
 
     files_found = fastq['name']
@@ -98,13 +99,14 @@ def check_files(design, fastq, paired):
 
     if len(missing_files) > 0:
         logger.error('Missing files from design file: %s', list(missing_files))
-        raise Exception("Missing files from design file: %s" % list(missing_files))
+        raise Exception("Missing files from design file: %s" %
+                        list(missing_files))
     else:
         file_dict = fastq.set_index('name').T.to_dict()
 
         design['fastq_read1'] = design['fastq_read1'] \
                                 .apply(lambda x: file_dict[x]['path'])
-        if paired: # paired-end data
+        if paired:  # paired-end data
             design['fastq_read2'] = design['fastq_read2'] \
                                     .apply(lambda x: file_dict[x]['path'])
     return design

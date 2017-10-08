@@ -3,9 +3,6 @@
 '''General utilities.'''
 
 
-import sys
-import os
-import subprocess
 import shlex
 import logging
 
