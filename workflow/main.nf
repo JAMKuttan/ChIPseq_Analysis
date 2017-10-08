@@ -104,7 +104,7 @@ process trimReads {
 process alignReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$baseDir/output/{task.process}", mode: 'copy'
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
 
   input:
 
