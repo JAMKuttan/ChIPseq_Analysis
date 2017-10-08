@@ -100,7 +100,7 @@ def generate_sa(fastq, reference):
     with open(sai, 'w') as sai_file:
         bwa_command = "bwa aln %s -t %d %s %s" \
                 % (bwa_aln_params, cpu_count(),
-                   reference, fastq, sai_file)
+                   reference, fastq)
 
         logger.info("Running bwa with %s", bwa_command)
         subprocess.check_call(shlex.split(bwa_command), stdout=sai_file)
