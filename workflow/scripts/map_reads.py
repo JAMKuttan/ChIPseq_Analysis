@@ -98,7 +98,7 @@ def generate_sa(fastq, reference):
 
     sai = '%s.sai' % (fastq_basename)
     with open(sai, 'w') as sai_file:
-        bwa_command = "bwa aln %s -t %d %s %s -f %s" \
+        bwa_command = "bwa aln %s -t %d %s %s" \
                 % (bwa_aln_params, cpu_count(),
                    reference, fastq, sai_file)
 
@@ -112,7 +112,7 @@ def align_se(fastq, sai, reference, fastq_basename):
     '''Use BWA to align SE data.'''
 
     sam_filename = "%s.sam" % (fastq_basename)
-    bam_filename = '%s.bam' % (fastq_basename)
+    bam_filename = '%s.srt.bam' % (fastq_basename)
 
     steps = [
         "bwa samse %s %s %s"
@@ -132,7 +132,7 @@ def align_pe(fastq, sai, reference, fastq_basename):
 
     sam_filename = "%s.sam" % (fastq_basename)
     badcigar_filename = "%s.badReads" % (fastq_basename)
-    bam_filename = '%s.bam' % (fastq_basename)
+    bam_filename = '%s.srt.bam' % (fastq_basename)
 
     # Remove read pairs with bad CIGAR strings and sort by position
     steps = [
@@ -197,7 +197,7 @@ def main():
 
         bam_filename = align_se(fastq, sai, reference, fastq_basename)
 
-    bam_mapstats_filename = '%s.raw.srt.bam.flagstat.qc' % (fastq_basename)
+    bam_mapstats_filename = '%s.srt.bam.flagstat.qc' % (fastq_basename)
     with open(bam_mapstats_filename, 'w') as fh:
         subprocess.check_call(
             shlex.split("samtools flagstat %s" % (bam_filename)),
