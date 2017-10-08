@@ -98,9 +98,9 @@ def generate_sa(fastq, reference):
 
     sai = '%s.sai' % (fastq_basename)
     with open(sai, 'w') as sai_file:
-        bwa_command = "bwa aln %s -t %d %s %s" \
+        bwa_command = "bwa aln %s -t %d %s %s -f %s" \
                 % (bwa_aln_params, cpu_count(),
-                   reference, fastq)
+                   reference, fastq, sai_file)
 
         logger.info("Running bwa with %s", bwa_command)
         subprocess.check_call(shlex.split(bwa_command), stdout=sai_file)
@@ -116,7 +116,7 @@ def align_se(fastq, sai, reference, fastq_basename):
 
     steps = [
         "bwa samse %s %s %s"
-        % (reference, fastq[0], sai[0]),
+        % (reference, sai[0], fastq[0]),
         "samtools view -@%d -Su -" % (cpu_count()),
         "samtools sort -@%d -o %s"
         % (cpu_count(), bam_filename)]
@@ -137,8 +137,8 @@ def align_pe(fastq, sai, reference, fastq_basename):
     # Remove read pairs with bad CIGAR strings and sort by position
     steps = [
             "bwa sampe -P %s %s %s %s %s"
-            % (reference, fastq[0], fastq[1],
-               sai[0], sai[1]),
+            % (reference, sai[0], sai[1],
+               fastq[0], fastq[1]),
             "tee %s" % (sam_filename),
             r"""awk 'BEGIN {FS="\t" ; OFS="\t"} ! /^@/ && $6!="*" { cigar=$6; gsub("[0-9]+D","",cigar); n = split(cigar,vals,"[A-Z]"); s = 0; for (i=1;i<=n;i++) s=s+vals[i]; seqlen=length($10) ; if (s!=seqlen) print $1"\t" ; }'""",
             "sort",
