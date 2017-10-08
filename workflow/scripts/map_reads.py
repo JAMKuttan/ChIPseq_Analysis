@@ -59,15 +59,6 @@ def get_args():
 
 ## Functions
 
-def strip_extensions(filename, extensions):
-    '''Strips extensions to get basename of file.'''
-
-    basename = filename
-    for extension in extensions:
-        basename = basename.rpartition(extension)[0] or basename
-
-    return basename
-
 
 def check_tools():
     '''Checks for required componenets on user system'''
@@ -92,7 +83,7 @@ def check_tools():
 def generate_sa(fastq, reference):
     '''Use BWA to generate Suffix Arrays.'''
 
-    fastq_basename = os.path.basename(strip_extensions(fastq, STRIP_EXTENSIONS))
+    fastq_basename = os.path.basename(utils.strip_extensions(fastq, STRIP_EXTENSIONS))
 
     bwa_aln_params = '-q 5 -l 32 -k 2'
 
@@ -184,16 +175,16 @@ def main():
     # Run alignment for either PE or SE
     if paired: # paired-end data
         fastq_r1_basename = os.path.basename(
-            strip_extensions(fastq[0], STRIP_EXTENSIONS))
+            utils.strip_extensions(fastq[0], STRIP_EXTENSIONS))
         fastq_r2_basename = os.path.basename(
-            strip_extensions(fastq[1], STRIP_EXTENSIONS))
+            utils.strip_extensions(fastq[1], STRIP_EXTENSIONS))
         fastq_basename = fastq_r1_basename + fastq_r2_basename
 
         bam_filename = align_pe(fastq, sai, reference, fastq_basename)
 
     else:
         fastq_basename = os.path.basename(
-            strip_extensions(fastq[0], STRIP_EXTENSIONS))
+            utils.strip_extensions(fastq[0], STRIP_EXTENSIONS))
 
         bam_filename = align_se(fastq, sai, reference, fastq_basename)
 

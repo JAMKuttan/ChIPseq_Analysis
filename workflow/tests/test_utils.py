@@ -6,6 +6,8 @@ import shlex
 import utils
 
 
+STRIP_EXTENSIONS = ['.gz', '.fq', '.fastq', '.fa', '.fasta']
+
 @pytest.fixture
 def steps():
     steps = []
@@ -51,3 +53,18 @@ def test_run_last_step_file(steps_2, capsys, tmpdir):
     output, errors = capsys.readouterr()
     assert "last step shlex" in output
     assert check_output in tmp_outfile.read()
+
+
+def test_strip_extensions():
+    filename = utils.strip_extensions('ENCFF833BLU.fastq.gz',STRIP_EXTENSIONS)
+    assert filename == 'ENCFF833BLU'
+
+
+def test_strip_extensions_not_valid():
+    filename = utils.strip_extensions('ENCFF833BLU.not.valid',STRIP_EXTENSIONS)
+    assert filename == 'ENCFF833BLU.not.valid'
+
+
+def test_strip_extensions_missing_basename():
+    filename = utils.strip_extensions('.fastq.gz',STRIP_EXTENSIONS)
+    assert filename == '.fastq'

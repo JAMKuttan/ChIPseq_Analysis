@@ -46,3 +46,13 @@ def run_pipe(steps, outfile=None):
             p = p_next
     out, err = p.communicate()
     return out, err
+
+
+def strip_extensions(filename, extensions):
+    '''Strips extensions to get basename of file.'''
+
+    basename = filename
+    for extension in extensions:
+        basename = basename.rpartition(extension)[0] or basename
+
+    return basename
