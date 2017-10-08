@@ -114,6 +114,7 @@ process alignReads {
   output:
 
   set sampleId, file('*.bam'), biosample, factor, treatment, replicate, controlId into mappedReads
+  set file('*.srt.bam.flagstat.qc')
 
   script:
 
