@@ -6,11 +6,11 @@ import os
 
 def test_trim_reads_singleend():
     raw_fastq = os.path.dirname(os.path.abspath(__file__)) + \
-                '../../test_data/ENCFF833BLU_fastq.gz'
+                '/../../test_data/ENCFF833BLU_fastq.gz'
     trimmed_fastq = os.path.dirname(os.path.abspath(__file__)) + \
-                '../output/trimReads/ENCFF833BLU_trimmed.fq.gz'
+                '/../output/trimReads/ENCFF833BLU_trimmed.fq.gz'
     trimmed_fastq_report = os.path.dirname(os.path.abspath(__file__)) + \
-                '../output/trimReads/ENCFF833BLU.fastq.gz_trimming_report.txt'
+                '/../output/trimReads/ENCFF833BLU.fastq.gz_trimming_report.txt'
     assert os.path.getsize(raw_fastq) != os.path.getsize(trimmed_fastq)
     assert os.path.getsize(trimmed_fastq) == 2512853101
     assert 'Trimming mode: single-end' in open(trimmed_fastq_report).readlines()[4]
