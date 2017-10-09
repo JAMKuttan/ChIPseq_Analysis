@@ -8,8 +8,8 @@ def test_map_reads_singleend():
     aligned_reads_report = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/alignReads/ENCFF646LXU.srt.bam.flagstat.qc'
     samtools_report = open(aligned_reads_report).readlines()
-    assert '80795025' in samtools_report[1]
-    assert '80050072' in samtools_report[5]
+    assert '80795025 + 0 in total' in samtools_report[0]
+    assert '80050072 + 0 mapped (99.08% : N/A)' in samtools_report[4]
 
 
 def test_map_reads_pairedend():
