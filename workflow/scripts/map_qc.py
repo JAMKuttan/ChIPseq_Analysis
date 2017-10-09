@@ -194,7 +194,7 @@ def dedup_mapped(bam, bam_basename, paired):
     # Generate mapping statistics
     final_bam_file_mapstats_filename = final_bam_prefix + ".flagstat.qc"
     with open(final_bam_file_mapstats_filename, 'w') as fh:
-        flagstat_command = "sambamba flagstat -t %d %s"
+        flagstat_command = "sambamba flagstat -t %d %s" \
                             % (cpu_count(), final_bam_filename)
         logger.info(flagstat_command)
         subprocess.check_call(shlex.split(flagstat_command), stdout=fh)
