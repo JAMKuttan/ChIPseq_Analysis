@@ -9,7 +9,7 @@
 # A unique identifier for the workflow package, text/underscores only
 name: 'chipseq_analysis_bicf'
 # Who wrote this?
-author: 'Beibei Chen'
+author: 'Beibei Chen and Venkat Malladi'
 # A contact email address for questions
 email: 'biohpc-help@utsouthwestern.edu'
 # A more informative title for the workflow package
@@ -17,8 +17,7 @@ title: 'BICF ChIP-seq Analysis Workflow'
 # A summary of the workflow package in plain text
 description: |
   This is a workflow package for the BioHPC/BICF ChIP-seq workflow system.
-  It implements a simple ChIP-seq analysis workflow and
-  visualization application.
+  It implements ChIP-seq analysis workflow and visualization application.
 
 # -----------------------------------------------------------------------------
 # DOCUMENTATION
@@ -40,9 +39,11 @@ documentation_files:
 # A list of cluster environment modules that this workflow requires to run.
 # Specify versioned module names to ensure reproducability.
 workflow_modules:
-  - 'fastqc/0.11.5'
-  - 'deeptools/2.3.5'
-  - 'meme/4.11.1-gcc-openmpi'
+  - 'python/3.6.1-2-anaconda'
+  - 'trimgalore/0.4.1'
+  - 'cutadapt/1.9.1'
+  - 'fastqc/0.11.2'
+  - 'bwa/intel/0.7.12'
 
 # A list of parameters used by the workflow, defining how to present them,
 # options etc in the web interface. For each parameter:
@@ -82,10 +83,11 @@ workflow_parameters:
     type: files
     required: true
     description: |
-      Fastq files of all  samples
-    regex: "*_{1,2}.fastq.gz"
+      One or more input FASTQ files from a ChIP-seq expereiment and a design
+      file with the link bewetwen the same file name and sample id
+    regex: ".*(fastq|fq)*"
 
-  - id: singleEnd
+  - id: pairedEnd
     type: select
     required: true
     choices:
@@ -97,6 +99,24 @@ workflow_parameters:
       reading it starts at one read, finishes this direction at the specified
       read length, and then starts another round of reading from the opposite
       end of the fragment.
+
+  - id: design
+    type: file
+    required: true
+    description: |
+      A design file listing sample id, fastq files, corresponding control id
+      and additional information about the sample.
+
+  - id: genome
+    type: select
+    choices:
+      - [ 'GRCh38', 'Human GRCh38']
+      - [ 'GRCh37', 'Human GRCh37']
+      - [ 'GRCh38', 'Mouse GRCh38']
+    required: true
+    description: |
+      Reference species and genome used for alignment and subsequent analysis.
+
 
 # -----------------------------------------------------------------------------
 # SHINY APP CONFIGURATION
@@ -114,7 +134,7 @@ vizapp_cran_packages:
   - shiny
   - shinyFiles
 
-# List of any Bioconductor packages, not provided by the modules, 
+# List of any Bioconductor packages, not provided by the modules,
 # that must be made available to the vizapp
 vizapp_bioc_packages:
   - qusage

@@ -7,6 +7,18 @@
 params.reads = "$baseDir/../test_data/*.fastq.gz"
 params.pairedEnd = false
 params.designFile = "$baseDir/../test_data/design_ENCSR238SGC_SE.txt"
+params.genome = 'GRCm38'
+params.genomes = []
+params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
+
+// Check inputs
+if( params.bwaIndex ){
+  bwaIndex = Channel
+    .fromPath(params.bwaIndex)
+    .ifEmpty { exit 1, "BWA index not found: ${params.bwaIndex}" }
+} else {
+  exit 1, "No reference genome specified."
+}
 
 // Define List of Files
 readsList = Channel
@@ -36,7 +48,7 @@ process checkDesignFile {
 
   if (pairedEnd) {
     """
-    python $baseDir/scripts/check_design.py -d $designFile -f $readsList -p
+    python3 $baseDir/scripts/check_design.py -d $designFile -f $readsList -p
     """
   }
   else {
@@ -55,14 +67,14 @@ if (pairedEnd) {
 } else {
 rawReads = designFilePaths
   .splitCsv(sep: '\t', header: true)
-  .map { row -> [ row.sample_id, [row.fastq_read1, row.fastq_read1], row.biosample, row.factor, row.treatment, row.replicate, row.control_id ] }
+  .map { row -> [ row.sample_id, [row.fastq_read1], row.biosample, row.factor, row.treatment, row.replicate, row.control_id ] }
 }
 
-process fastQc {
+// Trim raw reads using trimgalore
+process trimReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$baseDir/output/", mode: 'copy',
-    saveAs: {filename -> filename.indexOf(".zip") > 0 ? "zips/$filename" : "$filename"}
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
 
   input:
 
@@ -70,11 +82,51 @@ process fastQc {
 
   output:
 
-  file '*_fastqc.{zip,html}' into fastqc_results
+  set sampleId, file('*.fq.gz'), biosample, factor, treatment, replicate, controlId into trimmedReads
+  file('*trimming_report.txt') into trimgalore_results
 
   script:
 
-  """
-  python $baseDir/scripts/qc_fastq.py -f $reads
-  """
+  if (pairedEnd) {
+    """
+    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} ${reads[1]} -p
+    """
+  }
+  else {
+    """
+    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]}
+    """
+  }
+
+}
+
+// Align trimmed reads using bwa
+process alignReads {
+
+  tag "$sampleId-$replicate"
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  set sampleId, reads, biosample, factor, treatment, replicate, controlId from trimmedReads
+  file index from bwaIndex.first()
+
+  output:
+
+  set sampleId, file('*.bam'), biosample, factor, treatment, replicate, controlId into mappedReads
+  set file('*.srt.bam.flagstat.qc')
+
+  script:
+
+  if (pairedEnd) {
+    """
+    python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa -p
+    """
+  }
+  else {
+    """
+    python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa
+    """
+  }
+
 }

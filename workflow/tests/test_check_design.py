@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 
-import os
 import pytest
 import pandas as pd
 from io import StringIO
 import check_design
-import sys
 
 
 DESIGN_STRING = """sample_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\tfastq_read1
@@ -49,11 +47,12 @@ def design_2(design):
     design_df = design.drop(design.index[2])
     return design_df
 
+
 @pytest.fixture
 def design_3(design):
     # Drop A_2 and B_2 and append as fastq_read2
-    design_df = design.drop(design.index[[1,3]])
-    design_df['fastq_read2'] = design.loc[[1,3],'fastq_read1'].values
+    design_df = design.drop(design.index[[1, 3]])
+    design_df['fastq_read2'] = design.loc[[1, 3], 'fastq_read1'].values
     return design_df
 
 
@@ -94,10 +93,10 @@ def test_check_files_missing_files(design, fastq_files_1):
 def test_check_files_output_singleend(design, fastq_files):
     paired = False
     new_design = check_design.check_files(design, fastq_files, paired)
-    assert new_design.loc[0,'fastq_read1'] == "/path/to/file/A_1.fastq.gz"
+    assert new_design.loc[0, 'fastq_read1'] == "/path/to/file/A_1.fastq.gz"
 
 
 def test_check_files_output_pairedend(design_3, fastq_files):
     paired = True
     new_design = check_design.check_files(design_3, fastq_files, paired)
-    assert new_design.loc[0,'fastq_read2'] == "/path/to/file/A_2.fastq.gz"
+    assert new_design.loc[0, 'fastq_read2'] == "/path/to/file/A_2.fastq.gz"
