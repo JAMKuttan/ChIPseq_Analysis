@@ -144,8 +144,8 @@ process filterReads {
   output:
 
   set sampleId, file('*.bam'), biosample, factor, treatment, replicate, controlId into dedupReads
-  set file('*flagstat.qc') into dedupReadsStats
-  set file('*pbc.qc') into dedupReadsComplexity
+  file '*flagstat.qc' into dedupReadsStats
+  file '*pbc.qc' into dedupReadsComplexity
 
   script:
 
