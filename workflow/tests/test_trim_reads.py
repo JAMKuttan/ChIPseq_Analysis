@@ -6,7 +6,7 @@ import os
 
 def test_trim_reads_singleend():
     raw_fastq = os.path.dirname(os.path.abspath(__file__)) + \
-                '/../../test_data/ENCFF833BLU_fastq.gz'
+                '/../../test_data/ENCFF833BLU.fastq.gz'
     trimmed_fastq = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/trimReads/ENCFF833BLU_trimmed.fq.gz'
     trimmed_fastq_report = os.path.dirname(os.path.abspath(__file__)) + \
