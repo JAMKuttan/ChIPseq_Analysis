@@ -114,7 +114,7 @@ process alignReads {
   output:
 
   set sampleId, file('*.bam'), biosample, factor, treatment, replicate, controlId into mappedReads
-  set file('*.srt.bam.flagstat.qc')
+  file '*.srt.bam.flagstat.qc' into mappedReadsStats
 
   script:
 
@@ -126,6 +126,37 @@ process alignReads {
   else {
     """
     python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa
+    """
+  }
+
+}
+
+// Dedup reads using sambamba
+process filterReads {
+
+  tag "$sampleId-$replicate"
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  set sampleId, mapped, biosample, factor, treatment, replicate, controlId from mappedReads
+
+  output:
+
+  set sampleId, file('*.bam'), biosample, factor, treatment, replicate, controlId into dedupReads
+  set file('*flagstat.qc') into dedupReadsStats
+  set file('*pbc.qc') into dedupReadsComplexity
+
+  script:
+
+  if (pairedEnd) {
+    """
+    python3 $baseDir/scripts/map_qc.py -f $mapped -p
+    """
+  }
+  else {
+    """
+    python3 $baseDir/scripts/map_qc.py -f $mapped
     """
   }
 

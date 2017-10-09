@@ -44,6 +44,9 @@ workflow_modules:
   - 'cutadapt/1.9.1'
   - 'fastqc/0.11.2'
   - 'bwa/intel/0.7.12'
+  - 'samtools/intel/1.3'
+  - 'sambamba/0.6.6'
+  - 'bedtools/2.26.0'
 
 # A list of parameters used by the workflow, defining how to present them,
 # options etc in the web interface. For each parameter:
