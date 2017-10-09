@@ -6,5 +6,5 @@ before_script:
 
 test:
   script:
-  - nextflow run workflow/main.nf -resume
+  - nextflow run workflow/main.nf 
   - pytest
