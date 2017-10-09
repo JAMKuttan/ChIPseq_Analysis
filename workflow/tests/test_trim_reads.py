@@ -6,10 +6,15 @@ import gzip
 
 
 def test_trim_reads_singleend():
-    # assert os.path.getsize('sample1_R1.fastq.gz') != os.path.getsize('sample1_R1.trim.fastq.gz')
-    # check the size of the lines using
-    # a = sum(1 for _ in gzip.open('input_2.small_R1.fastq.gz'))
-    pass
+    raw_fastq = os.path.dirname(os.path.abspath(__file__)) +
+                '../../test_data/ENCFF833BLU_fastq.gz')
+    trimmed_fastq = os.path.dirname(os.path.abspath(__file__)) +
+                '../output/trimReads/ENCFF833BLU_trimmed.fq.gz')
+    trimmed_fastq_report = os.path.dirname(os.path.abspath(__file__)) +
+                '../output/trimReads/ENCFF833BLU.fastq.gz_trimming_report.txt')
+    assert os.path.getsize(raw_fastq) != os.path.getsize(trimmed_fastq)
+    assert os.path.getsize(trimmed_fastq) == 2512853101
+    assert 'Trimming mode: single-end' in open(trimmed_fastq_report).readlines()[4]
 
 
 def test_trim_reads_pairedend():
