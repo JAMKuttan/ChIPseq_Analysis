@@ -83,7 +83,7 @@ process trimReads {
   output:
 
   set sampleId, file('*.fq.gz'), biosample, factor, treatment, replicate, controlId into trimmedReads
-  file '*trimming_report.txt' into trimgalore_results
+  file('*trimming_report.txt') into trimgalore_results
 
   script:
 
