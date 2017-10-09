@@ -7,7 +7,7 @@
 params.reads = "$baseDir/../test_data/*.fastq.gz"
 params.pairedEnd = false
 params.designFile = "$baseDir/../test_data/design_ENCSR238SGC_SE.txt"
-params.genome = 'GRCh38'
+params.genome = 'GRCm38'
 params.genomes = []
 params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
 
