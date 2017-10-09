@@ -151,12 +151,12 @@ process filterReads {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/map_qc.py -f $mapped -p
+    python3 $baseDir/scripts/map_qc.py -b $mapped -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/map_qc.py -f $mapped
+    python3 $baseDir/scripts/map_qc.py -b $mapped
     """
   }
 
