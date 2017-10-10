@@ -166,7 +166,6 @@ def dedup_mapped(bam, bam_basename, paired):
             shlex.split(sambamba_markdup_command),
             stderr=fh)
 
-    os.remove(tmp_dup_mark_filename + '.bai')
 
     # Remove duplicates
     final_bam_prefix = bam_basename + ".filt.nodup"
@@ -174,10 +173,10 @@ def dedup_mapped(bam, bam_basename, paired):
 
     if paired:  # paired-end data
         samtools_dedupe_command = \
-            "samtools view -F 1804 -f 2 -b %s" % (bam)
+            "samtools view -F 1804 -f 2 -b %s" % (tmp_dup_mark_filename)
     else:
         samtools_dedupe_command = \
-            "samtools view -F 1804 -b %s" % (bam)
+            "samtools view -F 1804 -b %s" % (tmp_dup_mark_filename)
 
     with open(final_bam_filename, 'w') as fh:
         logger.info(samtools_dedupe_command)
@@ -200,7 +199,7 @@ def dedup_mapped(bam, bam_basename, paired):
         subprocess.check_call(shlex.split(flagstat_command), stdout=fh)
 
     os.remove(bam)
-    return final_bam_filename
+    return tmp_dup_mark_filename
 
 
 def compute_complexity(bam, paired, bam_basename):
@@ -253,6 +252,8 @@ def compute_complexity(bam, paired, bam_basename):
     pbc_file = pd.read_csv(tmp_pbc_file_qc_filename, sep='\t', header=None,
                           names=pbc_headers)
     pbc_file.to_csv(pbc_file_qc_filename, header=True, sep='\t', index=False)
+    os.remove(bam)
+    os.remove(bam + '.bai')
     os.remove(tmp_pbc_file_qc_filename)
 
 
@@ -278,10 +279,10 @@ def main():
         filter_bam_filename = filter_mapped_se(bam, bam_basename)
 
     # Remove duplicates
-    dedup_bam_filename = dedup_mapped(filter_bam_filename, bam_basename, paired)
+    markdup_bam_filename = dedup_mapped(filter_bam_filename, bam_basename, paired)
 
     # Compute library complexity
-    compute_complexity(dedup_bam_filename, paired, bam_basename)
+    compute_complexity(markdup_bam_filename, paired, bam_basename)
 
 
 if __name__ == '__main__':
