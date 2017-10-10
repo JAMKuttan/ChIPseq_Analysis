@@ -5,7 +5,6 @@ import os
 
 test_data_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../../test_data/'
-
 test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/trimReads/'
 
