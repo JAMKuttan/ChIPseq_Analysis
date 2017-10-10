@@ -9,7 +9,6 @@ import shutil
 import shlex
 import logging
 from multiprocessing import cpu_count
-import json
 import utils
 
 EPILOG = '''
@@ -66,18 +65,18 @@ def check_tools():
         raise Exception('Missing samtools')
 
     sambamba_path = shutil.which("sambamba")
-    if bwa_path:
-        logger.info('Found sambamba: %s', bwa_path)
+    if sambamba_path:
+        logger.info('Found sambamba: %s', sambamba_path)
     else:
         logger.error('Missing sambamba')
         raise Exception('Missing sambamba')
 
     bedtools_path = shutil.which("bedtools")
-    if bwa_path:
-        logger.info('Found sambamba: %s', bwa_path)
+    if bedtools_path:
+        logger.info('Found bedtools: %s', bedtools_path)
     else:
-        logger.error('Missing sambamba')
-        raise Exception('Missing sambamba')
+        logger.error('Missing bedtools')
+        raise Exception('Missing bedtools')
 
 
 def filter_mapped_pe(bam, bam_basename):
@@ -93,7 +92,7 @@ def filter_mapped_pe(bam, bam_basename):
     # Remove low MAPQ reads
     # Only keep properly paired reads
     # Obtain name sorted BAM file
-    out, err = common.run_pipe([
+    out, err = utils.run_pipe([
         # filter: -F 1804 FlAG bits to exclude; -f 2 FLAG bits to reqire;
         # -q 30 exclude MAPQ < 30; -u uncompressed output
         # exclude FLAG 1804: unmapped, next segment unmapped, secondary
@@ -103,14 +102,14 @@ def filter_mapped_pe(bam, bam_basename):
         # sort:  -n sort by name; - take input from stdin;
         # out to specified filename
         # Will produce name sorted BAM
-        "samtools sort -n -@%d -o %s" % (cpu_count(), tmp_filt_bam_filename)])
+        "samtools sort -n -@ %d -o %s" % (cpu_count(), tmp_filt_bam_filename)])
     if err:
         logger.error("samtools filter error: %s" % (err))
 
     # Remove orphan reads (pair was removed)
     # and read pairs mapping to different chromosomes
     # Obtain position sorted BAM
-    out, err = common.run_pipe([
+    out, err = utils.run_pipe([
         # fill in mate coordinates, ISIZE and mate-related flags
         # fixmate requires name-sorted alignment; -r removes secondary and
         # unmapped (redundant here because already done above?)
@@ -119,7 +118,7 @@ def filter_mapped_pe(bam, bam_basename):
         # repeat filtering after mate repair
         "samtools view -F 1804 -f 2 -u -",
         # produce the coordinate-sorted BAM
-        "samtools sort -@%d -o %s" % (cpu_count(), filt_bam_filename)])
+        "samtools sort -@ %d -o %s" % (cpu_count(), filt_bam_filename)])
 
     os.remove(tmp_filt_bam_filename)
     return filt_bam_filename
@@ -138,7 +137,7 @@ def filter_mapped_se(bam, bam_basename):
     with open(filt_bam_filename, 'w') as fh:
         samtools_filter_command = (
             "samtools view -F 1804 -q 30 -b %s"
-            % (samtools_params, input_bam)
+            % (bam)
             )
         logger.info(samtools_filter_command)
         subprocess.check_call(
@@ -154,17 +153,17 @@ def dedup_mapped(bam, bam_basename, paired):
     # Markduplicates
     dup_file_qc_filename = bam_basename + ".dup.qc"
     tmp_dup_mark_filename = bam_basename + ".dupmark.bam"
-    sambamba_parms = "--hash-table-size=17592186044416 \
-			--overflow-list-size=20000000 --io-buffer-size=256"
+    sambamba_parms = "--hash-table-size=17592186044416" + \
+                    " --overflow-list-size=20000000 --io-buffer-size=256"
     with open(dup_file_qc_filename, 'w') as fh:
         sambamba_markdup_command = (
             "sambamba markdup -t %d %s %s %s"
-            % (cpu_count, sambamba_parms, bam, tmp_dup_mark_filename)
+            % (cpu_count(), sambamba_parms, bam, tmp_dup_mark_filename)
             )
         logger.info(sambamba_markdup_command)
         subprocess.check_call(
-            shlex.split(sambamba_markdup),
-            stdout=fh)
+            shlex.split(sambamba_markdup_command),
+            stderr=fh)
 
     os.remove(tmp_dup_mark_filename + '.bai')
 
@@ -174,10 +173,10 @@ def dedup_mapped(bam, bam_basename, paired):
 
     if paired:  # paired-end data
         samtools_dedupe_command = \
-            "samtools view -F 1804 -f 2 -b %s" % (filt_bam_filename)
+            "samtools view -F 1804 -f 2 -b %s" % (bam)
     else:
         samtools_dedupe_command = \
-            "samtools view -F 1804 -b %s" % (filt_bam_filename)
+            "samtools view -F 1804 -b %s" % (bam)
 
     with open(final_bam_filename, 'w') as fh:
         logger.info(samtools_dedupe_command)
@@ -187,7 +186,7 @@ def dedup_mapped(bam, bam_basename, paired):
 
     # Index final bam file
     sambamba_index_command = \
-        "samtools index -t %d %s" % (cpu_count(), final_bam_filename)
+        "samtools index -@ %d %s" % (cpu_count(), final_bam_filename)
     logger.info(sambamba_index_command)
     subprocess.check_output(shlex.split(sambamba_index_command))
 
@@ -199,8 +198,9 @@ def dedup_mapped(bam, bam_basename, paired):
         logger.info(flagstat_command)
         subprocess.check_call(shlex.split(flagstat_command), stdout=fh)
 
-    os.remove(filt_bam_filename)
+    os.remove(bam)
     return final_bam_filename
+
 
 def compute_complexity(bam, paired, bam_basename):
     '''Calculate library complexity .'''
@@ -236,7 +236,7 @@ def compute_complexity(bam, paired, bam_basename):
         "uniq -c",
         r"""awk 'BEGIN{mt=0;m0=0;m1=0;m2=0} ($1==1){m1=m1+1} ($1==2){m2=m2+1} {m0=m0+1} {mt=mt+$1} END{printf "%d\t%d\t%d\t%d\t%f\t%f\t%f\n",mt,m0,m1,m2,m0/mt,m1/m0,m1/m2}'"""
         ])
-    out, err = common.run_pipe(steps, pbc_file_qc_filename)
+    out, err = utils.run_pipe(steps, pbc_file_qc_filename)
     if err:
         logger.error("PBC file error: %s" % (err))
 
@@ -247,12 +247,11 @@ def main():
     bam = args.bam
 
     # Create a file handler
-    handler = logging.FileHandler('filter_qc.log')
+    handler = logging.FileHandler('map_qc.log')
     logger.addHandler(handler)
 
     # Check if tools are present
     check_tools()
-
 
     # Run filtering for either PE or SE
     bam_basename = os.path.basename(
