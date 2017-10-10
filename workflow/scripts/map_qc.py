@@ -10,6 +10,7 @@ import shlex
 import logging
 from multiprocessing import cpu_count
 import utils
+import pandas as pd
 
 EPILOG = '''
 For more details:
@@ -205,7 +206,8 @@ def dedup_mapped(bam, bam_basename, paired):
 def compute_complexity(bam, paired, bam_basename):
     '''Calculate library complexity .'''
 
-    pbc_file_qc_filename = bam_basename + "filt.nodup.pbc.qc"
+    pbc_file_qc_filename = bam_basename + ".filt.nodup.pbc.qc"
+    tmp_pbc_file_qc_filename = "tmp.%s" % (pbc_file_qc_filename)
 
     # Sort by name
     # convert to bedPE and obtain fragment coordinates
@@ -220,6 +222,13 @@ def compute_complexity(bam, paired, bam_basename):
     # NRF=Distinct/Total [tab]
     # PBC1=OnePair/Distinct [tab]
     # PBC2=OnePair/TwoPair
+    pbc_headers = ['TotalReadPairs',
+                    'DistinctReadPairs',
+                    'OneReadPair',
+                    'TwoReadPairs',
+                    'NRF',
+                    'PBC1',
+                    'PBC2']
 
     if paired:
         steps = [
@@ -236,9 +245,15 @@ def compute_complexity(bam, paired, bam_basename):
         "uniq -c",
         r"""awk 'BEGIN{mt=0;m0=0;m1=0;m2=0} ($1==1){m1=m1+1} ($1==2){m2=m2+1} {m0=m0+1} {mt=mt+$1} END{printf "%d\t%d\t%d\t%d\t%f\t%f\t%f\n",mt,m0,m1,m2,m0/mt,m1/m0,m1/m2}'"""
         ])
-    out, err = utils.run_pipe(steps, pbc_file_qc_filename)
+    out, err = utils.run_pipe(steps, tmp_pbc_file_qc_filename)
     if err:
         logger.error("PBC file error: %s" % (err))
+
+    # Add headers
+    pbc_file = pd.read_csv(tmp_pbc_file_qc_filename, sep='\t', header=None,
+                          names=pbc_headers)
+    pbc_file.to_csv(pbc_file_qc_filename, header=True, sep='\t', index=False)
+    os.remove(tmp_pbc_file_qc_filename)
 
 
 def main():
