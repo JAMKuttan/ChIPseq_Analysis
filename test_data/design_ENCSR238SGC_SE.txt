@@ -1,5 +1,5 @@
-sample_id	biosample	factor	treatment	replicate	control_id	fastq_read1
-ENCSR238SGC	limb	H3K4me1	None	1	ENCSR687ALB	ENCFF833BLU.fastq.gz
-ENCSR238SGC	limb	H3K4me1	None	2	ENCSR687ALB	ENCFF646LXU.fastq.gz
-ENCSR687ALB	limb	Control	None	1	ENCSR687ALB	ENCFF524CAC.fastq.gz
-ENCSR687ALB	limb	Control	None	2	ENCSR687ALB	ENCFF163AJI.fastq.gz
+sample_id experiment_id biosample	factor	treatment	replicate	control_id	fastq_read1
+ENCBS844FSC ENCSR238SGC	limb	H3K4me1	None	1	ENCBS844FSC	ENCFF833BLU.fastq.gz
+ENCBS892NXC ENCSR238SGC	limb	H3K4me1	None	2	ENCBS892NXC	ENCFF646LXU.fastq.gz
+ENCBS844FSC ENCSR687ALB	limb	Control	None	1	ENCBS844FSC	ENCFF524CAC.fastq.gz
+ENCBS892NXC ENCSR687ALB	limb	Control	None	2	ENCBS892NXC	ENCFF163AJI.fastq.gz

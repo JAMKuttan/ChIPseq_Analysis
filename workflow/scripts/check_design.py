@@ -48,6 +48,7 @@ def check_design_headers(design, paired):
     # Default headers
     design_template = [
         'sample_id',
+        'experiment_id',
         'biosample',
         'factor',
         'treatment',
@@ -81,6 +82,27 @@ def check_controls(design):
         logger.error('Missing control experiments: %s', list(missing_controls))
         raise Exception("Missing control experiments: %s" %
                         list(missing_controls))
+
+
+def check_replicates(design):
+    '''Check if design file has unique replicate numbersfor an experiment.'''
+
+    logger.info("Running replicate check.")
+
+    experiment_replicates = design.groupby('experiment_id')['replicate'] \
+                            .apply(list)
+
+    duplicated_replicates = []
+    for experiment in experiment_replicates.index.values:
+        replicates = experiment_replicates[experiment]
+        unique_replicates = set(replicates)
+        if len(replicates) != len(unique_replicates):
+            duplicated_replicates.append(experiment)
+    
+    if len(duplicated_replicates) > 0:
+        logger.error('Duplicate replicates in experiments: %s', list(duplicated_replicates))
+        raise Exception("Duplicate replicates in experiments: %s" %
+                        list(duplicated_replicates))
 
 
 def check_files(design, fastq, paired):
@@ -126,6 +148,7 @@ def main():
     # Check design file
     check_design_headers(design_file, args.paired)
     check_controls(design_file)
+    check_replicates(design_file)
     new_design = check_files(design_file, fastq_file, args.paired)
 
     # Write out new design file
