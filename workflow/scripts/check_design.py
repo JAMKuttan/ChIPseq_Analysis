@@ -26,11 +26,11 @@ def get_args():
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-d', '--design',
-                        help="The design file to run QC (TSV format).",
+                        help="The design file to run QC (tsv format).",
                         required=True)
 
     parser.add_argument('-f', '--fastq',
-                        help="File with list of fastq files (csv format).",
+                        help="File with list of fastq files (tsv format).",
                         required=True)
 
     parser.add_argument('-p', '--paired',
