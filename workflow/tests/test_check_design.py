@@ -6,11 +6,11 @@ from io import StringIO
 import check_design
 
 
-DESIGN_STRING = """sample_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\tfastq_read1
-A_1\tLiver\tH3K27ac\tNone\t1\tB_1\tA_1.fastq.gz
-A_2\tLiver\tH3K27ac\tNone\t2\tB_2\tA_2.fastq.gz
-B_1\tLiver\tInput\tNone\t1\tB_1\tB_1.fastq.gz
-B_2\tLiver\tInput\tNone\t2\tB_2\tB_2.fastq.gz
+DESIGN_STRING = """sample_id\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\tfastq_read1
+A_1\tA\tLiver\tH3K27ac\tNone\t1\tB_1\tA_1.fastq.gz
+A_2\tA\tLiver\tH3K27ac\tNone\t2\tB_2\tA_2.fastq.gz
+B_1\tB\tLiver\tInput\tNone\t1\tB_1\tB_1.fastq.gz
+B_2\tB\tLiver\tInput\tNone\t2\tB_2\tB_2.fastq.gz
 """
 
 FASTQ_STRING = """
@@ -57,6 +57,13 @@ def design_3(design):
 
 
 @pytest.fixture
+def design_4(design):
+    # Update replicate 2 for experiment B to be 1
+    design.loc[design['sample_id'] == 'B_2', 'replicate'] = 1
+    return design
+
+
+@pytest.fixture
 def fastq_files_1(fastq_files):
     # Drop B_2.fastq.gz
     fastq_df = fastq_files.drop(fastq_files.index[3])
@@ -100,3 +107,10 @@ def test_check_files_output_pairedend(design_3, fastq_files):
     paired = True
     new_design = check_design.check_files(design_3, fastq_files, paired)
     assert new_design.loc[0, 'fastq_read2'] == "/path/to/file/A_2.fastq.gz"
+
+
+def test_check_replicates(design_4):
+    paired = False
+    with pytest.raises(Exception) as excinfo:
+        new_design = check_design.check_replicates(design_4)
+    assert str(excinfo.value) == "Duplicate replicates in experiments: ['B']"
