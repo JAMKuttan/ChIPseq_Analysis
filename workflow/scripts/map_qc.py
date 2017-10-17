@@ -154,7 +154,7 @@ def dedup_mapped(bam, bam_basename, paired):
     # Markduplicates
     dup_file_qc_filename = bam_basename + ".dup.qc"
     tmp_dup_mark_filename = bam_basename + ".dupmark.bam"
-    sambamba_parms = "--hash-table-size=17592186044416" + \
+    sambamba_params = "--hash-table-size=17592186044416" + \
                     " --overflow-list-size=20000000 --io-buffer-size=256"
     with open(dup_file_qc_filename, 'w') as fh:
         sambamba_markdup_command = (
