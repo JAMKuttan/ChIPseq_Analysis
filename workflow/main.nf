@@ -165,7 +165,7 @@ process filterReads {
 
 // Define channel collecting new design file
 dedupDesign = dedupReads.
-              collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\tbiosample\tfactor\ttreatment\treplicate\tcontrolId\n", storeDir:""$baseDir/output/design")
+              collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\tbiosample\tfactor\ttreatment\treplicate\tcontrolId\n", storeDir:"$baseDir/output/design")
 
 // Quality Metrics using deeptools
 process experimentQC {
