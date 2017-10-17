@@ -30,7 +30,7 @@ def steps_2(steps_1):
 
 
 def test_run_one_step(steps_1, capsys):
-    check_output = 'ENCBS844FSC\tENCSR238SGC\tlimb\tH3K4me1\tNone\t1\tENCBS844FSC\tENCFF833BLU.fastq.gz'.encode('UTF-8')
+    check_output = 'ENCLB144FDT\tENCSR238SGC\tlimb\tH3K4me1\tNone\t1\tENCLB304SBJ\tENCFF833BLU.fastq.gz'.encode('UTF-8')
     out, err = utils.run_pipe(steps_1)
     output, errors = capsys.readouterr()
     assert "first step shlex to stdout" in output

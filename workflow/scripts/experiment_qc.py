@@ -1,81 +1,177 @@
-#!/usr/bin/python
-# programmer : bbc
-# usage:
+#!/usr/bin/env python3
 
-import sys
-import argparse as ap
+'''Experiment correlation and enrichment of reads over genome-wide bins.'''
+
+
+import argparse
 import logging
 import subprocess
+import shutil
 import pandas as pd
-from multiprocessing import Pool
-logging.basicConfig(level=10)
+from multiprocessing import cpu_count
+
+EPILOG = '''
+For more details:
+        %(prog)s --help
+'''
+
+# SETTINGS
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+logger.propagate = False
+logger.setLevel(logging.INFO)
 
 
-def prepare_argparser():
-  description = "Make wig file for given bed using bam"
-  epilog = "For command line options of each command, type %(prog)% COMMAND -h"
-  argparser = ap.ArgumentParser(description=description, epilog = epilog)
-  argparser.add_argument("-i","--input",dest = "infile",type=str,required=True, help="input BAM file")
-  argparser.add_argument("-g","--genome",dest = "genome",type=str,required=True, help="genome", default="hg19")
-  #argparser.add_argument("-b","--bed",dest="bedfile",type=str,required=True, help = "Gene locus in bed format")
-  #argparser.add_argument("-s","--strandtype",dest="stranded",type=str,default="none", choices=["none","reverse","yes"])
-  #argparser.add_argument("-n","--name",dest="trackName",type=str,default="UserTrack",help = "track name for bedgraph header")
-  return(argparser)
+def get_args():
+    '''Define arguments.'''
+    parser = argparse.ArgumentParser(
+        description=__doc__, epilog=EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
 
-def run_qc(files, controls, labels):
-  mbs_command = "multiBamSummary bins --bamfiles "+' '.join(files)+" -out sample_mbs.npz"
-  p = subprocess.Popen(mbs_command, shell=True)
-  #logging.debug(mbs_command)
-  p.communicate()
-  pcor_command = "plotCorrelation -in sample_mbs.npz --corMethod spearman --skipZeros --plotTitle \"Spearman Correlation of Read Counts\" --whatToPlot heatmap --colorMap RdYlBu --plotNumbers  -o experiment.deeptools.heatmap_spearmanCorr_readCounts_v2.png --labels "+" ".join(labels)
-  #logging.debug(pcor_command)
-  p = subprocess.Popen(pcor_command, shell=True)
-  p.communicate()
-  #plotCoverage
-  pcov_command = "plotCoverage -b "+" ".join(files)+" --plotFile experiment.deeptools_coverage.png -n 1000000 --plotTitle \"sample coverage\" --ignoreDuplicates --minMappingQuality 10"
-  p = subprocess.Popen(pcov_command, shell=True)
-  p.communicate()
-  #draw fingerprints plots
-  for treat,ctrl,name in zip(files,controls,labels):
-    fp_command = "plotFingerprint -b "+treat+" "+ctrl+" --labels "+name+" control --plotFile "+name+".deeptools_fingerprints.png"
-    p = subprocess.Popen(fp_command, shell=True)
-    p.communicate()
+    parser.add_argument('-d', '--design',
+                        help="The design file to run QC (tsv format).",
+                        required=True)
 
-def bam2bw_wrapper(command):
-  p = subprocess.Popen(command, shell=True)
-  p.communicate()
+    args = parser.parse_args()
+    return args
 
-def run_signal(files, labels, genome):
-  #compute matrix and draw profile and heatmap
-  gene_bed = genome+"/gene.bed"#"/project/BICF/BICF_Core/bchen4/chipseq_analysis/test/genome/"+genome+"/gene.bed"
-  bw_commands = []
-  for f in files:
-    bw_commands.append("bamCoverage -bs 10 -b "+f+" -o "+f.replace("bam","bw"))
-  work_pool = Pool(min(len(files), 12))
-  work_pool.map(bam2bw_wrapper, bw_commands)
-  work_pool.close()
-  work_pool.join()
-  
-  cm_command = "computeMatrix scale-regions -R "+gene_bed+" -a 3000 -b 3000 --regionBodyLength 5000 --skipZeros -S *.bw -o samples.deeptools_generegionscalematrix.gz"
-  p = subprocess.Popen(cm_command, shell=True)
-  p.communicate()
-  hm_command = "plotHeatmap -m samples.deeptools_generegionscalematrix.gz -out samples.deeptools_readsHeatmap.png"
-  p = subprocess.Popen(hm_command, shell=True)
-  p.communicate()  
 
-def run(dfile,genome):
-  #parse dfile, suppose data files are the same folder as design file
-  dfile = pd.read_csv(dfile)
-  #QC: multiBamSummary and plotCorrelation
-  run_qc(dfile['bamReads'], dfile['bamControl'], dfile['SampleID']) 
-  #signal plots
-  run_signal(dfile['bamReads'],dfile['SampleID'],genome)
+def check_tools():
+    '''Checks for required componenets on user system.'''
+
+    logger.info('Checking for required libraries and components on this system')
+
+    deeptools_path = shutil.which("deeptools")
+    if deeptools_path:
+        logger.info('Found deeptools: %s', deeptools_path)
+    else:
+        logger.error('Missing deeptools')
+        raise Exception('Missing deeptools')
+
+
+def generate_read_summary(design):
+    '''Generate summary of data based on read counts.'''
+
+    bam_files = ' '.join(design['bam_reads'])
+    labels = ' '.join(design['sample_id'])
+    mbs_filename = 'sample_mbs.npz'
+
+    mbs_command = (
+        "multiBamSummary bins -p %d --bamfiles %s --labels %s -out %s"
+        % (cpu_count(), bam_files, labels, mbs_filename)
+        )
+
+    logger.info("Running deeptools with %s", mbs_command)
+
+    read_summary = subprocess.Popen(mbs_command, shell=True)
+    out, err = read_summary.communicate()
+
+    return mbs_filename
+
+
+def check_correlation(mbs):
+    '''Check Spearman pairwise correlation of samples based on read counts.'''
+
+    spearman_filename = 'heatmap_SpearmanCorr.png'
+    spearman_params = "--corMethod spearman --skipZero" + \
+                    " --plotTitle \"Spearman Correlation of Read Counts\"" + \
+                    " --whatToPlot heatmap --colorMap RdYlBu --plotNumbers"
+
+    spearman_command = (
+        "plotCorrelation -in %s %s -o %s"
+        % (mbs, spearman_params, spearman_filename)
+    )
+
+    logger.info("Running deeptools with %s", spearman_command)
+
+    spearman_correlation = subprocess.Popen(spearman_command, shell=True)
+    out, err = spearman_correlation.communicate()
+
+
+def check_coverage(design):
+    '''Asses the sequencing depth of samples.'''
+
+    bam_files = ' '.join(design['bam_reads'])
+    labels = ' '.join(design['sample_id'])
+    coverage_filename = 'coverage.png'
+    coverage_params = "-n 1000000 --plotTitle \"Sample Coverage\"" + \
+                    " --ignoreDuplicates --minMappingQuality 10"
+
+    coverage_command = (
+        "plotCoverage -b %s --labels %s %s --plotFile %s"
+        % (bam_files, labels, coverage_params, coverage_filename)
+        )
+
+    logger.info("Running deeptools with %s", coverage_command)
+
+    coverage_summary = subprocess.Popen(coverage_command, shell=True)
+    out, err = coverage_summary.communicate()
+
+
+def update_controls(design):
+    '''Update design file to append controls list.'''
+
+    logger.info("Running control file update.")
+
+    file_dict = design[['sample_id', 'bam_reads']] \
+                .set_index('sample_id').T.to_dict()
+
+    design['control_reads'] = design['control_id'] \
+                                .apply(lambda x: file_dict[x]['bam_reads'])
+
+    logger.info("Removing rows that are there own control.")
+
+    design = design[design['control_id'] != design['sample_id']]
+
+    return design
+
+
+def check_enrichment(sample_id, control_id, sample_reads, control_reads):
+    '''Asses the enrichment per sample.'''
+
+    fingerprint_filename = sample_id + '_fingerprint.png'
+
+    fingerprint_command = (
+        "plotFingerprint -b %s %s --labels %s %s --plotFile %s"
+        % (sample_reads, control_reads, sample_id, control_id, fingerprint_filename)
+        )
+
+    logger.info("Running deeptools with %s", fingerprint_command)
+
+    fingerprint_summary = subprocess.Popen(fingerprint_command, shell=True)
+    out, err = fingerprint_summary.communicate()
+
 
 def main():
-  argparser = prepare_argparser()
-  args = argparser.parse_args()
-  run(args.infile, args.genome)
-  
+    args = get_args()
 
-if __name__=="__main__":
-  main()
+    # Create a file handler
+    handler = logging.FileHandler('experiment_qc.log')
+    logger.addHandler(handler)
+
+    # Check if tools are present
+    check_tools()
+
+    # Read files
+    design_file = pd.read_csv(args.design, sep='\t')
+
+    # Run correlation
+    mbs_filename = generate_read_summary(design_file)
+    check_correlation(mbs_filename)
+
+    # Run coverage
+    check_coverage(design_file)
+
+    # Run enrichment
+    new_design = update_controls(design_file)
+    for index, row in new_design.iterrows():
+        check_enrichment(
+                            row['sample_id'],
+                            row['control_id'],
+                            row['bam_reads'],
+                            row['control_reads'])
+
+
+if __name__ == '__main__':
+    main()

@@ -162,3 +162,28 @@ process filterReads {
   }
 
 }
+
+// Define channel collecting new design file
+dedupDesign = dedupReads.
+              collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\tbiosample\tfactor\ttreatment\treplicate\controlId\n", storeDir:""$baseDir/output/design")
+
+// Quality Metrics using deeptools
+process experimentQC {
+
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  file dedupDesign
+
+  output:
+
+  file '*.{png,npz}' into deepToolsStats
+
+  script:
+
+  """
+  python3 $baseDir/scripts/experiment_qc.py -d $dedupDesign
+  """
+
+}
