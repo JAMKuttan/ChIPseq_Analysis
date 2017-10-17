@@ -24,13 +24,13 @@ def steps_1(steps):
 @pytest.fixture
 def steps_2(steps_1):
     steps_1.extend([
-        "cut -f7"
+        "cut -f8"
     ])
     return steps_1
 
 
 def test_run_one_step(steps_1, capsys):
-    check_output = 'ENCSR238SGC\tlimb\tH3K4me1\tNone\t1\tENCSR687ALB\tENCFF833BLU.fastq.gz'.encode('UTF-8')
+    check_output = 'ENCBS844FSC\tENCSR238SGC\tlimb\tH3K4me1\tNone\t1\tENCBS844FSC\tENCFF833BLU.fastq.gz'.encode('UTF-8')
     out, err = utils.run_pipe(steps_1)
     output, errors = capsys.readouterr()
     assert "first step shlex to stdout" in output
