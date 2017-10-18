@@ -7,7 +7,7 @@ from io import StringIO
 import experiment_qc
 
 test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
-                '/../output/filterReads/'
+                '/../output/experimentQC/'
 
 DESIGN_STRING = """sample_id\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\tbam_reads
 A_1\tA\tLiver\tH3K27ac\tNone\t1\tB_1\tA_1.bam
