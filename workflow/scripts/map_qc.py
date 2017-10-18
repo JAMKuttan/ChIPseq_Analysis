@@ -159,7 +159,7 @@ def dedup_mapped(bam, bam_basename, paired):
     with open(dup_file_qc_filename, 'w') as fh:
         sambamba_markdup_command = (
             "sambamba markdup -t %d %s %s %s"
-            % (cpu_count(), sambamba_parms, bam, tmp_dup_mark_filename)
+            % (cpu_count(), sambamba_params, bam, tmp_dup_mark_filename)
             )
         logger.info(sambamba_markdup_command)
         subprocess.check_call(
