@@ -167,7 +167,7 @@ process filterReads {
 dedupDesign = dedupReads
               .map{ sampleId, bam, bai, biosample, factor, treatment, replicate, controlId ->
               "$sampleId\t$bam\t$bai\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
-              .collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\tbiosample\tfactor\ttreatment\treplicate\tcontrolId\n", storeDir:"$baseDir/output/design")
+              .collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
 
 // Quality Metrics using deeptools
 process experimentQC {
