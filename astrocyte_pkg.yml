@@ -47,6 +47,7 @@ workflow_modules:
   - 'samtools/1.4.1'
   - 'sambamba/0.6.6'
   - 'bedtools/2.26.0'
+  - 'deeptools/2.5.0.1'
 
 # A list of parameters used by the workflow, defining how to present them,
 # options etc in the web interface. For each parameter:
