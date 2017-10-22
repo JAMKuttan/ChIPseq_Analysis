@@ -144,6 +144,7 @@ process filterReads {
   output:
 
   set sampleId, file('*.bam'), file('*.bai'), biosample, factor, treatment, replicate, controlId into dedupReads
+  set sampleId, file('*.bam'), biosample, factor, treatment, replicate, controlId into convertReads
   file '*flagstat.qc' into dedupReadsStats
   file '*pbc.qc' into dedupReadsComplexity
   file '*dup.qc' into dupReads
@@ -187,5 +188,34 @@ process experimentQC {
   """
   python3 $baseDir/scripts/experiment_qc.py -d $dedupDesign
   """
+
+}
+
+// Convert reads to bam
+process convertReads {
+
+  tag "$sampleId-$replicate"
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  set sampleId, deduped, biosample, factor, treatment, replicate, controlId from convertReads
+
+  output:
+
+  set sampleId, file('*.tagAlign.gz'), file('*.bedpe.gz'), biosample, factor, treatment, replicate, controlId into dedupReads
+
+  script:
+
+  if (pairedEnd) {
+    """
+    python3 $baseDir/scripts/convert_reads.py -b $deduped -p
+    """
+  }
+  else {
+    """
+    python3 $baseDir/scripts/convert_reads.py -b $deduped
+    """
+  }
 
 }
