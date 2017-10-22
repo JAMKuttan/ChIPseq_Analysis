@@ -203,7 +203,7 @@ process convertReads {
 
   output:
 
-  set sampleId, file('*.tagAlign.gz'), file('*.bedpe.gz'), biosample, factor, treatment, replicate, controlId into dedupReads
+  set sampleId, file('*.tagAlign.gz'), file('*.bedpe.gz'), biosample, factor, treatment, replicate, controlId into tagReads
 
   script:
 
