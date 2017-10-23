@@ -64,10 +64,9 @@ def check_tools():
         raise Exception('Missing samtools')
 
 
-def convert_mapped(bam, bam_basename):
+def convert_mapped(bam, tag_filename):
     '''Use bedtools to convert to tagAlign.'''
 
-    tag_filename = bam_basename + '.tagAlign.gz'
     out, err = utils.run_pipe([
         "bamToBed -i %s" % (bam),
         r"""awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}'""",
@@ -110,10 +109,14 @@ def main():
     bam_basename = os.path.basename(
         utils.strip_extensions(bam, ['.bam']))
 
-    convert_mapped(bam, bam_basename)
+    tag_filename = bam_basename + 'tagAlign.gz'
+    convert_mapped(bam, tag_filename)
 
     if paired:  # paired-end data
         convert_mapped_pe(bam, bam_basename)
+    else:
+        bedse_filename =  bam_basename + ".bedse.gz"
+        shutil(tag_filename, bedse_filename)
 
 
 if __name__ == '__main__':
