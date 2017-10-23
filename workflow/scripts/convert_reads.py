@@ -30,7 +30,7 @@ def get_args():
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-b', '--bam',
-                        help="The bam file to run filtering and qc on.",
+                        help="The bam file to convert.",
                         required=True)
 
     parser.add_argument('-p', '--paired',
