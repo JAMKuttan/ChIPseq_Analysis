@@ -116,7 +116,7 @@ def main():
         convert_mapped_pe(bam, bam_basename)
     else:
         bedse_filename =  bam_basename + ".bedse.gz"
-        shutil(tag_filename, bedse_filename)
+        shutil.copy(tag_filename, bedse_filename)
 
 
 if __name__ == '__main__':
