@@ -30,7 +30,7 @@ def get_args():
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-b', '--bam',
-                        help="The bam file to run filtering and qc on.",
+                        help="The bam file to convert.",
                         required=True)
 
     parser.add_argument('-p', '--paired',
@@ -116,7 +116,7 @@ def main():
         convert_mapped_pe(bam, bam_basename)
     else:
         bedse_filename =  bam_basename + ".bedse.gz"
-        shutil(tag_filename, bedse_filename)
+        shutil.copy(tag_filename, bedse_filename)
 
 
 if __name__ == '__main__':
