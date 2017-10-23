@@ -109,7 +109,7 @@ def main():
     bam_basename = os.path.basename(
         utils.strip_extensions(bam, ['.bam']))
 
-    tag_filename = bam_basename + 'tagAlign.gz'
+    tag_filename = bam_basename + '.tagAlign.gz'
     convert_mapped(bam, tag_filename)
 
     if paired:  # paired-end data
