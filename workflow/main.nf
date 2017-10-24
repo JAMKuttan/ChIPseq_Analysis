@@ -219,3 +219,33 @@ process convertReads {
   }
 
 }
+
+// Calculate Cross-correlation using phantompeaktools
+process crossReads {
+
+  tag "$sampleId-$replicate"
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  set sampleId, seTagAlign, tagAlign, biosample, factor, treatment, replicate, controlId from tagReads
+
+  output:
+
+  set sampleId, seTagAlign, tagAlign, file('*.cc.qc') biosample, factor, treatment, replicate, controlId into xcorReads
+  set file('*.cc.qc'), file('*.cc.plot.pdf') into xcorReadsStats
+
+  script:
+
+  if (pairedEnd) {
+    """
+    python3 $baseDir/scripts/xcor.py -b $seTagAlign -p
+    """
+  }
+  else {
+    """
+    python3 $baseDir/scripts/xcor.py.py -b $seTagAlign
+    """
+  }
+
+}
