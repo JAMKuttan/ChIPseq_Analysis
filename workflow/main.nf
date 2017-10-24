@@ -239,12 +239,12 @@ process crossReads {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/xcor.py -b $seTagAlign -p
+    python3 $baseDir/scripts/xcor.py -t $seTagAlign -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/xcor.py -b $seTagAlign
+    python3 $baseDir/scripts/xcor.py -t $seTagAlign
     """
   }
 
