@@ -5,7 +5,6 @@
 import os
 import argparse
 import shutil
-import shlex
 import logging
 from multiprocessing import cpu_count
 import utils
@@ -60,17 +59,17 @@ def check_tools():
 def xcor(tag, paired):
     '''Use spp to calculate cross-correlation stats.'''
 
-    tag_basename = tag.rstrip('.gz')
+    tag_basename = os.path.basename(utils.strip_extensions(tag, ['.gz']))
 
     uncompressed_tag_filename = tag_basename
-    out, err = utils.run_pipe(['gzip -d %s' % (tag_basename)])
+    out, err = utils.run_pipe([
+        'gzip -dc %s > ' % (tag)], outfile=uncompressed_tag_filename)
 
     # Subsample tagAlign file
     NREADS = 15000000
 
     subsampled_tag_filename = \
-        tag_basename  + \
-        ".%d.tagAlign.gz" % (NREADS/1000000)
+        tag_basename + ".%d.tagAlign.gz" % (NREADS/1000000)
     steps = [
         'grep -v "chrM" %s' % (uncompressed_tag_filename),
         'shuf -n %d --random-source=%s' % (NREADS, uncompressed_tag_filename)
