@@ -244,7 +244,7 @@ process crossReads {
   }
   else {
     """
-    python3 $baseDir/scripts/xcor.py.py -b $seTagAlign
+    python3 $baseDir/scripts/xcor.py -b $seTagAlign
     """
   }
 
