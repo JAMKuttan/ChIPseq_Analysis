@@ -232,7 +232,7 @@ process crossReads {
 
   output:
 
-  set sampleId, seTagAlign, tagAlign, file('*.cc.qc') biosample, factor, treatment, replicate, controlId into xcorReads
+  set sampleId, seTagAlign, tagAlign, file('*.cc.qc'), biosample, factor, treatment, replicate, controlId into xcorReads
   set file('*.cc.qc'), file('*.cc.plot.pdf') into xcorReadsStats
 
   script:
