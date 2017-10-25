@@ -58,7 +58,7 @@ def make_experiment_design(design):
 
     for experiment, df_experiment in design.groupby('experiment_id'):
         experiment_file = experiment + '.tsv'
-        new_design.to_csv(experiment_file, header=True, sep='\t', index=False)
+        df_experiment.to_csv(experiment_file, header=True, sep='\t', index=False)
 
 
 def main():
