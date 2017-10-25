@@ -164,7 +164,7 @@ process filterReads {
 
 }
 
-// Define channel collecting new design file
+// Define channel collecting dedup reads intp new design file
 dedupDesign = dedupReads
               .map{ sampleId, bam, bai, biosample, factor, treatment, replicate, controlId ->
               "$sampleId\t$bam\t$bai\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
@@ -232,7 +232,7 @@ process crossReads {
 
   output:
 
-  set sampleId, seTagAlign, tagAlign, file('*.cc.qc'), biosample, factor, treatment, replicate, controlId into xcorReads
+  set sampleId, tagAlign, file('*.cc.qc'), biosample, factor, treatment, replicate, controlId into xcorReads
   set file('*.cc.qc'), file('*.cc.plot.pdf') into xcorReadsStats
 
   script:
@@ -247,5 +247,32 @@ process crossReads {
     python3 $baseDir/scripts/xcor.py -t $seTagAlign
     """
   }
+
+}
+
+// Define channel collecting tagAlign and xcor into design file
+xcorDesign = xcorReads
+              .map{ sampleId, tagAlign, xcor, biosample, factor, treatment, replicate, controlId ->
+              "$sampleId\t$tagAlign\t$xcor\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
+              .collectFile(name:'design_xcor.tsv', seed:"sample_id\ttag_align\txcor\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+
+// Make Experiment design files to be read in for downstream analysis
+process defineExpDesignFiles {
+
+  publishDir "$baseDir/output/design", mode: 'copy'
+
+  input:
+
+  file xcorDesign
+
+  output:
+
+  file '*.tsv' into experimentObjs
+
+  script:
+
+  """
+  python3 $baseDir/scripts/experiment_design.py -d $xcorDesign
+  """
 
 }
