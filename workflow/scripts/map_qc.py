@@ -34,6 +34,7 @@ STRIP_EXTENSIONS = ['.bam', '.srt']
 
 def get_args():
     '''Define arguments.'''
+    
     parser = argparse.ArgumentParser(
         description=__doc__, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)

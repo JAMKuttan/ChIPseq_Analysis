@@ -21,6 +21,7 @@ logger.setLevel(logging.INFO)
 
 def get_args():
     '''Define arguments.'''
+    
     parser = argparse.ArgumentParser(
         description=__doc__, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -98,7 +99,7 @@ def check_replicates(design):
         unique_replicates = set(replicates)
         if len(replicates) != len(unique_replicates):
             duplicated_replicates.append(experiment)
-    
+
     if len(duplicated_replicates) > 0:
         logger.error('Duplicate replicates in experiments: %s', list(duplicated_replicates))
         raise Exception("Duplicate replicates in experiments: %s" %
