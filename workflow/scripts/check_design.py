@@ -21,7 +21,7 @@ logger.setLevel(logging.INFO)
 
 def get_args():
     '''Define arguments.'''
-    
+
     parser = argparse.ArgumentParser(
         description=__doc__, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -137,23 +137,26 @@ def check_files(design, fastq, paired):
 
 def main():
     args = get_args()
+    design = args.design
+    fastq = args.fastq
+    paired = args.paired
 
     # Create a file handler
     handler = logging.FileHandler('design.log')
     logger.addHandler(handler)
 
-    # Read files
-    design_file = pd.read_csv(args.design, sep='\t')
-    fastq_file = pd.read_csv(args.fastq, sep='\t', names=['name', 'path'])
+    # Read files as dataframes
+    design_df = pd.read_csv(args.design, sep='\t')
+    fastq_df = pd.read_csv(args.fastq, sep='\t', names=['name', 'path'])
 
     # Check design file
-    check_design_headers(design_file, args.paired)
-    check_controls(design_file)
-    check_replicates(design_file)
-    new_design = check_files(design_file, fastq_file, args.paired)
+    check_design_headers(design_df, paired)
+    check_controls(design_df)
+    check_replicates(design_df)
+    new_design_df = check_files(design_file, fastq_df, paired)
 
     # Write out new design file
-    new_design.to_csv('design.tsv', header=True, sep='\t', index=False)
+    new_design_df.to_csv('design.tsv', header=True, sep='\t', index=False)
 
 
 if __name__ == '__main__':

@@ -21,7 +21,7 @@ logger.setLevel(logging.INFO)
 
 def get_args():
     '''Define arguments.'''
-    
+
     parser = argparse.ArgumentParser(
         description=__doc__, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -64,19 +64,20 @@ def make_experiment_design(design):
 
 def main():
     args = get_args()
+    design = args.design
 
     # Create a file handler
     handler = logging.FileHandler('experiment_generation.log')
     logger.addHandler(handler)
 
-    # Read files
-    design_file = pd.read_csv(args.design, sep='\t')
+    # Read files as dataframes
+    design_df = pd.read_csv(design, sep='\t')
 
     # Update design file for check_controls
-    new_design = update_controls(design_file)
+    new_design_df = update_controls(design_df)
 
     # write out experiment design files
-    make_experiment_design(new_design)
+    make_experiment_design(new_design_df)
 
 
 if __name__ == '__main__':

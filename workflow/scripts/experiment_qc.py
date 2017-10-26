@@ -25,7 +25,7 @@ logger.setLevel(logging.INFO)
 
 def get_args():
     '''Define arguments.'''
-    
+
     parser = argparse.ArgumentParser(
         description=__doc__, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -146,6 +146,7 @@ def check_enrichment(sample_id, control_id, sample_reads, control_reads):
 
 def main():
     args = get_args()
+    design = args.design
 
     # Create a file handler
     handler = logging.FileHandler('experiment_qc.log')
@@ -155,18 +156,18 @@ def main():
     check_tools()
 
     # Read files
-    design_file = pd.read_csv(args.design, sep='\t')
+    design_df = pd.read_csv(design, sep='\t')
 
     # Run correlation
-    mbs_filename = generate_read_summary(design_file)
+    mbs_filename = generate_read_summary(design_df)
     check_correlation(mbs_filename)
 
     # Run coverage
-    check_coverage(design_file)
+    check_coverage(design_df)
 
     # Run enrichment
-    new_design = update_controls(design_file)
-    for index, row in new_design.iterrows():
+    new_design_df = update_controls(design_df)
+    for index, row in new_design_df.iterrows():
         check_enrichment(
                             row['sample_id'],
                             row['control_id'],

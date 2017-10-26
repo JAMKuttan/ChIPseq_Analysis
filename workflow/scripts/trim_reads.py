@@ -22,7 +22,7 @@ logger.setLevel(logging.INFO)
 
 def get_args():
     '''Define arguments.'''
-    
+
     parser = argparse.ArgumentParser(
         description=__doc__, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -81,6 +81,8 @@ def trim_reads(fastq, paired):
 
 def main():
     args = get_args()
+    fastq = args.fastq
+    paired = args.paired
 
     # Create a file handler
     handler = logging.FileHandler('trim.log')
@@ -90,7 +92,7 @@ def main():
     check_tools()
 
     # Run trim_reads
-    trim_reads(args.fastq, args.paired)
+    trim_reads(fastq, paired)
 
 
 if __name__ == '__main__':
