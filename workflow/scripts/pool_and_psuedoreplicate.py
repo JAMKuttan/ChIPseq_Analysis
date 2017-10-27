@@ -97,14 +97,14 @@ def pool(tag_files, outfile, paired):
     return pooled_filename
 
 
-def self_psuedoreplication(tag_file, prefix, reps, paired):
+def self_psuedoreplication(tag_file, prefix, paired):
     '''Make n number of self-psuedoreplicates equivlent to reps.'''
 
     # Get total number of reads
     no_lines = utils.count_lines(tag_file)
 
     # Number of lines to split into
-    lines_per_rep = round(no_lines/reps)
+    lines_per_rep = (no_lines+1)/2
 
     # Make an array of number of psuedoreplicatesfile names
     pseudoreplicate_dict = {r: prefix + '.pr' + str(r) + '.bedse.tagAlign.gz'
@@ -200,7 +200,7 @@ def main():
         for rep, tag_file in zip(design_df['replicate'], design_df['tag_align']):
             replicate_prefix = experiment_id + '_' + rep
             self_pseudoreplicates_dict = \
-                self_psuedoreplication(tag_file, replicate_prefix, 2, paired)
+                self_psuedoreplication(tag_file, replicate_prefix, paired)
 
         # Update design to include new self pseudo replicates
         for rep, pseudorep_file in self_pseudoreplicates_dict.items():
@@ -218,7 +218,7 @@ def main():
         pseudoreplicates_dict = {}
         for rep, tag_file in zip(design_df['replicate'], design_df['tag_align']):
             replicate_prefix = experiment_id + '_' + rep
-            pr_dict = self_psuedoreplication(tag_file, replicate_prefix, no_reps, paired)
+            pr_dict = self_psuedoreplication(tag_file, replicate_prefix, paired)
             pseudoreplicates_dict[rep] = pr_dict
 
         # Merge self psuedoreplication for each true replicate
