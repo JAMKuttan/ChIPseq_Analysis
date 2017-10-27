@@ -108,7 +108,7 @@ def self_psuedoreplication(tag_file, prefix, paired):
 
     # Make an array of number of psuedoreplicatesfile names
     pseudoreplicate_dict = {r: prefix + '.pr' + str(r) + '.bedse.tagAlign.gz'
-                            for r in list(range(0, reps))}
+                            for r in [0, 1]}
 
     # Shuffle and split file into equal parts
     # by using the input to seed shuf we ensure multiple runs with the same
