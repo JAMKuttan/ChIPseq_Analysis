@@ -30,7 +30,10 @@ def test_check_update_controls_tag(design_tag):
 
 
 def test_experiment_design_single_end():
-    assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC.tsv'))
+    design_file = os.path.join(test_output_path, 'ENCSR238SGC.tsv')
+    assert os.path.exists(design_file)
+    design_df = pd.read_csv(design_file, sep="\t")
+    assert design_df.shape[0] == 2
 
 
 def test_experiment_design_paired_end():

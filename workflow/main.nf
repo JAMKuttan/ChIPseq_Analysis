@@ -10,6 +10,7 @@ params.designFile = "$baseDir/../test_data/design_ENCSR238SGC_SE.txt"
 params.genome = 'GRCm38'
 params.genomes = []
 params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
+params.cutoffRatio = 1.2
 
 // Check inputs
 if( params.bwaIndex ){
@@ -30,6 +31,7 @@ readsList = Channel
 // Define regular variables
 pairedEnd = params.pairedEnd
 designFile = params.designFile
+cutoffRatio = params.cutoffRatio
 
 process checkDesignFile {
 
@@ -274,5 +276,34 @@ process defineExpDesignFiles {
   """
   python3 $baseDir/scripts/experiment_design.py -d $xcorDesign
   """
+
+}
+
+
+// Make Experiment design files to be read in for downstream analysis
+process poolAndPsuedoReads {
+
+  publishDir "$baseDir/output/design", mode: 'copy'
+
+  input:
+
+  file experimentObjs
+
+  output:
+
+  file '*.tsv' into experimentPoolObjs
+
+  script:
+
+  if (pairedEnd) {
+    """
+    python3 $baseDir/scripts/pool_and_psuedoreplicate.py -t $experimentObjs -p -c cutoffRatio
+    """
+  }
+  else {
+    """
+    python3 $baseDir/scripts/pool_and_psuedoreplicate.py -t $experimentObjs -c cutoffRatio
+    """
+  }
 
 }
