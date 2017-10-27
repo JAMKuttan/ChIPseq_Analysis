@@ -153,7 +153,7 @@ def main():
     check_design_headers(design_df, paired)
     check_controls(design_df)
     check_replicates(design_df)
-    new_design_df = check_files(design_file, fastq_df, paired)
+    new_design_df = check_files(design_df, fastq_df, paired)
 
     # Write out new design file
     new_design_df.to_csv('design.tsv', header=True, sep='\t', index=False)
