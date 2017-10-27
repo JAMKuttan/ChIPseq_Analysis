@@ -65,11 +65,11 @@ process checkDesignFile {
 if (pairedEnd) {
   rawReads = designFilePaths
     .splitCsv(sep: '\t', header: true)
-    .map { row -> [ row.sample_id, [row.fastq_read1, row.fastq_read2], row.biosample, row.factor, row.treatment, row.replicate, row.control_id ] }
+    .map { row -> [ row.sample_id, [row.fastq_read1, row.fastq_read2], row.experiment_id, row.biosample, row.factor, row.treatment, row.replicate, row.control_id ] }
 } else {
 rawReads = designFilePaths
   .splitCsv(sep: '\t', header: true)
-  .map { row -> [ row.sample_id, [row.fastq_read1], row.biosample, row.factor, row.treatment, row.replicate, row.control_id ] }
+  .map { row -> [ row.sample_id, [row.fastq_read1], row.experiment_id, row.biosample, row.factor, row.treatment, row.replicate, row.control_id ] }
 }
 
 // Trim raw reads using trimgalore
@@ -80,11 +80,11 @@ process trimReads {
 
   input:
 
-  set sampleId, reads, biosample, factor, treatment, replicate, controlId from rawReads
+  set sampleId, reads, experimentId biosample, factor, treatment, replicate, controlId from rawReads
 
   output:
 
-  set sampleId, file('*.fq.gz'), biosample, factor, treatment, replicate, controlId into trimmedReads
+  set sampleId, file('*.fq.gz'), experimentId, biosample, factor, treatment, replicate, controlId into trimmedReads
   file('*trimming_report.txt') into trimgalore_results
 
   script:
@@ -110,12 +110,12 @@ process alignReads {
 
   input:
 
-  set sampleId, reads, biosample, factor, treatment, replicate, controlId from trimmedReads
+  set sampleId, reads, experimentId, biosample, factor, treatment, replicate, controlId from trimmedReads
   file index from bwaIndex.first()
 
   output:
 
-  set sampleId, file('*.bam'), biosample, factor, treatment, replicate, controlId into mappedReads
+  set sampleId, file('*.bam'), experimentId, biosample, factor, treatment, replicate, controlId into mappedReads
   file '*.srt.bam.flagstat.qc' into mappedReadsStats
 
   script:
@@ -141,12 +141,12 @@ process filterReads {
 
   input:
 
-  set sampleId, mapped, biosample, factor, treatment, replicate, controlId from mappedReads
+  set sampleId, mapped, experimentId, biosample, factor, treatment, replicate, controlId from mappedReads
 
   output:
 
-  set sampleId, file('*.bam'), file('*.bai'), biosample, factor, treatment, replicate, controlId into dedupReads
-  set sampleId, file('*.bam'), biosample, factor, treatment, replicate, controlId into convertReads
+  set sampleId, file('*.bam'), file('*.bai'), experimentId, biosample, factor, treatment, replicate, controlId into dedupReads
+  set sampleId, file('*.bam'), experimentId, biosample, factor, treatment, replicate, controlId into convertReads
   file '*flagstat.qc' into dedupReadsStats
   file '*pbc.qc' into dedupReadsComplexity
   file '*dup.qc' into dupReads
@@ -168,9 +168,9 @@ process filterReads {
 
 // Define channel collecting dedup reads intp new design file
 dedupDesign = dedupReads
-              .map{ sampleId, bam, bai, biosample, factor, treatment, replicate, controlId ->
-              "$sampleId\t$bam\t$bai\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
-              .collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+              .map{ sampleId, bam, bai, experimentId, biosample, factor, treatment, replicate, controlId ->
+              "$sampleId\t$bam\t$bai\texperimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
+              .collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
 
 // Quality Metrics using deeptools
 process experimentQC {
@@ -201,11 +201,11 @@ process convertReads {
 
   input:
 
-  set sampleId, deduped, biosample, factor, treatment, replicate, controlId from convertReads
+  set sampleId, deduped, experimentId, biosample, factor, treatment, replicate, controlId from convertReads
 
   output:
 
-  set sampleId, file('*.tagAlign.gz'), file('*.bed{pe,se}.gz'), biosample, factor, treatment, replicate, controlId into tagReads
+  set sampleId, file('*.tagAlign.gz'), file('*.bed{pe,se}.gz'), experimentId, biosample, factor, treatment, replicate, controlId into tagReads
 
   script:
 
@@ -230,11 +230,11 @@ process crossReads {
 
   input:
 
-  set sampleId, seTagAlign, tagAlign, biosample, factor, treatment, replicate, controlId from tagReads
+  set sampleId, seTagAlign, tagAlign, experimentId, biosample, factor, treatment, replicate, controlId from tagReads
 
   output:
 
-  set sampleId, tagAlign, file('*.cc.qc'), biosample, factor, treatment, replicate, controlId into xcorReads
+  set sampleId, tagAlign, file('*.cc.qc'), experimentId, biosample, factor, treatment, replicate, controlId into xcorReads
   set file('*.cc.qc'), file('*.cc.plot.pdf') into xcorReadsStats
 
   script:
@@ -254,9 +254,9 @@ process crossReads {
 
 // Define channel collecting tagAlign and xcor into design file
 xcorDesign = xcorReads
-              .map{ sampleId, tagAlign, xcor, biosample, factor, treatment, replicate, controlId ->
-              "$sampleId\t$tagAlign\t$xcor\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
-              .collectFile(name:'design_xcor.tsv', seed:"sample_id\ttag_align\txcor\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+              .map{ sampleId, tagAlign, xcor, experimentId, biosample, factor, treatment, replicate, controlId ->
+              "$sampleId\t$tagAlign\t$xcor\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
+              .collectFile(name:'design_xcor.tsv', seed:"sample_id\ttag_align\txcor\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
 
 // Make Experiment design files to be read in for downstream analysis
 process defineExpDesignFiles {
