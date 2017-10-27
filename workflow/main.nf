@@ -297,12 +297,12 @@ process poolAndPsuedoReads {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/pool_and_psuedoreplicate.py -t $experimentObjs -p -c cutoffRatio
+    python3 $baseDir/scripts/pool_and_psuedoreplicate.py -d $experimentObjs -p -c cutoffRatio
     """
   }
   else {
     """
-    python3 $baseDir/scripts/pool_and_psuedoreplicate.py -t $experimentObjs -c cutoffRatio
+    python3 $baseDir/scripts/pool_and_psuedoreplicate.py -d $experimentObjs -c cutoffRatio
     """
   }
 

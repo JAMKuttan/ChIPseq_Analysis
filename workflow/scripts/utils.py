@@ -56,19 +56,19 @@ def strip_extensions(filename, extensions):
 
 
 def count_lines(filename):
-    from magic import from_file
+    import mimetypes
     compressed_mimetypes = [
-        "application/x-compress",
-        "application/x-bzip2",
-        "application/x-gzip"
+        "compress",
+        "bzip2",
+        "gzip"
         ]
-    mime_type = from_file(fname, mime=True)
+    mime_type = mimetypes.guess_type(filename)[1]
     if mime_type in compressed_mimetypes:
         catcommand = 'gzip -dc'
     else:
         catcommand = 'cat'
     out, err = run_pipe([
-        '%s %s' % (catcommand, fname),
+        '%s %s' % (catcommand, filename),
         'wc -l'
         ])
     return int(out)

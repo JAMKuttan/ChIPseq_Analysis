@@ -82,9 +82,9 @@ def pool(tag_files, outfile, paired):
     '''Pool files together.'''
 
     if paired:
-        file_extension = 'bedpe.gz'
+        file_extension = '.bedpe.gz'
     else:
-        file_extension = 'bedse.gz'
+        file_extension = '.bedse.gz'
 
     pooled_filename = outfile + file_extension
 
@@ -98,7 +98,7 @@ def pool(tag_files, outfile, paired):
 
 
 def self_psuedoreplication(tag_file, prefix, paired):
-    '''Make n number of self-psuedoreplicates equivlent to reps.'''
+    '''Make 2 self-psuedoreplicates.'''
 
     # Get total number of reads
     no_lines = utils.count_lines(tag_file)
@@ -124,7 +124,7 @@ def self_psuedoreplication(tag_file, prefix, paired):
 
     # Convert read pairs to reads into standard tagAlign file
 
-    for i, index in enumerate(list(range(0, reps))):
+    for i, index in enumerate([0, 1]):
         steps = ['cat %s' % (splits_prefix + index)]
         if paired:
             steps.extend([r"""awk 'BEGIN{OFS="\t"}{printf "%s\t%s\t%s\tN\t1000\t%s\n%s\t%s\t%s\tN\t1000\t%s\n",$1,$2,$3,$9,$4,$5,$6,$10}'"""])
@@ -139,7 +139,7 @@ def main():
     args = get_args()
     paired = args.paired
     design = args.design
-    cutoff_ratio = args.cutoff_ratio
+    cutoff_ratio = args.cutoff
 
     # Create a file handler
     handler = logging.FileHandler('experiment_generation.log')
@@ -149,7 +149,7 @@ def main():
     design_df = pd.read_csv(design, sep='\t')
 
     # Get current directory to build paths
-    cwd = os.getwd()
+    cwd = os.getcwd()
 
     # Check Number of replicates and replicates
     no_reps = check_replicates(design_df)
@@ -217,7 +217,7 @@ def main():
         # Make self psuedoreplicates equivalent to number of replicates
         pseudoreplicates_dict = {}
         for rep, tag_file in zip(design_df['replicate'], design_df['tag_align']):
-            replicate_prefix = experiment_id + '_' + rep
+            replicate_prefix = experiment_id + '_' + str(rep)
             pr_dict = self_psuedoreplication(tag_file, replicate_prefix, paired)
             pseudoreplicates_dict[rep] = pr_dict
 
