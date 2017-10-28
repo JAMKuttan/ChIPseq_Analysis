@@ -80,7 +80,7 @@ process trimReads {
 
   input:
 
-  set sampleId, reads, experimentId biosample, factor, treatment, replicate, controlId from rawReads
+  set sampleId, reads, experimentId, biosample, factor, treatment, replicate, controlId from rawReads
 
   output:
 
