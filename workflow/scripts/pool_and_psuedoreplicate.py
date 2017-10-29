@@ -124,7 +124,7 @@ def self_psuedoreplication(tag_file, prefix, paired):
 
     # Convert read pairs to reads into standard tagAlign file
 
-    for i, index in enumerate([0, 1]):
+    for i, string(index) in enumerate([0, 1]):
         steps = ['cat %s' % (splits_prefix + index)]
         if paired:
             steps.extend([r"""awk 'BEGIN{OFS="\t"}{printf "%s\t%s\t%s\tN\t1000\t%s\n%s\t%s\t%s\tN\t1000\t%s\n",$1,$2,$3,$9,$4,$5,$6,$10}'"""])
@@ -226,7 +226,7 @@ def main():
         pool_pseudoreplicates_dict = {}
         for index, row in pseudoreplicates_df.iterrows():
             replicate_id = index + 1
-            pr_filename = experiment_id + ".pr" + replicate_id + '.bedse.gz'
+            pr_filename = experiment_id + ".pr" + str(replicate_id) + '.bedse.gz'
             pool_replicate = pool(row, pr_filename, False)
             pool_pseudoreplicates_dict[replicate_id] = pool_replicate
 
