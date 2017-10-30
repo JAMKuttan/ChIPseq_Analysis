@@ -162,16 +162,16 @@ def main():
         replicated = False
 
     else:
-        logger.info("Multiple replicates specified"
+        logger.info("Multiple replicates specified "
                     "so processing as a replicated experiment.")
         replicated = True
 
     if no_unique_controls == 1 and replicated:
-        logger.info("Only a single control was specified"
+        logger.info("Only a single control was specified "
                     "so using same control for replicates, pool and psuedoreplicates.")
         single_control = True
     else:
-        logger.info("Will merge only unique controls for pooled")
+        logger.info("Will merge only unique controls for pooled.")
         single_control = False
 
     # Pool the controls for checking
@@ -235,7 +235,7 @@ def main():
         # Check controls against cutoff_ratio
         # if so replace with pool_control
         path_to_pool_control = cwd + '/' + pool_control
-        if control_df[control_df > cutoff_ratio].values.any():
+        if if control_df.values.max() > 1.2:
             logger.info("Number of reads in controls differ by " +
                 " > factor of %f. Using pooled controls." % (cutoff_ratio))
             design_new_df['control_tag_align'] = path_to_pool_control
@@ -254,8 +254,8 @@ def main():
         tmp_metadata = design_new_df.loc[0].copy()
         tmp_metadata['control_tag_align'] = path_to_pool_control
         for rep, pseudorep_file in pool_pseudoreplicates_dict.items():
-            tmp_metadata['sample_id'] = experiment_id + '_pr' + rep
-            tmp_metadata['replicate'] = rep + '_pr'
+            tmp_metadata['sample_id'] = experiment_id + '_pr' + str(rep)
+            tmp_metadata['replicate'] = str(rep) + '_pr'
             tmp_metadata['xcor'] = 'Calculate'
             path_to_file = cwd + '/' + pseudorep_file
             tmp_metadata['tag_align'] = path_to_file
