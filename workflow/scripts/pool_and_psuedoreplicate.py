@@ -124,13 +124,14 @@ def self_psuedoreplication(tag_file, prefix, paired):
 
     # Convert read pairs to reads into standard tagAlign file
 
-    for i, string(index) in enumerate([0, 1]):
-        steps = ['cat %s' % (splits_prefix + index)]
+    for i, index in enumerate([0, 1]):
+        string_index = str(index)
+        steps = ['cat %s' % (splits_prefix + string_index)]
         if paired:
             steps.extend([r"""awk 'BEGIN{OFS="\t"}{printf "%s\t%s\t%s\tN\t1000\t%s\n%s\t%s\t%s\tN\t1000\t%s\n",$1,$2,$3,$9,$4,$5,$6,$10}'"""])
         steps.extend(['gzip -cn'])
         out, err = utils.run_pipe(steps, outfile=pseudoreplicate_dict[i])
-        os.remove(splits_prefix + index)
+        os.remove(splits_prefix + string_index)
 
     return pseudoreplicate_dict
 
