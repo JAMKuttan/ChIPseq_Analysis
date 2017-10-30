@@ -125,7 +125,7 @@ def self_psuedoreplication(tag_file, prefix, paired):
     # Convert read pairs to reads into standard tagAlign file
 
     for i, index in enumerate([0, 1]):
-        string_index = str(index)
+        string_index = '0' + str(index)
         steps = ['cat %s' % (splits_prefix + string_index)]
         if paired:
             steps.extend([r"""awk 'BEGIN{OFS="\t"}{printf "%s\t%s\t%s\tN\t1000\t%s\n%s\t%s\t%s\tN\t1000\t%s\n",$1,$2,$3,$9,$4,$5,$6,$10}'"""])
