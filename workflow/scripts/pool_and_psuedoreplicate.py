@@ -235,7 +235,7 @@ def main():
         # Check controls against cutoff_ratio
         # if so replace with pool_control
         path_to_pool_control = cwd + '/' + pool_control
-        if if control_df.values.max() > 1.2:
+        if control_df.values.max() > 1.2:
             logger.info("Number of reads in controls differ by " +
                 " > factor of %f. Using pooled controls." % (cutoff_ratio))
             design_new_df['control_tag_align'] = path_to_pool_control
