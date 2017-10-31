@@ -279,6 +279,9 @@ process defineExpDesignFiles {
 
 }
 
+// Define channel of list of experimentObs
+experimentList = experimentObjs
+                .flatten()
 
 // Make Experiment design files to be read in for downstream analysis
 process poolAndPsuedoReads {
@@ -287,7 +290,7 @@ process poolAndPsuedoReads {
 
   input:
 
-  file experimentObjs
+  file experimentList
 
   output:
 
