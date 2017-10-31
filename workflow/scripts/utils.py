@@ -53,3 +53,22 @@ def strip_extensions(filename, extensions):
         basename = basename.rpartition(extension)[0] or basename
 
     return basename
+
+
+def count_lines(filename):
+    import mimetypes
+    compressed_mimetypes = [
+        "compress",
+        "bzip2",
+        "gzip"
+        ]
+    mime_type = mimetypes.guess_type(filename)[1]
+    if mime_type in compressed_mimetypes:
+        catcommand = 'gzip -dc'
+    else:
+        catcommand = 'cat'
+    out, err = run_pipe([
+        '%s %s' % (catcommand, filename),
+        'wc -l'
+        ])
+    return int(out)
