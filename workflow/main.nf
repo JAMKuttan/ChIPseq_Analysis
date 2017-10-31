@@ -269,7 +269,7 @@ process defineExpDesignFiles {
 
   output:
 
-  file '*.tsv' into experimentObjs
+  file '*.tsv' into experimentObjs mode flatten
 
   script:
 
@@ -279,9 +279,6 @@ process defineExpDesignFiles {
 
 }
 
-// Define channel of list of experimentObs
-experimentList = experimentObjs
-                .flatten()
 
 // Make Experiment design files to be read in for downstream analysis
 process poolAndPsuedoReads {
@@ -290,7 +287,7 @@ process poolAndPsuedoReads {
 
   input:
 
-  file experimentList
+  file experimentObjs
 
   output:
 
