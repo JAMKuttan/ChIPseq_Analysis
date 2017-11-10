@@ -189,12 +189,12 @@ def main():
         experiment_id = design_df.at[0, 'experiment_id']
         replicate = design_df.at[0, 'replicate']
         design_new_df = design_df.loc[np.repeat(design_df.index, 4)].reset_index()
-        design_new_df.set_value(1, 'sample_id', experiment_id + '_pr')
-        design_new_df.set_value(1, 'replicate', '1_pr')
-        design_new_df.set_value(2, 'sample_id', experiment_id + '_pr')
-        design_new_df.set_value(2, 'replicate', '2_pr')
-        design_new_df.set_value(3, 'sample_id', experiment_id + '_pooled')
-        design_new_df.set_value(3, 'sample_id', experiment_id + '_pooled')
+        design_new_df.at[1, 'sample_id'] = experiment_id + '_pr'
+        design_new_df.at[1, 'replicate'] = '1_pr'
+        design_new_df.at[2, 'sample_id'] = experiment_id + '_pr'
+        design_new_df.at[2, 'replicate'] = '2_pr'
+        design_new_df.at[3, 'sample_id'] = experiment_id + '_pr'
+        design_new_df.at[3, 'replicate'] = '2_pr'
 
         # Make 2 self psuedoreplicates
         self_pseudoreplicates_dict = {}
