@@ -24,7 +24,7 @@ logger.setLevel(logging.INFO)
 
 def get_args():
     '''Define arguments.'''
-    
+
     parser = argparse.ArgumentParser(
         description=__doc__, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -106,6 +106,8 @@ def xcor(tag, paired):
          cc_plot_filename, cc_scores_filename)
     ])
 
+    return cc_scores_filename
+
 
 def main():
     args = get_args()
@@ -120,7 +122,7 @@ def main():
     check_tools()
 
     # Calculate Cross-correlation
-    xcor(tag, paired)
+    xcor_filename = xcor(tag, paired)
 
 
 if __name__ == '__main__':
