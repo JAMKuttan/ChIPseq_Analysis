@@ -317,7 +317,7 @@ experimentRows = experimentPoolObjs.collect()
             .splitCsv(sep:'\t', header: true)
 
 // Call Peaks using MACS
-process callPeaksMacs {
+process callPeaksMACS {
 
   tag "$sampleId-$replicate"
   publishDir "$baseDir/output/${task.process}", mode: 'copy'
