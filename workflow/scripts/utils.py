@@ -5,6 +5,7 @@
 
 import shlex
 import logging
+import subprocess
 
 
 logger = logging.getLogger(__name__)
@@ -48,7 +49,7 @@ def run_pipe(steps, outfile=None):
 def block_on(command):
     process = subprocess.Popen(shlex.split(command), stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
     for line in iter(process.stdout.readline, ''):
-        sys.stdout.write(line)
+        sys.stdout.buffer.write(line)
     process.wait()
     return process.returncode
 
