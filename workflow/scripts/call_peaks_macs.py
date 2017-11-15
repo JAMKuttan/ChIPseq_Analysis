@@ -8,7 +8,7 @@ import shutil
 import logging
 from multiprocessing import cpu_count
 import utils
-from xcor import xcor
+from xcor import xcor as calcualte_xcor
 
 EPILOG = '''
 For more details:
@@ -256,7 +256,7 @@ def main():
 
     # Calculate Cross-correlation if not already calcualted
     if xcor == 'Calculate':
-        xcor_file = xcor(tag, paired)
+        xcor_file = calculate_xcor(tag, paired)
     else:
         xcor_file = xcor
 
