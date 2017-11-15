@@ -48,6 +48,9 @@ workflow_modules:
   - 'sambamba/0.6.6'
   - 'bedtools/2.26.0'
   - 'deeptools/2.5.0.1'
+  - 'phantompeakqualtools/1.2'
+  - 'macs/2.1.0-20151222'
+  - 'UCSC_userApps/v317'
 
 # A list of parameters used by the workflow, defining how to present them,
 # options etc in the web interface. For each parameter:

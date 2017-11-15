@@ -10,6 +10,8 @@ params.designFile = "$baseDir/../test_data/design_ENCSR238SGC_SE.txt"
 params.genome = 'GRCm38'
 params.genomes = []
 params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
+params.geneomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
+params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
 params.cutoffRatio = 1.2
 
 // Check inputs
@@ -31,6 +33,8 @@ readsList = Channel
 // Define regular variables
 pairedEnd = params.pairedEnd
 designFile = params.designFile
+genomeSize = params.genomeSize
+chromSizes = params.chromSizes
 cutoffRatio = params.cutoffRatio
 
 process checkDesignFile {
@@ -303,6 +307,38 @@ process poolAndPsuedoReads {
   else {
     """
     python3 $baseDir/scripts/pool_and_psuedoreplicate.py -d $experimentObjs -c $cutoffRatio
+    """
+  }
+
+}
+
+// Collect list of experiment design files into a single channel
+experimentRows = experimentPoolObjs.collect()
+            .splitCsv(sep:'\t', header: true)
+
+// Call Peaks using MACS
+process callPeaksMacs {
+
+  tag "$sampleId-$replicate"
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+  set sampleId, tagAlign, xcor, experimentId, biosample, factor, treatment, replicate, controlId, controlTagAlign from experimentRows
+
+  output:
+
+  set sampleId, file('*.narrowPeak'), file('*.fc_signal.bw'), file('*.pvalue_signal.bw'), experimentId, biosample, factor, treatment, replicate, controlId from experimentRows
+
+  script:
+
+  if (pairedEnd) {
+    """
+    python3 $baseDir/scripts/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes -p
+    """
+  }
+  else {
+    """
+    python3 $baseDir/scripts/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes -p
     """
   }
 
