@@ -287,6 +287,8 @@ process defineExpDesignFiles {
 // Make Experiment design files to be read in for downstream analysis
 process poolAndPsuedoReads {
 
+
+  tag "${experimentObjs.baseName}"
   publishDir "$baseDir/output/design", mode: 'copy'
 
   input:
