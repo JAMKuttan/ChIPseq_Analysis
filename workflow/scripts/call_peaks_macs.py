@@ -98,7 +98,8 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
     # cross-correlation scores file
     with open(xcor, 'r') as xcor_fh:
         firstline = xcor_fh.readline()
-        fragment_length = firstline.split()[2]  # third column
+        frag_lengths = firstline.split()[2]  # third column
+        fragment_length = frag_lengths.split(',')[0]  # grab first value
         logger.info("Fraglen %s" % (fragment_length))
 
 
