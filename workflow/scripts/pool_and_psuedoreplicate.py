@@ -190,17 +190,20 @@ def main():
         replicate = design_df.at[0, 'replicate']
         design_new_df = design_df.loc[np.repeat(design_df.index, 4)].reset_index()
         design_new_df['replicate'] = design_new_df['replicate'].astype(str)
-        design_new_df.at[1, 'sample_id'] = experiment_id + '_pr'
+        design_new_df.at[1, 'sample_id'] = experiment_id + '_pr1'
         design_new_df.at[1, 'replicate'] = '1_pr'
-        design_new_df.at[2, 'sample_id'] = experiment_id + '_pr'
+        design_new_df.at[1,'xcor'] = 'Calculate'
+        design_new_df.at[2, 'sample_id'] = experiment_id + '_pr2'
         design_new_df.at[2, 'replicate'] = '2_pr'
-        design_new_df.at[3, 'sample_id'] = experiment_id + '_pr'
+        design_new_df.at[2,'xcor'] = 'Calculate'
+        design_new_df.at[3, 'sample_id'] = experiment_id + 'pooled'
         design_new_df.at[3, 'replicate'] = 'pooled'
+        design_new_df.at[3,'xcor'] = 'Calculate'
 
         # Make 2 self psuedoreplicates
         self_pseudoreplicates_dict = {}
         for rep, tag_file in zip(design_df['replicate'], design_df['tag_align']):
-            replicate_prefix = experiment_id + '_' + rep
+            replicate_prefix = experiment_id + '_' + str(rep)
             self_pseudoreplicates_dict = \
                 self_psuedoreplication(tag_file, replicate_prefix, paired)
 
