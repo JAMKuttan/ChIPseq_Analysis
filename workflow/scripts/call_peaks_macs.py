@@ -175,8 +175,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
 
     # Sort file
     out, err = utils.run_pipe([
-        'sort -k1,1 -k2,2n %s' % (fc_bedgraph_fn)],
-        fc_bedgraph_sorted_fn)
+        'bedSort %s %s' % (fc_bedgraph_fn, fc_bedgraph_sorted_fn)])
 
     # Convert bedgraph to bigwig
     command = 'bedGraphToBigWig ' + \
@@ -223,8 +222,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
 
     # Sort file
     out, err = utils.run_pipe([
-        'sort -k1,1 -k2,2n %s' % (fc_bedgraph_fn)],
-        pvalue_bedgraph_sorted_fn)
+        'bedSort %s %s' % (fc_bedgraph_fn, pvalue_bedgraph_sorted_fn)])
 
     # Convert bedgraph to bigwig
     command = 'bedGraphToBigWig ' + \
