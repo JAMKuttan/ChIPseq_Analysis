@@ -85,11 +85,18 @@ def check_tools():
         raise Exception('Missing MACS2')
 
     bg_bw_path = shutil.which("bedGraphToBigWig")
-    if r_path:
+    if bg_bw_path:
         logger.info('Found bedGraphToBigWig: %s', bg_bw_path)
     else:
         logger.error('Missing bedGraphToBigWig')
         raise Exception('Missing bedGraphToBigWig')
+
+    bedtools_path = shutil.which("bedtools")
+    if bedtools_path:
+        logger.info('Found bedtools: %s', bedtools_path)
+    else:
+        logger.error('Missing bedtools')
+        raise Exception('Missing bedtools')
 
 
 def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes):
@@ -119,7 +126,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
     # Remove coordinates outside chromosome sizes
 
     narrowpeak_fn = '%s_peaks.narrowPeak' % (prefix)
-    clipped_narrowpeak_fn = '%s-clipped' % (filename)
+    clipped_narrowpeak_fn = 'clipped-%s' % (narrowpeak_fn)
 
 
     steps = ['slopBed -i %s -g %s -b 0' % (narrowpeak_fn, chrom_sizes),
@@ -159,15 +166,21 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
 
     # Remove coordinates outside chromosome sizes (MACS2 bug)
     fc_bedgraph_fn = '%s.fc.signal.bedgraph' % (prefix)
+    fc_bedgraph_sorted_fn = 'sorted-%s' % (fc_bedgraph_fn)
     fc_signal_fn = "%s.fc_signal.bw" % (prefix)
     steps = ['slopBed -i %s_FE.bdg -g %s -b 0' % (prefix, chrom_sizes),
             'bedClip stdin %s %s' % (chrom_sizes, fc_bedgraph_fn)]
 
     out, err = utils.run_pipe(steps)
 
+    # Sort file
+    out, err = utils.run_pipe([
+        'sort -k1,1 -k2,2n %s' % (fc_bedgraph_fn)],
+        fc_bedgraph_sorted_fn)
+
     # Convert bedgraph to bigwig
     command = 'bedGraphToBigWig ' + \
-          '%s ' % (fc_bedgraph_fn) + \
+          '%s ' % (fc_bedgraph_sorted_fn) + \
           '%s ' % (chrom_sizes) + \
           '%s' % (fc_signal_fn)
 
@@ -182,7 +195,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
     # min(no. of reads in ChIP, no. of reads in control) / 1,000,000
     out, err = utils.run_pipe(['gzip -dc %s' % (experiment), 'wc -l'])
     chip_reads = out.strip()
-    out, err = common.run_pipe(['gzip -dc %s' % (control), 'wc -l'])
+    out, err = utils.run_pipe(['gzip -dc %s' % (control), 'wc -l'])
     control_reads = out.strip()
     sval = str(min(float(chip_reads), float(control_reads)) / 1000000)
 
@@ -201,15 +214,21 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
 
     # Remove coordinates outside chromosome sizes (MACS2 bug)
     pvalue_bedgraph_fn = '%s.pval.signal.bedgraph' % (prefix)
+    pvalue_bedgraph_sorted_fn = 'sort-%s' % (pvalue_bedgraph_fn)
     pvalue_signal_fn = "%s.pvalue_signal.bw" % (prefix)
     steps = ['slopBed -i %s_ppois.bdg -g %s -b 0' % (prefix, chrom_sizes),
             'bedClip stdin %s %s' % (chrom_sizes, pvalue_bedgraph_fn)]
 
     out, err = utils.run_pipe(steps)
 
+    # Sort file
+    out, err = utils.run_pipe([
+        'sort -k1,1 -k2,2n %s' % (fc_bedgraph_fn)],
+        pvalue_bedgraph_sorted_fn)
+
     # Convert bedgraph to bigwig
     command = 'bedGraphToBigWig ' + \
-          '%s ' % (pvalue_bedgraph_fn) + \
+          '%s ' % (pvalue_bedgraph_sorted_fn) + \
           '%s ' % (chrom_sizes) + \
           '%s' % (fc_signal_fn)
 

@@ -6,6 +6,7 @@
 import shlex
 import logging
 import subprocess
+import sys
 
 
 logger = logging.getLogger(__name__)
@@ -48,9 +49,9 @@ def run_pipe(steps, outfile=None):
 
 def block_on(command):
     process = subprocess.Popen(shlex.split(command), stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
-    for line in iter(process.stdout.readline, ''):
-        sys.stdout.buffer.write(line)
-    process.wait()
+    for line in iter(process.stdout.readline, b''):
+        sys.stdout.write(line.decode('utf-8'))
+    process.communicate()
     return process.returncode
 
 
@@ -85,11 +86,11 @@ def count_lines(filename):
 
 def rescale_scores(filename, scores_col, new_min=10, new_max=1000):
     n_peaks = count_lines(filename)
-    sorted_fn = '%s-sorted' % (filename)
-    rescaled_fn = '%s-rescaled' % (filename)
+    sorted_fn = 'sorted-%s' % (filename)
+    rescaled_fn = 'rescaled-%s' % (filename)
 
     out, err = run_pipe([
-        'sort -k %dgr,%dgr %s' % (scores_col, scores_col, fn),
+        'sort -k %dgr,%dgr %s' % (scores_col, scores_col, filename),
         r"""awk 'BEGIN{FS="\t";OFS="\t"}{if (NF != 0) print $0}'"""],
         sorted_fn)
 
