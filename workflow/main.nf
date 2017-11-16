@@ -367,7 +367,7 @@ process consensusPeaks {
 
   file '*.replicated.*' into consensusPeaks
   file '*.rejected.*' into rejectedPeaks
-  file("design_diffPeaks.tsv") into designFilePaths
+  file("design_diffPeaks.tsv") into designDiffPeaks
 
   script:
 
