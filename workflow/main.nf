@@ -365,11 +365,12 @@ process consensusPeaks {
 
   output:
 
-  file '*.narrowPeak' into consensusPeaks
+  file '*.replicated.*' into consensusPeaks
+  file '*.rejected.*' into rejectedPeaks
   file("design_diffPeaks.tsv") into designFilePaths
 
   script:
-  
+
   """
   python3 $baseDir/scripts/overlap_peaks.py -d $peaksDesign -f preDiffDesign
   """
