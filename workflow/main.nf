@@ -170,11 +170,12 @@ process filterReads {
 
 }
 
-// Define channel collecting dedup reads intp new design file
-dedupDesign = dedupReads
-              .map{ sampleId, bam, bai, experimentId, biosample, factor, treatment, replicate, controlId ->
-              "$sampleId\t$bam\t$bai\texperimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
-              .collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+// Define channel collecting dedup reads into new design file
+dedupReads
+.map{ sampleId, bam, bai, experimentId, biosample, factor, treatment, replicate, controlId ->
+"$sampleId\t$bam\t$bai\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
+.collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+.into { dedupDesign; preDiffDesign }
 
 // Quality Metrics using deeptools
 process experimentQC {
@@ -343,5 +344,34 @@ process callPeaksMACS {
     python3 $baseDir/scripts/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes -p
     """
   }
+
+}
+
+// Define channel collecting peaks into design file
+peaksDesign = experimentRows
+              .map{ sampleId, peak, fcSignal, pvalueSignal, experimentId, biosample, factor, treatment, replicate, controlId ->
+              "$sampleId\t$peak\t$fcSignal\t$pvalueSignal\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
+              .collectFile(name:'design_peak.tsv', seed:"sample_id\tpeak\txcor\tfcSignal\tpvalueSignal\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+
+// Calculate Consensus Peaks
+process consensusPeaks {
+
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  file peaksDesign
+  file preDiffDesign
+
+  output:
+
+  file '*.narrowPeak' into consensusPeaks
+  file("design_diffPeaks.tsv") into designFilePaths
+
+  script:
+  
+  """
+  python3 $baseDir/scripts/overlap_peaks.py -d $peaksDesign -f preDiffDesign
+  """
 
 }
