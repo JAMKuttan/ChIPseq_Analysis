@@ -330,7 +330,7 @@ process callPeaksMACS {
 
   output:
 
-  set sampleId, file('*.narrowPeak'), file('*.fc_signal.bw'), file('*.pvalue_signal.bw'), experimentId, biosample, factor, treatment, replicate, controlId from experimentRows
+  set sampleId, file('*.narrowPeak'), file('*.fc_signal.bw'), file('*.pvalue_signal.bw'), experimentId, biosample, factor, treatment, replicate, controlId into experimentPeaks
 
   script:
 
@@ -348,7 +348,7 @@ process callPeaksMACS {
 }
 
 // Define channel collecting peaks into design file
-peaksDesign = experimentRows
+peaksDesign = experimentPeaks
               .map{ sampleId, peak, fcSignal, pvalueSignal, experimentId, biosample, factor, treatment, replicate, controlId ->
               "$sampleId\t$peak\t$fcSignal\t$pvalueSignal\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
               .collectFile(name:'design_peak.tsv', seed:"sample_id\tpeak\txcor\tfcSignal\tpvalueSignal\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
