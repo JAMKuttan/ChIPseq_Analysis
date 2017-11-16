@@ -316,8 +316,10 @@ process poolAndPsuedoReads {
 }
 
 // Collect list of experiment design files into a single channel
-experimentRows = experimentPoolObjs.collect()
-            .splitCsv(sep:'\t', header: true)
+experimentRows = experimentPoolObjs
+                .collect()
+                .splitCsv(sep:'\t', header: true)
+                .map { row -> [ row.sample_id, row.tag_align, row.xcor, row.experiment_id, row.biosample, row.factor, row.treatment, row.replicate, row.control_id, row.control_tag_align] }
 
 // Call Peaks using MACS
 process callPeaksMACS {
