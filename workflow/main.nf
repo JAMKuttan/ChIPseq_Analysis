@@ -10,7 +10,7 @@ params.designFile = "$baseDir/../test_data/design_ENCSR238SGC_SE.txt"
 params.genome = 'GRCm38'
 params.genomes = []
 params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
-params.geneomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
+params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
 params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
 params.cutoffRatio = 1.2
 
