@@ -228,7 +228,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
     command = 'bedGraphToBigWig ' + \
           '%s ' % (pvalue_bedgraph_sorted_fn) + \
           '%s ' % (chrom_sizes) + \
-          '%s' % (fc_signal_fn)
+          '%s' % (pvalue_signal_fn)
 
     logger.info(command)
     returncode = utils.block_on(command)
