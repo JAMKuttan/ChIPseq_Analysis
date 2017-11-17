@@ -8,7 +8,7 @@ import shutil
 import logging
 from multiprocessing import cpu_count
 import utils
-from xcor import xcor as calcualte_xcor
+from xcor import xcor as calculate_xcor
 
 EPILOG = '''
 For more details:
