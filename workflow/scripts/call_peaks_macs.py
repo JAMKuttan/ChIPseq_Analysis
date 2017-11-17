@@ -235,6 +235,10 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
     logger.info("bedGraphToBigWig exited with returncode %d" % (returncode))
     assert returncode == 0, "bedGraphToBigWig non-zero return"
 
+    # Remove temporary files
+    os.remove(clipped_narrowpeak_fn)
+    os.remove(rescaled_narrowpeak_fn)
+
 
 def main():
     args = get_args()
