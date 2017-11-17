@@ -375,7 +375,7 @@ process consensusPeaks {
   script:
 
   """
-  python3 $baseDir/scripts/overlap_peaks.py -d $peaksDesign -f preDiffDesign
+  python3 $baseDir/scripts/overlap_peaks.py -d $peaksDesign -f $preDiffDesign
   """
 
 }
