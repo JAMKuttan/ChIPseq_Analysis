@@ -4,6 +4,7 @@ import pytest
 import pandas as pd
 from io import StringIO
 import os
+import utils
 import overlap_peaks
 
 test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
@@ -26,7 +27,7 @@ def design_diff():
 
 def test_check_update_design(design_diff):
     new_design = overlap_peaks.update_design(design_diff)
-    assert df.shape[0] == 2
+    assert new_design.shape[0] == 2
     assert new_design.loc[0, 'control_bam_reads'] == "B_1.bam"
     assert new_design.loc[0, 'peak_caller'] == "bed"
 
