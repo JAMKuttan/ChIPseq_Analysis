@@ -354,7 +354,7 @@ process callPeaksMACS {
 peaksDesign = experimentPeaks
               .map{ sampleId, peak, fcSignal, pvalueSignal, experimentId, biosample, factor, treatment, replicate, controlId ->
               "$sampleId\t$peak\t$fcSignal\t$pvalueSignal\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
-              .collectFile(name:'design_peak.tsv', seed:"sample_id\tpeak\txcor\tfcSignal\tpvalueSignal\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+              .collectFile(name:'design_peak.tsv', seed:"sample_id\tpeaks\tfc_signal\tpvalue_signal\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
 
 // Calculate Consensus Peaks
 process consensusPeaks {

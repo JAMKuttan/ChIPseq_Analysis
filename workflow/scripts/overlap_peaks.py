@@ -2,9 +2,12 @@
 
 '''Generate naive overlap peak files and design file for downstream processing.'''
 
+import os
 import argparse
 import logging
+import shutil
 import pandas as pd
+import utils
 
 EPILOG = '''
 For more details:
@@ -72,7 +75,7 @@ def update_design(design):
 
     logger.info("Adding peaks column.")
 
-    design = design.assign(peak = "", peak_caller = 'bed')
+    design = design.assign(peak='', peak_caller='bed')
 
     return design
 
@@ -84,17 +87,17 @@ def overlap(experiment, design):
 
     # Output File names
     peak_type = 'narrowPeak'
-    overlapping_peaks_fn 	= '%s.replicated.%s' %(experiment, peak_type)
-    rejected_peaks_fn		= '%s.rejected.%s' %(experiment, peak_type)
+    overlapping_peaks_fn = '%s.replicated.%s' % (experiment, peak_type)
+    rejected_peaks_fn = '%s.rejected.%s' % (experiment, peak_type)
 
     # Intermediate File names
-	overlap_tr_fn 	= 'replicated_tr.%s' %(peak_type)
-	overlap_pr_fn 	= 'replicated_pr.%s' %(peak_type)
+    overlap_tr_fn = 'replicated_tr.%s' % (peak_type)
+    overlap_pr_fn = 'replicated_pr.%s' % (peak_type)
 
     # Assign Pooled and Psuedoreplicate peaks
-    pool_peaks = design.loc[design.replicate == 'pooled', 'peak']
-    pr1_peaks = design.loc[design.replicate == '1_pr', 'peak']
-    pr2_peaks = design.loc[design.replicate == '2_pr', 'peak']
+    pool_peaks = design.loc[design.replicate == 'pooled', 'peaks'].values[0]
+    pr1_peaks = design.loc[design.replicate == '1_pr', 'peaks'].values[0]
+    pr2_peaks = design.loc[design.replicate == '2_pr', 'peaks'].values[0]
 
     # Remove non true replicate rows
     not_replicates = ['1_pr', '2_pr', 'pooled']
@@ -102,14 +105,14 @@ def overlap(experiment, design):
     true_rep_peaks = design_true_reps.peaks.unique()
 
     # Find overlaps
-	awk_command = r"""awk 'BEGIN{FS="\t";OFS="\t"}{s1=$3-$2; s2=$13-$12; if (($21/s1 >= 0.5) || ($21/s2 >= 0.5)) {print $0}}'"""
-	cut_command = 'cut -f 1-10'
+    awk_command = r"""awk 'BEGIN{FS="\t";OFS="\t"}{s1=$3-$2; s2=$13-$12; if (($21/s1 >= 0.5) || ($21/s2 >= 0.5)) {print $0}}'"""
+    cut_command = 'cut -f 1-10'
 
     # Find pooled peaks that overlap Rep1 and Rep2
     # where overlap is defined as the fractional overlap
     # with any one of the overlapping peak pairs  >= 0.5
 
-    steps_true = ['intersectBed -wo -a %s -b %s' %(pool_peaks, true_rep_peaks[0]),
+    steps_true = ['intersectBed -wo -a %s -b %s' % (pool_peaks, true_rep_peaks[0]),
                     awk_command,
                     cut_command,
                     'sort -u']
@@ -119,44 +122,45 @@ def overlap(experiment, design):
 
     if len(true_rep_peaks) > 1:
         for true_peak in true_rep_peaks[1:]:
-            steps_true.extend(['intersectBed -wo -a stdin -b %s' %(true_peak),
-            		awk_command,
-            		cut_command,
-            		'sort -u'])
+            steps_true.extend(['intersectBed -wo -a stdin -b %s' % (true_peak),
+                                awk_command,
+                                cut_command,
+                                'sort -u'])
 
     out, err = utils.run_pipe(steps_true, outfile=overlap_tr_fn)
-    print "%d peaks overlap with both true replicates" %(utils.count_lines(overlap_tr_fn))
+    print("%d peaks overlap with both true replicates" %
+        (utils.count_lines(overlap_tr_fn)))
 
     # Find pooled peaks that overlap PseudoRep1 and PseudoRep2
     # where overlap is defined as the fractional overlap
     # with any one of the overlapping peak pairs  >= 0.5
 
-    steps_pseudo = ['intersectBed -wo -a %s -b %s' %(pool_peaks, pr1_peaks),
+    steps_pseudo = ['intersectBed -wo -a %s -b %s' % (pool_peaks, pr1_peaks),
                     awk_command,
                     cut_command,
                     'sort -u',
-                    'intersectBed -wo -a stdin -b %s' %(pr2_peaks),
+                    'intersectBed -wo -a stdin -b %s' % (pr2_peaks),
                     awk_command,
                     cut_command,
                     'sort -u']
 
     out, err = utils.run_pipe(steps_pseudo, outfile=overlap_pr_fn)
-    print "%d peaks overlap with both pooled pseudoreplicates" \
-        % (utils.count_lines(overlap_pr_fn))
+    print("%d peaks overlap with both pooled pseudoreplicates"
+            % (utils.count_lines(overlap_pr_fn)))
 
-	# Make union of peak lists
-	out, err = utils.run_pipe([
-		'cat %s %s' %(overlap_tr_fn, overlap_pr_fn),
-		'sort -u'
-		], overlapping_peaks_fn)
-	print "%d peaks overlap with true replicates or with pooled pseudorepliates" \
-        % (utils.count_lines(overlapping_peaks_fn))
+    # Make union of peak lists
+    out, err = utils.run_pipe([
+                'cat %s %s' % (overlap_tr_fn, overlap_pr_fn),
+                'sort -u'
+                ], overlapping_peaks_fn)
+    print("%d peaks overlap with true replicates or with pooled pseudorepliates"
+            % (utils.count_lines(overlapping_peaks_fn)))
 
-	# Make rejected peak list
-	out, err = utils.run_pipe([
-		'intersectBed -wa -v -a %s -b %s' %(pool_peaks, overlapping_peaks_fn)
-		], rejected_peaks_fn)
-	print "%d peaks were rejected" %(utils.count_lines(rejected_peaks_fn))
+    # Make rejected peak list
+    out, err = utils.run_pipe([
+        'intersectBed -wa -v -a %s -b %s' % (pool_peaks, overlapping_peaks_fn)
+        ], rejected_peaks_fn)
+    print("%d peaks were rejected" % (utils.count_lines(rejected_peaks_fn)))
 
     # Remove temporary files
     os.remove(overlap_tr_fn)
@@ -168,14 +172,14 @@ def overlap(experiment, design):
 def main():
     args = get_args()
     design = args.design
-    files = args.design
+    files = args.files
 
     # Create a file handler
     handler = logging.FileHandler('consensus_peaks.log')
     logger.addHandler(handler)
 
     # Read files as dataframes
-    design_peaks_df = pd.read_csv(design, sep='\t')
+    design_peaks_df = pd.read_csv('../design/design_peak.tsv', sep='\t')
     design_files_df = pd.read_csv(files, sep='\t')
 
     # Make a design file for
@@ -184,7 +188,7 @@ def main():
     # Find consenus overlap peaks for each experiment
     for experiment, df_experiment in design_peaks_df.groupby('experiment_id'):
         replicated_peak = overlap(experiment, df_experiment)
-        design_diff.loc[design_diff.experiment_id == experiment, "peaks"] = replicated_peak
+        design_diff.loc[design_diff.experiment_id == experiment, "peak"] = replicated_peak
 
     # Write out file
     design_diff.columns = ['SampleID',
