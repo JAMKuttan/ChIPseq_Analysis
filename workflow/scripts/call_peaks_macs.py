@@ -250,7 +250,6 @@ def main():
     chrom_size = args.size
     paired = args.paired
 
-
     # Create a file handler
     handler = logging.FileHandler('call_peaks.log')
     logger.addHandler(handler)

@@ -192,13 +192,13 @@ def main():
         design_new_df['replicate'] = design_new_df['replicate'].astype(str)
         design_new_df.at[1, 'sample_id'] = experiment_id + '_pr1'
         design_new_df.at[1, 'replicate'] = '1_pr'
-        design_new_df.at[1,'xcor'] = 'Calculate'
+        design_new_df.at[1, 'xcor'] = 'Calculate'
         design_new_df.at[2, 'sample_id'] = experiment_id + '_pr2'
         design_new_df.at[2, 'replicate'] = '2_pr'
-        design_new_df.at[2,'xcor'] = 'Calculate'
+        design_new_df.at[2, 'xcor'] = 'Calculate'
         design_new_df.at[3, 'sample_id'] = experiment_id + 'pooled'
         design_new_df.at[3, 'replicate'] = 'pooled'
-        design_new_df.at[3,'xcor'] = 'Calculate'
+        design_new_df.at[3, 'xcor'] = 'Calculate'
 
         # Make 2 self psuedoreplicates
         self_pseudoreplicates_dict = {}

@@ -85,7 +85,6 @@ def count_lines(filename):
 
 
 def rescale_scores(filename, scores_col, new_min=10, new_max=1000):
-    n_peaks = count_lines(filename)
     sorted_fn = 'sorted-%s' % (filename)
     rescaled_fn = 'rescaled-%s' % (filename)
 
