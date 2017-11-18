@@ -179,7 +179,7 @@ def main():
     logger.addHandler(handler)
 
     # Read files as dataframes
-    design_peaks_df = pd.read_csv('../design/design_peak.tsv', sep='\t')
+    design_peaks_df = pd.read_csv(design, sep='\t')
     design_files_df = pd.read_csv(files, sep='\t')
 
     # Make a design file for
