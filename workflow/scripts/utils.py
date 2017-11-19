@@ -7,6 +7,7 @@ import shlex
 import logging
 import subprocess
 import sys
+import os
 
 
 logger = logging.getLogger(__name__)
@@ -109,10 +110,12 @@ def rescale_scores(filename, scores_col, new_min=10, new_max=1000):
     b = max_score
     x = new_min
     y = new_max
+
     if min_score == max_score:  # give all peaks new_min
         rescale_formula = "x"
     else:  # n is the unscaled score from scores_col
         rescale_formula = "((n-a)*(y-x)/(b-a))+x"
+
     out, err = run_pipe(
         [
             'cat %s' % (sorted_fn),
@@ -122,4 +125,7 @@ def rescale_scores(filename, scores_col, new_min=10, new_max=1000):
             % (scores_col, rescale_formula)
         ],
         rescaled_fn)
+
+    os.remove(sorted_fn)
+
     return rescaled_fn
