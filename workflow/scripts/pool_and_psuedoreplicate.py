@@ -213,6 +213,9 @@ def main():
             replicate = rep + 1
             design_new_df.loc[replicate, 'tag_align'] = path_to_file
 
+        # Drop index column
+        design_new_df.drop(labels='index', axis=1, inplace=True)
+
     else:
         # Make pool of replicates
         replicate_files = design_df.tag_align.unique()
