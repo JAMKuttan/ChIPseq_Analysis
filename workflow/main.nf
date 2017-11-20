@@ -10,6 +10,8 @@ params.designFile = "$baseDir/../test_data/design_ENCSR238SGC_SE.txt"
 params.genome = 'GRCm38'
 params.genomes = []
 params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
+params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
+params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
 params.cutoffRatio = 1.2
 
 // Check inputs
@@ -31,6 +33,8 @@ readsList = Channel
 // Define regular variables
 pairedEnd = params.pairedEnd
 designFile = params.designFile
+genomeSize = params.genomeSize
+chromSizes = params.chromSizes
 cutoffRatio = params.cutoffRatio
 
 process checkDesignFile {
@@ -166,11 +170,12 @@ process filterReads {
 
 }
 
-// Define channel collecting dedup reads intp new design file
-dedupDesign = dedupReads
-              .map{ sampleId, bam, bai, experimentId, biosample, factor, treatment, replicate, controlId ->
-              "$sampleId\t$bam\t$bai\texperimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
-              .collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+// Define channel collecting dedup reads into new design file
+dedupReads
+.map{ sampleId, bam, bai, experimentId, biosample, factor, treatment, replicate, controlId ->
+"$sampleId\t$bam\t$bai\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
+.collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+.into { dedupDesign; preDiffDesign }
 
 // Quality Metrics using deeptools
 process experimentQC {
@@ -283,6 +288,8 @@ process defineExpDesignFiles {
 // Make Experiment design files to be read in for downstream analysis
 process poolAndPsuedoReads {
 
+
+  tag "${experimentObjs.baseName}"
   publishDir "$baseDir/output/design", mode: 'copy'
 
   input:
@@ -305,5 +312,70 @@ process poolAndPsuedoReads {
     python3 $baseDir/scripts/pool_and_psuedoreplicate.py -d $experimentObjs -c $cutoffRatio
     """
   }
+
+}
+
+// Collect list of experiment design files into a single channel
+experimentRows = experimentPoolObjs
+                .collect()
+                .splitCsv(sep:'\t', header: true)
+                .flatten()
+                .map { row -> [ row.sample_id, row.tag_align, row.xcor, row.experiment_id, row.biosample, row.factor, row.treatment, row.replicate, row.control_id, row.control_tag_align] }
+
+// Call Peaks using MACS
+process callPeaksMACS {
+
+  tag "$sampleId-$replicate"
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+  set sampleId, tagAlign, xcor, experimentId, biosample, factor, treatment, replicate, controlId, controlTagAlign from experimentRows
+
+  output:
+
+  set sampleId, file('*.narrowPeak'), file('*.fc_signal.bw'), file('*.pvalue_signal.bw'), experimentId, biosample, factor, treatment, replicate, controlId into experimentPeaks
+
+  script:
+
+  if (pairedEnd) {
+    """
+    python3 $baseDir/scripts/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes -p
+    """
+  }
+  else {
+    """
+    python3 $baseDir/scripts/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes -p
+    """
+  }
+
+}
+
+// Define channel collecting peaks into design file
+peaksDesign = experimentPeaks
+              .map{ sampleId, peak, fcSignal, pvalueSignal, experimentId, biosample, factor, treatment, replicate, controlId ->
+              "$sampleId\t$peak\t$fcSignal\t$pvalueSignal\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
+              .collectFile(name:'design_peak.tsv', seed:"sample_id\tpeaks\tfc_signal\tpvalue_signal\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+
+// Calculate Consensus Peaks
+process consensusPeaks {
+
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  file peaksDesign
+  file preDiffDesign
+
+  output:
+
+  file '*.replicated.*' into consensusPeaks
+  file '*.rejected.*' into rejectedPeaks
+  file("design_diffPeaks.tsv") into designDiffPeaks
+
+  script:
+
+  """
+  python3 $baseDir/scripts/overlap_peaks.py -d $peaksDesign -f $preDiffDesign
+  """
 
 }
