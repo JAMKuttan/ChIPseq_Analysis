@@ -241,20 +241,22 @@ def main():
         design_new_df = design_df
         # Check controls against cutoff_ratio
         # if so replace with pool_control
+        # unless single control was used
         path_to_pool_control = cwd + '/' + pool_control
-        if control_df.values.max() > 1.2 and not single_control:
-            logger.info("Number of reads in controls differ by " +
-                " > factor of %f. Using pooled controls." % (cutoff_ratio))
-            design_new_df['control_tag_align'] = path_to_pool_control
-        else:
-            for index, row in design_new_df.iterrows():
-                exp_no_reads = utils.count_lines(row['tag_align'])
-                con_no_reads = utils.count_lines(row['control_tag_align'])
-                if con_no_reads < exp_no_reads:
-                    logger.info("Fewer reads in control than experiment." +
-                                "Using pooled controls for replicate %s."
-                                % row['replicate'])
-                    design_new_df.loc[index, 'control_tag_align'] = \
+        if not single_control:
+            if control_df.values.max() > 1.2:
+                logger.info("Number of reads in controls differ by " +
+                    " > factor of %f. Using pooled controls." % (cutoff_ratio))
+                design_new_df['control_tag_align'] = path_to_pool_control
+            else:
+                for index, row in design_new_df.iterrows():
+                    exp_no_reads = utils.count_lines(row['tag_align'])
+                    con_no_reads = utils.count_lines(row['control_tag_align'])
+                    if con_no_reads < exp_no_reads:
+                        logger.info("Fewer reads in control than experiment." +
+                                    "Using pooled controls for replicate %s."
+                                    % row['replicate'])
+                        design_new_df.loc[index, 'control_tag_align'] = \
                                                             path_to_pool_control
 
         # Add in pseudo replicates
