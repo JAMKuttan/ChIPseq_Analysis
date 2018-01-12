@@ -34,7 +34,7 @@ STRIP_EXTENSIONS = ['.bam', '.srt']
 
 def get_args():
     '''Define arguments.'''
-    
+
     parser = argparse.ArgumentParser(
         description=__doc__, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -232,7 +232,7 @@ def compute_complexity(bam, paired, bam_basename):
 
     if paired:
         steps = [
-            "sambamba sort -t %d -n %s" % (cpu_count(), bam),
+            "samtools sort -@%d -n %s" % (cpu_count(), bam),
             "bamToBed -bedpe -i stdin",
             r"""awk 'BEGIN{OFS="\t"}{print $1,$2,$4,$6,$9,$10}'"""]
     else:
