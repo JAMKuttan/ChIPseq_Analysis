@@ -25,7 +25,7 @@ logger.setLevel(logging.INFO)
 
 def get_args():
     '''Define arguments.'''
-    
+
     parser = argparse.ArgumentParser(
         description=__doc__, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -86,7 +86,7 @@ def convert_mapped_pe(bam, bam_basename):
         % (cpu_count(), nmsrt_bam_filename, bam)
 
     logger.info(samtools_sort_command)
-    utils.check_output(shlex.split(samtools_sort_command))
+    subprocess.check_output(shlex.split(samtools_sort_command))
 
     out, err = utils.run_pipe([
         "bamToBed -bedpe -mate1 -i %s" % (nmsrt_bam_filename),
