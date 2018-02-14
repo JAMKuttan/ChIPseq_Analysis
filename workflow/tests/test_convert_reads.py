@@ -7,7 +7,7 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/convertReads/'
 
 
-@pytest.mark.acceptance
+@pytest.mark.integration
 def test_convert_reads_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.filt.nodup.tagAlign.gz'))
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.filt.nodup.bedse.gz'))

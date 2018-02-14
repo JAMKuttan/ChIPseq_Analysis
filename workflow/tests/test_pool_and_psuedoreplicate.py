@@ -60,7 +60,7 @@ def test_check_controls_single(design_experiment_3):
     assert no_controls == 1
 
 
-@pytest.mark.acceptance
+@pytest.mark.integration
 def test_pool_and_psuedoreplicate_single_end():
     design_file = os.path.join(test_output_path, 'ENCSR238SGC_ppr.tsv')
     assert os.path.exists(design_file)
@@ -68,7 +68,7 @@ def test_pool_and_psuedoreplicate_single_end():
     assert design_df.shape[0] == 5
 
 
-@pytest.mark.acceptance
+@pytest.mark.integration
 def test_experiment_design_paired_end():
     # Do the same thing for paired end data
     pass

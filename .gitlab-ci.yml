@@ -7,7 +7,6 @@ before_script:
 stages:
   - unit
   - integration
-  - acceptance
 
 user_configuration:
   stage: unit
@@ -18,8 +17,4 @@ single_end_mouse:
   stage: integration
   script:
   - nextflow run workflow/main.nf
-
-single_end_acceptance:
-  stage: acceptance
-  script:
-  - pytest -m acceptance
+  - pytest -m integration
