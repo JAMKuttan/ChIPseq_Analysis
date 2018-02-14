@@ -18,3 +18,8 @@ single_end_mouse:
   script:
   - nextflow run workflow/main.nf
   - pytest -m integration
+
+paired_end_human:
+  stage: integration
+  script:
+  - nextflow run workflow/main.nf --designFile "test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38'
