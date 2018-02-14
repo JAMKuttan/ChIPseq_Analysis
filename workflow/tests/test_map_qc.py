@@ -8,6 +8,7 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/filterReads/'
 
 
+@pytest.mark.acceptance
 def test_map_qc_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.filt.nodup.bam'))
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.filt.nodup.bam.bai'))

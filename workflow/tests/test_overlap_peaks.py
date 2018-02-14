@@ -25,6 +25,7 @@ def design_diff():
     return design_df
 
 
+@pytest.mark.unit
 def test_check_update_design(design_diff):
     new_design = overlap_peaks.update_design(design_diff)
     assert new_design.shape[0] == 2
@@ -32,12 +33,14 @@ def test_check_update_design(design_diff):
     assert new_design.loc[0, 'peak_caller'] == "bed"
 
 
+@pytest.mark.acceptance
 def test_overlap_peaks_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC.rejected.narrowPeak'))
     peak_file = test_output_path + 'ENCSR238SGC.replicated.narrowPeak'
-    assert utils.count_lines(peak_file) == 150096
+    assert utils.count_lines(peak_file) == 150302
 
 
+@pytest.mark.acceptance
 def test_call_peaks_macs_pairedend():
     # Do the same thing for paired end data
     pass

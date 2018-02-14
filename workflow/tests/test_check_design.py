@@ -70,6 +70,7 @@ def fastq_files_1(fastq_files):
     return fastq_df
 
 
+@pytest.mark.unit
 def test_check_headers_singleend(design_1):
     paired = False
     with pytest.raises(Exception) as excinfo:
@@ -77,6 +78,7 @@ def test_check_headers_singleend(design_1):
     assert str(excinfo.value) == "Missing column headers: ['fastq_read1']"
 
 
+@pytest.mark.unit
 def test_check_headers_pairedend(design):
     paired = True
     with pytest.raises(Exception) as excinfo:
@@ -84,12 +86,14 @@ def test_check_headers_pairedend(design):
     assert str(excinfo.value) == "Missing column headers: ['fastq_read2']"
 
 
+@pytest.mark.unit
 def test_check_controls(design_2):
     with pytest.raises(Exception) as excinfo:
         check_design.check_controls(design_2)
     assert str(excinfo.value) == "Missing control experiments: ['B_1']"
 
 
+@pytest.mark.unit
 def test_check_files_missing_files(design, fastq_files_1):
     paired = False
     with pytest.raises(Exception) as excinfo:
@@ -97,18 +101,22 @@ def test_check_files_missing_files(design, fastq_files_1):
     assert str(excinfo.value) == "Missing files from design file: ['B_2.fastq.gz']"
 
 
+@pytest.mark.unit
 def test_check_files_output_singleend(design, fastq_files):
     paired = False
     new_design = check_design.check_files(design, fastq_files, paired)
     assert new_design.loc[0, 'fastq_read1'] == "/path/to/file/A_1.fastq.gz"
 
 
+@pytest.mark.unit
 def test_check_files_output_pairedend(design_3, fastq_files):
     paired = True
     new_design = check_design.check_files(design_3, fastq_files, paired)
     assert new_design.loc[0, 'fastq_read2'] == "/path/to/file/A_2.fastq.gz"
 
 
+
+@pytest.mark.unit
 def test_check_replicates(design_4):
     paired = False
     with pytest.raises(Exception) as excinfo:

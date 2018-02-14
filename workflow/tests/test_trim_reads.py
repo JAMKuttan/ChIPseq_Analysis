@@ -9,6 +9,8 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/trimReads/'
 
 
+
+@pytest.mark.acceptance
 def test_trim_reads_singleend():
     raw_fastq = test_data_path + 'ENCFF833BLU.fastq.gz'
     trimmed_fastq = test_output_path + 'ENCFF833BLU_trimmed.fq.gz'
@@ -19,6 +21,7 @@ def test_trim_reads_singleend():
     assert 'Trimming mode: single-end' in open(trimmed_fastq_report).readlines()[4]
 
 
+@pytest.mark.acceptance
 def test_trim_reads_pairedend():
     # Do the same thing for paired end data
     pass

@@ -36,26 +36,31 @@ def design_experiment_3(design_experiment):
     return design_experiment
 
 
+@pytest.mark.unit
 def test_check_replicates(design_experiment):
     no_reps = pool_and_psuedoreplicate.check_replicates(design_experiment)
     assert no_reps == 2
 
 
+@pytest.mark.unit
 def test_check_replicates_single(design_experiment_2):
     no_reps = pool_and_psuedoreplicate.check_replicates(design_experiment_2)
     assert no_reps == 1
 
 
+@pytest.mark.unit
 def test_check_controls(design_experiment):
     no_controls = pool_and_psuedoreplicate.check_controls(design_experiment)
     assert no_controls == 2
 
 
+@pytest.mark.unit
 def test_check_controls_single(design_experiment_3):
     no_controls = pool_and_psuedoreplicate.check_controls(design_experiment_3)
     assert no_controls == 1
 
 
+@pytest.mark.acceptance
 def test_pool_and_psuedoreplicate_single_end():
     design_file = os.path.join(test_output_path, 'ENCSR238SGC_ppr.tsv')
     assert os.path.exists(design_file)
@@ -63,6 +68,7 @@ def test_pool_and_psuedoreplicate_single_end():
     assert design_df.shape[0] == 5
 
 
+@pytest.mark.acceptance
 def test_experiment_design_paired_end():
     # Do the same thing for paired end data
     pass

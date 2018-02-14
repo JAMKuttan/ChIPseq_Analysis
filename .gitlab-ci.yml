@@ -4,7 +4,22 @@ before_script:
   - module load nextflow/0.24.1-SNAPSHOT
   - ln -s /project/shared/bicf_workflow_ref/workflow_testdata/chipseq/*fastq.gz test_data/
 
-test:
+stages:
+  - unit
+  - integration
+  - acceptance
+
+user_configuration:
+  stage: unit
   script:
-  - nextflow run workflow/main.nf 
-  - pytest
+  - pytest -m unit
+
+single_end_mouse:
+  stage: integration
+  script:
+  - nextflow run workflow/main.nf
+
+single_end_acceptance:
+  stage: unit
+  script:
+  - pytest -m acceptance

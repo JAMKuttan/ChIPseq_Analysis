@@ -29,6 +29,7 @@ def steps_2(steps_1):
     return steps_1
 
 
+@pytest.mark.unit
 def test_run_one_step(steps_1, capsys):
     check_output = 'ENCLB144FDT\tENCSR238SGC\tlimb\tH3K4me1\tNone\t1\tENCLB304SBJ\tENCFF833BLU.fastq.gz'.encode('UTF-8')
     out, err = utils.run_pipe(steps_1)
@@ -37,6 +38,7 @@ def test_run_one_step(steps_1, capsys):
     assert check_output in out
 
 
+@pytest.mark.unit
 def test_run_two_step(steps_2, capsys):
     check_output = 'ENCFF833BLU.fastq.gz\nENCFF646LXU.fastq.gz'.encode('UTF-8')
     out, err = utils.run_pipe(steps_2)
@@ -45,6 +47,7 @@ def test_run_two_step(steps_2, capsys):
     assert check_output in out
 
 
+@pytest.mark.unit
 def test_run_last_step_file(steps_2, capsys, tmpdir):
     check_output = 'ENCFF833BLU.fastq.gz\nENCFF646LXU.fastq.gz'
     tmp_outfile = tmpdir.join('output.txt')
@@ -54,16 +57,19 @@ def test_run_last_step_file(steps_2, capsys, tmpdir):
     assert check_output in tmp_outfile.read()
 
 
+@pytest.mark.unit
 def test_strip_extensions():
     filename = utils.strip_extensions('ENCFF833BLU.fastq.gz', STRIP_EXTENSIONS)
     assert filename == 'ENCFF833BLU'
 
 
+@pytest.mark.unit
 def test_strip_extensions_not_valid():
     filename = utils.strip_extensions('ENCFF833BLU.not.valid', STRIP_EXTENSIONS)
     assert filename == 'ENCFF833BLU.not.valid'
 
 
+@pytest.mark.unit
 def test_strip_extensions_missing_basename():
     filename = utils.strip_extensions('.fastq.gz', STRIP_EXTENSIONS)
     assert filename == '.fastq'

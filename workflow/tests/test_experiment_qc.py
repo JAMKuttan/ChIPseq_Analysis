@@ -24,11 +24,13 @@ def design_bam():
     return design_df
 
 
+@pytest.mark.unit
 def test_check_update_controls(design_bam):
     new_design = experiment_qc.update_controls(design_bam)
     assert new_design.loc[0, 'control_reads'] == "B_1.bam"
 
 
+@pytest.mark.acceptance
 def test_experiment_qc_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'sample_mbs.npz'))
     assert os.path.exists(os.path.join(test_output_path, 'heatmap_SpearmanCorr.png'))
@@ -36,7 +38,7 @@ def test_experiment_qc_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB144FDT_fingerprint.png'))
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB831RUI_fingerprint.png'))
 
-
+@pytest.mark.acceptance
 def test_experiment_qc_pairedend():
     # Do the same thing for paired end data
     pass

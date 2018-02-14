@@ -24,11 +24,13 @@ def design_tag():
     return design_df
 
 
+@pytest.mark.unit
 def test_check_update_controls_tag(design_tag):
     new_design = experiment_design.update_controls(design_tag)
     assert new_design.loc[0, 'control_tag_align'] == "B_1.tagAlign.gz"
 
 
+@pytest.mark.acceptance
 def test_experiment_design_single_end():
     design_file = os.path.join(test_output_path, 'ENCSR238SGC.tsv')
     assert os.path.exists(design_file)
@@ -36,6 +38,7 @@ def test_experiment_design_single_end():
     assert design_df.shape[0] == 2
 
 
+@pytest.mark.acceptance
 def test_experiment_design_paired_end():
     # Do the same thing for paired end data
     pass

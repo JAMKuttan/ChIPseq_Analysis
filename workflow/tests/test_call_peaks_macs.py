@@ -8,6 +8,7 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/callPeaksMACS/'
 
 
+@pytest.mark.acceptance
 def test_call_peaks_macs_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB144FDT.fc_signal.bw'))
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB144FDT.pvalue_signal.bw'))
@@ -15,6 +16,7 @@ def test_call_peaks_macs_singleend():
     assert utils.count_lines(peak_file) == 210349
 
 
+@pytest.mark.acceptance
 def test_call_peaks_macs_pairedend():
     # Do the same thing for paired end data
     pass
