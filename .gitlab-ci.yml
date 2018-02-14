@@ -20,6 +20,6 @@ single_end_mouse:
   - nextflow run workflow/main.nf
 
 single_end_acceptance:
-  stage: unit
+  stage: acceptance
   script:
   - pytest -m acceptance
