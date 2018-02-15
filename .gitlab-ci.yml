@@ -1,6 +1,6 @@
 before_script:
   - module add  python/3.6.1-2-anaconda
-  - pip install --user pytest-pythonpath
+  - pip install --user pytest-pythonpath pytest-cov
   - module load nextflow/0.24.1-SNAPSHOT
   - ln -s /project/shared/bicf_workflow_ref/workflow_testdata/chipseq/*fastq.gz test_data/
 
@@ -18,8 +18,9 @@ single_end_mouse:
   script:
   - nextflow run workflow/main.nf
   - pytest -m integration
+  - pytest --cov=./workflow/scripts 
 
 paired_end_human:
   stage: integration
   script:
-  - nextflow run workflow/main.nf --designFile "test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38'
+  - nextflow run workflow/main.nf --designFile "$baseDir/../test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38'
