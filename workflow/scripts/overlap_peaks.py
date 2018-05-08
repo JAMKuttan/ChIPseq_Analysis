@@ -182,8 +182,11 @@ def main():
     design_peaks_df = pd.read_csv(design, sep='\t')
     design_files_df = pd.read_csv(files, sep='\t')
 
-    # Make a design file for
+    # Make a design file for differential binding
     design_diff = update_design(design_files_df)
+
+    # Make a design file for annotating Peaks
+    design_anno = pd.DataFrame()
 
     # Find consenus overlap peaks for each experiment
     for experiment, df_experiment in design_peaks_df.groupby('experiment_id'):

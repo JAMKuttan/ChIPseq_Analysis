@@ -34,6 +34,7 @@ readsList = Channel
 pairedEnd = params.pairedEnd
 designFile = params.designFile
 genomeSize = params.genomeSize
+genome = params.genome
 chromSizes = params.chromSizes
 cutoffRatio = params.cutoffRatio
 
@@ -376,4 +377,23 @@ process consensusPeaks {
   python3 $baseDir/scripts/overlap_peaks.py -d $peaksDesign -f $preDiffDesign
   """
 
+}
+
+// Annotate Peaks
+process peakAnnotation {
+
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  file consensusPeaks
+
+   output:
+     file "*chipseeker*" into chipseeker_originalpeak_output
+   script:
+     """
+     module load python/2.7.x-anaconda
+     module load R/3.3.2-gccmkl
+     Rscript $baseDir/scripts/runChipseeker.R $design_file ${params.genomepath}
+"""
 }

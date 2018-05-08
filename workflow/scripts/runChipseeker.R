@@ -1,35 +1,31 @@
-args = commandArgs(trailingOnly=TRUE)
-#if (length(args)==0) {
-#  stop("At least one argument must be supplied (input file).n", call.=FALSE)
-#} else if (length(args)==1) {
-#  # default output file
-#  args[3] = "out.txt"
-#}
+#!/bin/Rscript
 
 library(ChIPseeker)
-#Parse the genome path and get genome version
-path_elements = unlist(strsplit(args[2],"[/]"))
-genome = path_elements[length(path_elements)]
 
-if(genome=="GRCh37")
-{ 
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-}
-if(genome=="GRCm38")
-{ 
-library(TxDb.Mmusculus.UCSC.mm10.knownGene)
-txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
-}
-if(genome=="GRCh38")
-{ 
-library(TxDb.Hsapiens.UCSC.hg38.knownGene)
-txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
-}
 
-design<-read.csv(args[1])
-files<-as.list(as.character(design$Peaks))
-names(files)<-design$SampleID
+# Create parser object
+parser <- ArgumentParser()
+
+# Specify our desired options
+parser$add_argument("-d", "--design", help = "File path to design file", required = TRUE)
+parser$add_argument("-g", "--genome", help = "The genome assembly", required = TRUE)
+
+# Parse arguments
+args <- parser$parse_args()
+
+
+# Load UCSC Known Genes
+if(args$genome=='GRCh37') {
+    library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+    txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+} else if(args$genome=='GRCm38')  {
+    library(TxDb.Mmusculus.UCSC.mm10.knownGene)
+    txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
+}
+else if(args$genome=='GRCh38')  {
+    library(TxDb.Hsapiens.UCSC.hg38.knownGene)
+    txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
+}
 
 
 peakAnnoList <- lapply(files, annotatePeak, TxDb=txdb, tssRegion=c(-3000, 3000), verbose=FALSE)
@@ -38,8 +34,8 @@ for(index in c(1:length(peakAnnoList)))
   filename<-paste(names(files)[index],".chipseeker_annotation.xls",sep="")
   write.table(as.data.frame(peakAnnoList[[index]]),filename,sep="\t",quote=F)
   #draw individual plot
-  pie_name <- paste(names(files)[index],".chipseeker_pie.pdf",sep="") 
-  vennpie_name <- paste(names(files)[index],".chipseeker_vennpie.pdf",sep="") 
+  pie_name <- paste(names(files)[index],".chipseeker_pie.pdf",sep="")
+  vennpie_name <- paste(names(files)[index],".chipseeker_vennpie.pdf",sep="")
   upsetplot_name <- paste(names(files)[index],".chipseeker_upsetplot.pdf",sep="")
   pdf(pie_name)
   plotAnnoPie(peakAnnoList[[index]])
@@ -53,4 +49,3 @@ for(index in c(1:length(peakAnnoList)))
 
 
 }
-
