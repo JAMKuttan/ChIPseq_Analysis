@@ -54,12 +54,12 @@ process checkDesignFile {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/check_design.py -d $designFile -f $readsList -p
+    python3 $baseDir/process_scripts/design_file/check_design.py -d $designFile -f $readsList -p
     """
   }
   else {
     """
-    python $baseDir/scripts/check_design.py -d $designFile -f $readsList
+    python $baseDir/process_scripts/design_file/check_design.py -d $designFile -f $readsList
     """
   }
 
@@ -95,12 +95,12 @@ process trimReads {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} ${reads[1]} -p
+    python3 $baseDir/process_scripts/preproc_fastq/trim_reads.py -f ${reads[0]} ${reads[1]} -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]}
+    python3 $baseDir/process_scripts/preproc_fastq/trim_reads.py -f ${reads[0]}
     """
   }
 
@@ -126,12 +126,12 @@ process alignReads {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa -p
+    python3 $baseDir/process_scripts/alignment/map_reads.py -f $reads -r ${index}/genome.fa -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa
+    python3 $baseDir/process_scripts/alignment/map_reads.py -f $reads -r ${index}/genome.fa
     """
   }
 
@@ -159,12 +159,12 @@ process filterReads {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/map_qc.py -b $mapped -p
+    python3 $baseDir/process_scripts/alignment/map_qc.py -b $mapped -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/map_qc.py -b $mapped
+    python3 $baseDir/process_scripts/alignment/map_qc.py -b $mapped
     """
   }
 
@@ -193,7 +193,7 @@ process experimentQC {
   script:
 
   """
-  python3 $baseDir/scripts/experiment_qc.py -d $dedupDesign
+  python3 $baseDir/process_scripts/quality_metrics/experiment_qc.py -d $dedupDesign
   """
 
 }
@@ -216,12 +216,12 @@ process convertReads {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/convert_reads.py -b $deduped -p
+    python3 $baseDir/process_scripts/alignment/convert_reads.py -b $deduped -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/convert_reads.py -b $deduped
+    python3 $baseDir/process_scripts/alignment/convert_reads.py -b $deduped
     """
   }
 
@@ -246,12 +246,12 @@ process crossReads {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/xcor.py -t $seTagAlign -p
+    python3 $baseDir/process_scripts/quality_metrics/xcor.py -t $seTagAlign -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/xcor.py -t $seTagAlign
+    python3 $baseDir/process_scripts/quality_metrics/xcor.py -t $seTagAlign
     """
   }
 
@@ -279,7 +279,7 @@ process defineExpDesignFiles {
   script:
 
   """
-  python3 $baseDir/scripts/experiment_design.py -d $xcorDesign
+  python3 $baseDir/process_scripts/design_file/experiment_design.py -d $xcorDesign
   """
 
 }
@@ -304,12 +304,12 @@ process poolAndPsuedoReads {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/pool_and_psuedoreplicate.py -d $experimentObjs -c $cutoffRatio -p
+    python3 $baseDir/process_scripts/call_peaks/pool_and_psuedoreplicate.py -d $experimentObjs -c $cutoffRatio -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/pool_and_psuedoreplicate.py -d $experimentObjs -c $cutoffRatio
+    python3 $baseDir/process_scripts/call_peaks/pool_and_psuedoreplicate.py -d $experimentObjs -c $cutoffRatio
     """
   }
 
@@ -337,12 +337,12 @@ process callPeaksMACS {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes -p
+    python3 $baseDir/process_scripts/call_peaks/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes
+    python3 $baseDir/process_scripts/call_peaks/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes
     """
   }
 
@@ -373,7 +373,7 @@ process consensusPeaks {
   script:
 
   """
-  python3 $baseDir/scripts/overlap_peaks.py -d $peaksDesign -f $preDiffDesign
+  python3 $baseDir/process_scripts/call_peaks/overlap_peaks.py -d $peaksDesign -f $preDiffDesign
   """
 
 }

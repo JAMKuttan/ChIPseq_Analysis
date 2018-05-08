@@ -1,8 +1,14 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 before_script:
   - module add  python/3.6.1-2-anaconda
   - pip install --user pytest-pythonpath pytest-cov
   - module load nextflow/0.27.6
   - ln -s /project/shared/bicf_workflow_ref/workflow_testdata/chipseq/*fastq.gz test_data/
+  - git submodule update --init --recursive
+  - git submodule sync --recursive
+
 
 stages:
   - unit
@@ -12,6 +18,9 @@ user_configuration:
   stage: unit
   script:
   - pytest -m unit
+  artifacts:
+    expire_in: 2 days
+
 
 single_end_mouse:
   stage: integration
@@ -19,8 +28,12 @@ single_end_mouse:
   - nextflow run workflow/main.nf
   - pytest -m integration
   - pytest --cov=./workflow/scripts
+  artifacts:
+    expire_in: 2 days
 
 paired_end_human:
   stage: integration
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38'
+  artifacts:
+    expire_in: 2 days
