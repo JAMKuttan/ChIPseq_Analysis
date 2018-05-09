@@ -50,7 +50,7 @@ process checkDesignFile {
 
   file("design.tsv") into designFilePaths
 
-  beforeScript """python3 $baseDir/process_scripts/setup.py install"""
+  beforeScript """python3 $baseDir/process_scripts/setup.py install --user"""
 
   script:
 
@@ -93,7 +93,7 @@ process trimReads {
   set sampleId, file('*.fq.gz'), experimentId, biosample, factor, treatment, replicate, controlId into trimmedReads
   file('*trimming_report.txt') into trimgalore_results
 
-  beforeScript """python3 $baseDir/process_scripts/setup.py install"""
+  beforeScript """python3 $baseDir/process_scripts/setup.py install --user"""
 
   script:
 
@@ -126,7 +126,7 @@ process alignReads {
   set sampleId, file('*.bam'), experimentId, biosample, factor, treatment, replicate, controlId into mappedReads
   file '*.srt.bam.flagstat.qc' into mappedReadsStats
 
-  beforeScript """python3 $baseDir/process_scripts/setup.py install"""
+  beforeScript """python3 $baseDir/process_scripts/setup.py install --user"""
 
   script:
 
@@ -161,7 +161,7 @@ process filterReads {
   file '*pbc.qc' into dedupReadsComplexity
   file '*dup.qc' into dupReads
 
-  beforeScript """python3 $baseDir/process_scripts/setup.py install"""
+  beforeScript """python3 $baseDir/process_scripts/setup.py install --user"""
 
   script:
 
@@ -198,7 +198,7 @@ process experimentQC {
 
   file '*.{png,npz}' into deepToolsStats
 
-  beforeScript """python3 $baseDir/process_scripts/setup.py install"""
+  beforeScript """python3 $baseDir/process_scripts/setup.py install --user"""
 
   script:
 
@@ -222,7 +222,7 @@ process convertReads {
 
   set sampleId, file('*.tagAlign.gz'), file('*.bed{pe,se}.gz'), experimentId, biosample, factor, treatment, replicate, controlId into tagReads
 
-  beforeScript """python3 $baseDir/process_scripts/setup.py install"""
+  beforeScript """python3 $baseDir/process_scripts/setup.py install --user"""
 
   script:
 
@@ -254,7 +254,7 @@ process crossReads {
   set sampleId, tagAlign, file('*.cc.qc'), experimentId, biosample, factor, treatment, replicate, controlId into xcorReads
   set file('*.cc.qc'), file('*.cc.plot.pdf') into xcorReadsStats
 
-  beforeScript """python3 $baseDir/process_scripts/setup.py install"""
+  beforeScript """python3 $baseDir/process_scripts/setup.py install --user"""
 
   script:
 
@@ -290,7 +290,7 @@ process defineExpDesignFiles {
 
   file '*.tsv' into experimentObjs mode flatten
 
-  beforeScript """python3 $baseDir/process_scripts/setup.py install"""
+  beforeScript """python3 $baseDir/process_scripts/setup.py install --user"""
 
   script:
 
@@ -316,7 +316,7 @@ process poolAndPsuedoReads {
 
   file '*.tsv' into experimentPoolObjs
 
-  beforeScript """python3 $baseDir/process_scripts/setup.py install"""
+  beforeScript """python3 $baseDir/process_scripts/setup.py install --user"""
 
   script:
 
@@ -351,7 +351,7 @@ process callPeaksMACS {
 
   set sampleId, file('*.narrowPeak'), file('*.fc_signal.bw'), file('*.pvalue_signal.bw'), experimentId, biosample, factor, treatment, replicate, controlId into experimentPeaks
 
-  beforeScript """python3 $baseDir/process_scripts/setup.py install"""
+  beforeScript """python3 $baseDir/process_scripts/setup.py install --user"""
 
   script:
 
@@ -390,7 +390,7 @@ process consensusPeaks {
   file '*.rejected.*' into rejectedPeaks
   file("design_diffPeaks.tsv") into designDiffPeaks
 
-  beforeScript """python3 $baseDir/process_scripts/setup.py install"""
+  beforeScript """python3 $baseDir/process_scripts/setup.py install --user"""
 
   script:
 
