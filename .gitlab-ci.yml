@@ -3,7 +3,6 @@ variables:
 
 before_script:
   - git submodule update --init --recursive
-  - git submodule sync --recursive
   - module add  python/3.6.1-2-anaconda
   - pip install --user pytest-pythonpath pytest-cov
   - module load nextflow/0.27.6
