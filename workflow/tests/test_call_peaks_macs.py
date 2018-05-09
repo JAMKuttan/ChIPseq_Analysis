@@ -2,7 +2,7 @@
 
 import pytest
 import os
-import utils
+from python_utils import utils
 
 test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/callPeaksMACS/'

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import pytest
-import utils
+from python_utils import utils
 
 
 STRIP_EXTENSIONS = ['.gz', '.fq', '.fastq', '.fa', '.fasta']

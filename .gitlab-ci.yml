@@ -16,6 +16,7 @@ stages:
 user_configuration:
   stage: unit
   script:
+  - python workflow/process_scripts/setup.py install
   - pytest -m unit
   artifacts:
     expire_in: 2 days

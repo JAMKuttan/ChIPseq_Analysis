@@ -4,7 +4,7 @@ import pytest
 import pandas as pd
 from io import StringIO
 import os
-import pool_and_psuedoreplicate
+from call_peaks import pool_and_psuedoreplicate
 
 test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/design/'

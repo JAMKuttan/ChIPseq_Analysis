@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 from io import StringIO
-import check_design
+from design_file import check_design
 
 
 DESIGN_STRING = """sample_id\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\tfastq_read1

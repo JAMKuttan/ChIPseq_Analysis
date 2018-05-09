@@ -4,8 +4,8 @@ import pytest
 import pandas as pd
 from io import StringIO
 import os
-import utils
-import overlap_peaks
+from python_utils import utils
+from call_peaks import overlap_peaks
 
 test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/consensusPeaks/'

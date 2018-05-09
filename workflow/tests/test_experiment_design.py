@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 from io import StringIO
-import experiment_design
+from design_file import experiment_design
 import os
 
 test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
