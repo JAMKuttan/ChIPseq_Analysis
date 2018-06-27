@@ -40,7 +40,7 @@ def get_args():
 
     parser.add_argument('-c', '--cutoff',
                         help="Cutoff ratio used for choosing controls.",
-                        type=int,
+                        type=float,
                         default=1.2)
 
     args = parser.parse_args()
