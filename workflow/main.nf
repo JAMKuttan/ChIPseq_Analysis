@@ -239,7 +239,7 @@ process crossReads {
 
   output:
 
-  set sampleId, tagAlign, file('*.cc.qc'), experimentId, biosample, factor, treatment, replicate, controlId into xcorReads
+  set sampleId, seTagAlign, tagAlign, file('*.cc.qc'), experimentId, biosample, factor, treatment, replicate, controlId into xcorReads
   set file('*.cc.qc'), file('*.cc.plot.pdf') into xcorReadsStats
 
   script:
@@ -259,9 +259,9 @@ process crossReads {
 
 // Define channel collecting tagAlign and xcor into design file
 xcorDesign = xcorReads
-              .map{ sampleId, tagAlign, xcor, experimentId, biosample, factor, treatment, replicate, controlId ->
-              "$sampleId\t$tagAlign\t$xcor\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
-              .collectFile(name:'design_xcor.tsv', seed:"sample_id\ttag_align\txcor\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+              .map{ sampleId, seTagAlign, tagAlign, xcor, experimentId, biosample, factor, treatment, replicate, controlId ->
+              "$sampleId\t$seTagAlign\t$tagAlign\t$xcor\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
+              .collectFile(name:'design_xcor.tsv', seed:"sample_id\tse_tag_align\ttag_align\txcor\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
 
 // Make Experiment design files to be read in for downstream analysis
 process defineExpDesignFiles {
