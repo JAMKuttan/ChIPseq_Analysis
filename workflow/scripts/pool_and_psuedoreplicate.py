@@ -40,6 +40,7 @@ def get_args():
 
     parser.add_argument('-c', '--cutoff',
                         help="Cutoff ratio used for choosing controls.",
+                        type=int,
                         default=1.2)
 
     args = parser.parse_args()
@@ -247,7 +248,7 @@ def main():
             path_to_pool_control = cwd + '/' + pool_control
             if control_df.values.max() > 1.2:
                 logger.info("Number of reads in controls differ by " +
-                    " > factor of %f. Using pooled controls." % (str(cutoff_ratio)))
+                    " > factor of %f. Using pooled controls." % (cutoff_ratio))
                 design_new_df['control_tag_align'] = path_to_pool_control
             else:
                 for index, row in design_new_df.iterrows():
