@@ -40,6 +40,7 @@ def get_args():
 
     parser.add_argument('-c', '--cutoff',
                         help="Cutoff ratio used for choosing controls.",
+                        type=float,
                         default=1.2)
 
     args = parser.parse_args()
@@ -95,6 +96,20 @@ def pool(tag_files, outfile, paired):
         outfile=pooled_filename)
 
     return pooled_filename
+
+
+def bedpe_to_tagalign(tag_file, outfile):
+    '''Convert read pairs to reads itno standard tagAlign file.'''
+
+    se_tag_filename = outfile + "bedse.tagAlign.gz"
+
+    # Convert read pairs to reads into standard tagAlign file
+    tag_steps = ["zcat -f %s" % (tag_file)]
+    tag_steps.extend([r"""awk 'BEGIN{OFS="\t"}{printf "%s\t%s\t%s\tN\t1000\t%s\n%s\t%s\t%s\tN\t1000\t%s\n",$1,$2,$3,$9,$4,$5,$6,$10}'"""])
+    tag_steps.extend(['gzip -cn'])
+    out, err = utils.run_pipe(tag_steps, outfile=se_tag_filename)
+
+    return se_tag_filename
 
 
 def self_psuedoreplication(tag_file, prefix, paired):
@@ -182,13 +197,24 @@ def main():
     else:
         pool_control = design_df.control_tag_align.unique()[0]
 
+    # if paired_end make tagAlign
+    if paired:
+        pool_control_tmp = bedpe_to_tagalign(pool_control, "pool_control")
+        pool_control = pool_control_tmp
+
     # Psuedoreplicate and update design accordingly
     if not replicated:
 
-        # Duplicate rows and update for pool and psuedoreplicates
+        # Duplicate rows and update for pool and psuedoreplicates and update tagAlign with single end data
         experiment_id = design_df.at[0, 'experiment_id']
         replicate = design_df.at[0, 'replicate']
         design_new_df = design_df.loc[np.repeat(design_df.index, 4)].reset_index()
+
+        # Update tagAlign with single end data
+        if paired:
+            design_new_df['tag_align'] = design_new_df['se_tag_align']
+        design_new_df.drop(labels = 'se_tag_align', axis = 1, inplace = True)
+
         design_new_df['replicate'] = design_new_df['replicate'].astype(str)
         design_new_df.at[1, 'sample_id'] = experiment_id + '_pr1'
         design_new_df.at[1, 'replicate'] = '1_pr'
@@ -199,6 +225,7 @@ def main():
         design_new_df.at[3, 'sample_id'] = experiment_id + '_pooled'
         design_new_df.at[3, 'replicate'] = 'pooled'
         design_new_df.at[3, 'xcor'] = 'Calculate'
+        design_new_df.at[3, 'tag_align'] = design_new_df.at[0, 'tag_align']
 
         # Make 2 self psuedoreplicates
         self_pseudoreplicates_dict = {}
@@ -216,11 +243,19 @@ def main():
         # Drop index column
         design_new_df.drop(labels='index', axis=1, inplace=True)
 
+
+
     else:
         # Make pool of replicates
         replicate_files = design_df.tag_align.unique()
         experiment_id = design_df.at[0, 'experiment_id']
         pool_experiment = pool(replicate_files, experiment_id + "_pooled", paired)
+
+        # If paired change to single End
+        if paired:
+            pool_experiment_se = bedpe_to_tagalign(pool_experiment, experiment_id + "_pooled")
+        else:
+            pool_experiment_se = pool_experiment
 
         # Make self psuedoreplicates equivalent to number of replicates
         pseudoreplicates_dict = {}
@@ -239,6 +274,10 @@ def main():
             pool_pseudoreplicates_dict[replicate_id] = pool_replicate
 
         design_new_df = design_df
+        # Update tagAlign with single end data
+        if paired:
+            design_new_df['tag_align'] = design_new_df['se_tag_align']
+        design_new_df.drop(labels = 'se_tag_align', axis = 1, inplace = True)
         # Check controls against cutoff_ratio
         # if so replace with pool_control
         # unless single control was used
@@ -259,6 +298,16 @@ def main():
                                     % row['replicate'])
                         design_new_df.loc[index, 'control_tag_align'] = \
                                                             path_to_pool_control
+                    else:
+                        if paired:
+                            control = row['control_tag_align']
+                            control_basename = os.path.basename(
+                                utils.strip_extensions(control, ['.filt.nodup.bedpe.gz']))
+                            control_tmp = bedpe_to_tagalign(control , "control_basename")
+                            path_to_control = cwd + '/' + control_tmp
+                            design_new_df.loc[index, 'control_tag_align'] = \
+                                                                path_to_control
+
         else:
             path_to_pool_control =  pool_control
 
@@ -277,9 +326,10 @@ def main():
         tmp_metadata['sample_id'] = experiment_id + '_pooled'
         tmp_metadata['replicate'] = 'pooled'
         tmp_metadata['xcor'] = 'Calculate'
-        path_to_file = cwd + '/' + pool_experiment
+        path_to_file = cwd + '/' + pool_experiment_se
         tmp_metadata['tag_align'] = path_to_file
         design_new_df = design_new_df.append(tmp_metadata)
+
 
     # Write out new dataframe
     design_new_df.to_csv(experiment_id + '_ppr.tsv',
