@@ -1,4 +1,4 @@
-#!/qbrc/software/Python-2.7.7/bin/python
+#!/usr/bin/env python
 # programmer : bbc
 # usage:
 
@@ -8,12 +8,8 @@ from re import sub
 import string
 import argparse as ap
 import logging
-import twobitreader
 import subprocess
 import pandas as pd
-from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
 from multiprocessing import Pool
 logging.basicConfig(level=10)
 
@@ -26,7 +22,7 @@ def prepare_argparser():
 #  argparser.add_argument("-o","--output",dest = "outfile",type=str,required=True, help="output")
   argparser.add_argument("-g","--genome",dest = "genome",type=str, help="Genome 2 bit file")
  # argparser.add_argument("-m","--mask",dest = "mask",type=bool,default=False, help="Convert repeats to N")
-  argparser.add_argument("-l","--limit",dest = "limit",type=int,default=-1, help="Top limit of peaks")
+ # argparser.add_argument("-l","--limit",dest = "limit",type=int,default=-1, help="Top limit of peaks")
   return(argparser)
 
 def rc(seq):
@@ -38,8 +34,8 @@ def main():
   args = argparser.parse_args()
   #run(args.infile, args.genome, args.limit, args.output)
   #get Pool ready
-  dfile = pd.read_csv(args.infile)
-  meme_arglist =  zip(dfile['Peaks'].tolist(),[args.genome+"/genome.2bit"]*dfile.shape[0],[str(args.limit)]*dfile.shape[0],dfile['SampleID'].tolist())  
+  dfile = pd.read_csv(args.infile, sep='\t')
+  meme_arglist =  zip(dfile['Peaks'].tolist(),[args.genome]*dfile.shape[0],dfile['Condition'].tolist())
   work_pool = Pool(min(12,dfile.shape[0]))
   resultList =  work_pool.map(run_wrapper, meme_arglist)
   work_pool.close()
@@ -49,43 +45,16 @@ def main():
 def run_wrapper(args):
   run(*args)
 
+def run(infile, genome, output):
+  # Get fasta file
+  fasta_command = "bedtools getfasta -fi "+genome+' -bed '+infile+' -fo '+output+'.fa'
+  p = subprocess.Popen(fasta_command, shell=True)
+  p.communicate()
 
-def run(infile, genome, limit, output):
-  infile = open(infile).readlines()
-  logging.debug(len(infile))
-  genome = twobitreader.TwoBitFile(genome)
-  outfile = open(output+".fa","w")
-  rowcount = 0
-  limit = int(limit)
-  logging.debug(limit)
-  if limit < 0:
-    limit = len(infile)
-  for record in infile:
-    rowcount += 1   
-    #logging.debug(record) 
-    if rowcount <=limit:
-      seqbuf = record.rstrip().split("\t")
-      try:
-        #logging.debug(record.chrom)
-        seq = genome[seqbuf[0]][int(seqbuf[1]):int(seqbuf[2])]
-      except:
-        pass
-      else:
-        if len(seqbuf)>=5: 
-          if seqbuf[5] == "-":
-            seq = rc(seq)
-        if len(seqbuf)>=4:
-          newfa_name = seqbuf[3]
-        else:
-          newfa_name = "_".join(seqbuf)
-        newfa = SeqRecord(Seq(seq),newfa_name,description="")
-        #logging.debug(seq)
-        SeqIO.write(newfa,outfile,"fasta")
-  outfile.close()
   #Call memechip
   meme_command = "meme-chip -oc "+output+"_memechip"+" -meme-minw 5 -meme-maxw 15 -meme-nmotifs 10 "+output+".fa"
   p = subprocess.Popen(meme_command, shell=True)
   p.communicate()
- 
+
 if __name__=="__main__":
   main()

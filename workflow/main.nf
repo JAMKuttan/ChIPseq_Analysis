@@ -12,6 +12,7 @@ params.genomes = []
 params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
 params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
 params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
+params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 params.cutoffRatio = 1.2
 
 // Check inputs
@@ -36,6 +37,7 @@ designFile = params.designFile
 genomeSize = params.genomeSize
 genome = params.genome
 chromSizes = params.chromSizes
+fasta = params.fasta
 cutoffRatio = params.cutoffRatio
 
 process checkDesignFile {
@@ -371,6 +373,7 @@ process consensusPeaks {
   file '*.rejected.*' into rejectedPeaks
   file("design_diffPeaks.csv") into designDiffPeaks
   file("design_annotatePeaks.tsv") into designAnnotatePeaks
+  file("design_annotatePeaks.tsv") into designMotifSearch
   file("unqiue_experiments.csv") into uniqueExperiments
 
   script:
@@ -440,4 +443,24 @@ process diffPeaks {
     """
   }
 
+}
+
+// Motif Search  Peaks
+process motifSearch {
+
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  file designMotifSearch
+
+  output:
+
+  file "*meme*" into motifSearch
+
+  script:
+
+  """
+  python2.7 $baseDir/scripts/motif_search.py -i $designMotifSearch -g $fasta
+  """
 }

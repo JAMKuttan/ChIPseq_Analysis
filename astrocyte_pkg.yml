@@ -49,6 +49,8 @@ workflow_modules:
   - 'macs/2.1.0-20151222'
   - 'UCSC_userApps/v317'
   - 'R/3.4.1-gccmkl'
+  - 'meme/4.11.1-gcc-openmpi'
+  - 'python/2.7.x-anaconda'
 
 # A list of parameters used by the workflow, defining how to present them,
 # options etc in the web interface. For each parameter:
