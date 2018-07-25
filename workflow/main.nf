@@ -417,10 +417,10 @@ process diffPeaks {
 
   output:
 
-  file "design_diffpeak_annotatePeaks.csv" into diffPeaksDesignAnnotatePeaks
-  file "design_diffpeak_annotatePeaks.csv" into diffPeaksDesignMeme
-  file "*_diffbind.bed" into diffpeaks_meme
-  file "*_diffbind.bed" into diffpeaks_chipseeker
+  file "design_diffpeak_annotatePeaks.tsv" into diffPeaksDesignAnnotatePeaks
+  file "design_diffpeak_annotatePeaks.tsv" into diffPeaksDesignMeme
+  file "*_diffbind.bed" into diffPeaks
+  file "*_diffbind.csv" into diffPeaksCounts
   file '*.pdf' into diffPeaksStats
   file 'normcount_peaksets.txt' into normCountPeaks
 

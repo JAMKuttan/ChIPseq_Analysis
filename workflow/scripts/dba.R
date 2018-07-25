@@ -42,7 +42,7 @@ for (i in c(1:length(data$contrasts))) {
  contrast_bed_name = paste(data$contrasts[[i]]$name1,"vs",
                       data$contrasts[[i]]$name2,"diffbind.bed",sep="_")
  contrast_name = paste(data$contrasts[[i]]$name1,"vs",
-                      data$contrasts[[i]]$name2,"diffbind.xls",sep="_")
+                      data$contrasts[[i]]$name2,"diffbind.csv",sep="_")
  new_SampleID = c(new_SampleID,paste(data$contrasts[[i]]$name1,"vs",data$contrasts[[i]]$name2,sep="_"))
  new_Peaks = c(new_Peaks, contrast_bed_name)
  report <- dba.report(data, contrast=i, th=1, bCount=TRUE)
@@ -55,4 +55,4 @@ for (i in c(1:length(data$contrasts))) {
 
 # Write new design file
 newdesign = data.frame(Condition=new_SampleID, Peaks=new_Peaks)
-write.csv(newdesign,"design_diffpeak_annotatePeaks.csv",row.names=F, quote=F)
+write.csv(newdesign,"design_diffpeak_annotatePeaks.csv",row.names=F, quote=F, sep='\t')
