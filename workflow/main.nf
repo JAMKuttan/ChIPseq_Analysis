@@ -405,8 +405,7 @@ process peakAnnotation {
 }
 
 // Define channel to find number of unique experiments
-peaksDesign = uniqueExperiments
-              .readLines()
+peaksDesign = Channel from(uniqueExperiments.readLines())
               .count()
 
 // Calculate Differential Binding Activity
