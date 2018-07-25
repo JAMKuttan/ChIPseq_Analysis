@@ -388,12 +388,14 @@ process peakAnnotation {
 
   file consensusPeaks
 
-   output:
-     file "*chipseeker*" into chipseeker_originalpeak_output
-   script:
-     """
-     module load python/2.7.x-anaconda
-     module load R/3.3.2-gccmkl
-     Rscript $baseDir/scripts/runChipseeker.R $design_file ${params.genomepath}
-"""
+ output:
+
+  file "*chipseeker*" into peakAnnotation
+
+ script:
+   """
+   module load python/2.7.x-anaconda
+   module load R/3.3.2-gccmkl
+   Rscript $baseDir/scripts/annotate_peaks.R $design_file $genome
+   """
 }

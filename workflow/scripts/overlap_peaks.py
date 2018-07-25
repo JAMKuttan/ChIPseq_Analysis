@@ -166,7 +166,7 @@ def overlap(experiment, design):
     os.remove(overlap_tr_fn)
     os.remove(overlap_pr_fn)
 
-    return overlapping_peaks_fn
+    return os.path.abspath(overlapping_peaks_fn)
 
 
 def main():
@@ -186,14 +186,16 @@ def main():
     design_diff = update_design(design_files_df)
 
     # Make a design file for annotating Peaks
-    design_anno = pd.DataFrame()
+    anno_cols = ['Condition', 'Peaks']
+    design_anno = pd.DataFrame(columns = anno_cols)
 
     # Find consenus overlap peaks for each experiment
     for experiment, df_experiment in design_peaks_df.groupby('experiment_id'):
         replicated_peak = overlap(experiment, df_experiment)
         design_diff.loc[design_diff.experiment_id == experiment, "peak"] = replicated_peak
+        design_anno.loc[experiment] = [experiment, replicated_peak]
 
-    # Write out file
+    # Write out design files
     design_diff.columns = ['SampleID',
                             'bamReads',
                             'Condition',
@@ -207,6 +209,7 @@ def main():
                             'PeakCaller']
 
     design_diff.to_csv("design_diffPeaks.tsv", header=True, sep='\t', index=False)
+    design_anno.to_csv("design_annotatePeaks.tsv", header=True, sep='\t', index=False)
 
 
 if __name__ == '__main__':

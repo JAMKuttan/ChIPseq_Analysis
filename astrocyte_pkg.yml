@@ -41,16 +41,14 @@ documentation_files:
 workflow_modules:
   - 'python/3.6.1-2-anaconda'
   - 'trimgalore/0.4.1'
-  - 'cutadapt/1.9.1'
-  - 'fastqc/0.11.2'
   - 'bwa/intel/0.7.12'
-  - 'samtools/1.4.1'
   - 'sambamba/0.6.6'
   - 'bedtools/2.26.0'
   - 'deeptools/2.5.0.1'
   - 'phantompeakqualtools/1.2'
   - 'macs/2.1.0-20151222'
   - 'UCSC_userApps/v317'
+  - 'R/3.4.1-gccmkl'
 
 # A list of parameters used by the workflow, defining how to present them,
 # options etc in the web interface. For each parameter:
@@ -113,13 +111,14 @@ workflow_parameters:
     description: |
       A design file listing sample id, fastq files, corresponding control id
       and additional information about the sample.
+    regex: ".*tsv"
 
   - id: genome
     type: select
     choices:
       - [ 'GRCh38', 'Human GRCh38']
       - [ 'GRCh37', 'Human GRCh37']
-      - [ 'GRCh38', 'Mouse GRCh38']
+      - [ 'GRCm38', 'Mouse GRCm38']
     required: true
     description: |
       Reference species and genome used for alignment and subsequent analysis.
