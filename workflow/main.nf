@@ -369,7 +369,9 @@ process consensusPeaks {
 
   file '*.replicated.*' into consensusPeaks
   file '*.rejected.*' into rejectedPeaks
-  file("design_diffPeaks.tsv") into designDiffPeaks
+  file("design_diffPeaks.csv") into designDiffPeaks
+  file("design_annotatePeaks.tsv") into designAnnotatePeaks
+  file("unqiue_experiments.csv") into uniqueExperiments
 
   script:
 
@@ -386,16 +388,56 @@ process peakAnnotation {
 
   input:
 
-  file consensusPeaks
+  file designAnnotatePeaks
 
- output:
+  output:
 
   file "*chipseeker*" into peakAnnotation
 
- script:
-   """
-   module load python/2.7.x-anaconda
-   module load R/3.3.2-gccmkl
-   Rscript $baseDir/scripts/annotate_peaks.R $design_file $genome
-   """
+  script:
+
+  """
+  Rscript $baseDir/scripts/annotate_peaks.R $designAnnotatePeaks $genome
+  """
+}
+
+// Define channel to find number of unique experiments
+peaksDesign = uniqueExperiments
+              .readLines()
+              .count()
+
+// Calculate Differential Binding Activity
+process diffPeaks {
+
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  file designDiffPeaks
+
+  output:
+
+  file "design_diffpeak_annotatePeaks.csv" into diffPeaksDesignAnnotatePeaks
+  file "design_diffpeak_annotatePeaks.csv" into diffPeaksDesignMeme
+  file "*_diffbind.bed" into diffpeaks_meme
+  file "*_diffbind.bed" into diffpeaks_chipseeker
+  file '*.pdf' into diffPeaksStats
+  file 'normcount_peaksets.txt' into normCountPeaks
+
+  script:
+  if (peaksDesign == 1) {
+    """
+    touch design_diffpeak_annotatePeaks.tsv
+    touch no_diffbind.bed
+    touch heatmap.pdf
+    touch pca.pdf
+    touch normcount_peaksets.txt
+    """
+  }
+  else {
+    """
+    Rscript $baseDir/scripts/dba.R $designDiffPeaks
+    """
+  }
+
 }

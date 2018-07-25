@@ -208,8 +208,12 @@ def main():
                             'Peaks',
                             'PeakCaller']
 
-    design_diff.to_csv("design_diffPeaks.tsv", header=True, sep='\t', index=False)
+    design_diff.to_csv("design_diffPeaks.csv", header=True, sep=',', index=False)
     design_anno.to_csv("design_annotatePeaks.tsv", header=True, sep='\t', index=False)
+
+    # Write the unique conditions
+    unique_experiments = pd.Series(design_diff['Condition'].unique)
+    unique_experiments.to_csv('unqiue_experiments.csv')
 
 
 if __name__ == '__main__':
