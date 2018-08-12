@@ -15,6 +15,5 @@ def test_convert_reads_singleend():
 
 @pytest.mark.integration
 def test_map_qc_pairedend():
-    # Do the same thing for paired end data
-    # Also check that bedpe exists
-    pass
+    assert os.path.exists(os.path.join(test_output_path, 'ENCFF293YFE_val_2ENCFF330MCZ_val_1.filt.nodup.tagAlign.gz'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCFF293YFE_val_2ENCFF330MCZ_val_1.filt.nodup.bedpe.gz'))
