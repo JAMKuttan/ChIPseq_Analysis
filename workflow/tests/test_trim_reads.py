@@ -23,5 +23,11 @@ def test_trim_reads_singleend():
 
 @pytest.mark.integration
 def test_trim_reads_pairedend():
-    # Do the same thing for paired end data
-    pass
+    raw_fastq = test_data_path + 'ENCFF582IOZ.fastq.gz'
+    trimmed_fastq = test_output_path + ' ENCFF582IOZ_val_2.fq.gz'
+    trimmed_fastq_report = test_output_path + \
+                            'ENCFF582IOZ.fastq.gz_trimming_report.txt'
+    assert os.path.getsize(raw_fastq) != os.path.getsize(trimmed_fastq)
+    assert os.path.getsize(trimmed_fastq) == 2229312710
+    assert 'Trimming mode: paired-end' in open(trimmed_fastq_report).readlines()[4]
+    
