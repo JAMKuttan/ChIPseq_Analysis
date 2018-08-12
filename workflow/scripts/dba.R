@@ -1,11 +1,7 @@
 #!/bin/Rscript
 
 # Load libraries
-source("http://bioconductor.org/biocLite.R")
-if(!require("DiffBind")){
-    biocLite("DiffBind")
-    library("DiffBind")
-}
+library("DiffBind")
 
 # Create parser object
 args <- commandArgs(trailingOnly=TRUE)

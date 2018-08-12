@@ -1,26 +1,18 @@
 #!/bin/Rscript
 
 # Load libraries
+library("ChIPseeker")
+
+# Currently mouse or human
+
+library("TxDb.Hsapiens.UCSC.hg19.knownGene")
+library("TxDb.Mmusculus.UCSC.mm10.knownGene")
+library("TxDb.Hsapiens.UCSC.hg38.knownGene")
+
 source("http://bioconductor.org/biocLite.R")
 if(!require("ChIPseeker")){
     biocLite("ChIPseeker")
-    library("ChIPseeker")
 }
-
-# Currently mouse or human
-if (!require("TxDb.Hsapiens.UCSC.hg19.knownGene")){
-    biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene")
-    library("TxDb.Hsapiens.UCSC.hg19.knownGene")
-}
-if (!require("TxDb.Mmusculus.UCSC.mm10.knownGene")){
-    biocLite("TxDb.Mmusculus.UCSC.mm10.knownGene")
-    library("TxDb.Mmusculus.UCSC.mm10.knownGene")
-}
-if (!require("TxDb.Hsapiens.UCSC.hg38.knownGene")){
-    biocLite("TxDb.Hsapiens.UCSC.hg38.knownGene")
-    library("TxDb.Hsapiens.UCSC.hg38.knownGene")
-}
-
 
 
 # Create parser object
