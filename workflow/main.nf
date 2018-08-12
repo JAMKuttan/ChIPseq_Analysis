@@ -405,7 +405,9 @@ process peakAnnotation {
 }
 
 // Define channel to find number of unique experiments
-peaksDesign = uniqueExperiments.readLines()
+noUniqueExperiments = uniqueExperiments
+              .readLines()
+              .size()
 
 // Calculate Differential Binding Activity
 process diffPeaks {
@@ -426,7 +428,7 @@ process diffPeaks {
   file 'normcount_peaksets.txt' into normCountPeaks
 
   script:
-  if (peaksDesign == 1) {
+  if (noUniqueExperiments == 2) {
     """
     touch design_diffpeak_annotatePeaks.tsv
     touch no_diffbind.bed
