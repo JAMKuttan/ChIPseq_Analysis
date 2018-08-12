@@ -402,10 +402,11 @@ process peakAnnotation {
   """
   Rscript $baseDir/scripts/annotate_peaks.R $designAnnotatePeaks $genome
   """
+
 }
 
 // Define channel to find number of unique experiments
-noUniqueExperiments = uniqueExperiments.readLines().size()
+noUniqueExperiments = 2
 
 // Calculate Differential Binding Activity
 process diffPeaks {
