@@ -406,7 +406,8 @@ process peakAnnotation {
 }
 
 // Define channel to find number of unique experiments
-noUniqueExperiments = 2
+noUniqueExperiments = uniqueExperiments
+                      .readLines().size()
 
 // Calculate Differential Binding Activity
 process diffPeaks {
@@ -431,6 +432,7 @@ process diffPeaks {
     """
     touch design_diffpeak_annotatePeaks.tsv
     touch no_diffbind.bed
+    touch no_diffbind.csv
     touch heatmap.pdf
     touch pca.pdf
     touch normcount_peaksets.txt
