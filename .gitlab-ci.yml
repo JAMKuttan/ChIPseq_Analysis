@@ -16,7 +16,7 @@ user_configuration:
 single_end_mouse:
   stage: integration
   script:
-  - nextflow run workflow/main.nf
+  - nextflow run workflow/main.nf -resume
   - pytest -m integration
   - pytest --cov=./workflow/scripts
   artifacts:
@@ -25,6 +25,6 @@ single_end_mouse:
 paired_end_human:
   stage: integration
   script:
-  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38' --pairedEnd true
+  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38' --pairedEnd true -resume
   artifacts:
     expire_in: 2 days
