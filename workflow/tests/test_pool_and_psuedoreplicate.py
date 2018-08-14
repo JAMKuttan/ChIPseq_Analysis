@@ -70,5 +70,7 @@ def test_pool_and_psuedoreplicate_single_end():
 
 @pytest.mark.integration
 def test_experiment_design_paired_end():
-    # Do the same thing for paired end data
-    pass
+    design_file = os.path.join(test_output_path, 'ENCSR729LGA_ppr.tsv')
+    assert os.path.exists(design_file)
+    design_df = pd.read_csv(design_file, sep="\t")
+    assert design_df.shape[0] == 5
