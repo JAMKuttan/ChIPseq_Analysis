@@ -384,6 +384,11 @@ process consensusPeaks {
 
 }
 
+// Define channel to find number of unique experiments
+noUniqueExperiments = Channel
+                      .from(uniqueExperiments.readLines())
+                      .size()
+
 // Annotate Peaks
 process peakAnnotation {
 
@@ -405,9 +410,6 @@ process peakAnnotation {
 
 }
 
-// Define channel to find number of unique experiments
-noUniqueExperiments = uniqueExperiments
-                      .readLines().size()
 
 // Calculate Differential Binding Activity
 process diffPeaks {
