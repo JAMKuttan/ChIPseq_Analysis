@@ -371,10 +371,9 @@ process consensusPeaks {
 
   file '*.replicated.*' into consensusPeaks
   file '*.rejected.*' into rejectedPeaks
-  file("design_diffPeaks.csv") into designDiffPeaks
-  file("design_annotatePeaks.tsv") into designAnnotatePeaks
-  file("design_annotatePeaks.tsv") into designMotifSearch
-  file("unqiue_experiments.csv") into uniqueExperiments
+  file 'design_diffPeaks.csv'  into designDiffPeaks
+  file 'design_annotatePeaks.tsv'  into designAnnotatePeaks, designMotifSearch
+  file 'unique_experiments.csv' into uniqueExperiments
 
   script:
 
@@ -386,8 +385,7 @@ process consensusPeaks {
 
 // Define channel to find number of unique experiments
 noUniqueExperiments = Channel
-                      .from(uniqueExperiments)
-                      .readLines()
+                      .from(uniqueExperiments.readLines())
                       .size()
 
 // Annotate Peaks
@@ -423,10 +421,9 @@ process diffPeaks {
 
   output:
 
-  file "design_diffpeak_annotatePeaks.tsv" into diffPeaksDesignAnnotatePeaks
-  file "design_diffpeak_annotatePeaks.tsv" into diffPeaksDesignMeme
-  file "*_diffbind.bed" into diffPeaks
-  file "*_diffbind.csv" into diffPeaksCounts
+  file 'design_diffpeak_annotatePeaks.tsv' into diffPeaksDesignAnnotatePeaks, diffPeaksDesignMeme
+  file '*_diffbind.bed' into diffPeaks
+  file '*_diffbind.csv' into diffPeaksCounts
   file '*.pdf' into diffPeaksStats
   file 'normcount_peaksets.txt' into normCountPeaks
 

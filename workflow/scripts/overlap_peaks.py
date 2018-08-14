@@ -213,7 +213,7 @@ def main():
 
     # Write the unique conditions
     unique_experiments = pd.Series(design_diff['Condition'].unique)
-    unique_experiments.to_csv('unqiue_experiments.csv')
+    unique_experiments.to_csv('unique_experiments.csv')
 
 
 if __name__ == '__main__':
