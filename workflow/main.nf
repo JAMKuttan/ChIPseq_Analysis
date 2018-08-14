@@ -386,7 +386,9 @@ process consensusPeaks {
 
 // Define channel to find number of unique experiments
 noUniqueExperiments = Channel
-                      .from(uniqueExperiments.size())
+                      .fromPath(uniqueExperiments)
+                      .readLines()
+                      .size()
 
 // Annotate Peaks
 process peakAnnotation {
