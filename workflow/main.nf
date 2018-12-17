@@ -455,11 +455,11 @@ process motifSearch {
 
   output:
 
-  file "*meme*" into motifSearch
+  file "*meme_chip" into motifSearch
 
   script:
 
   """
-  python2.7 $baseDir/scripts/motif_search.py -i $designMotifSearch -g $fasta
+  python3 $baseDir/scripts/motif_search.py -i $designMotifSearch -g $fasta
   """
 }
