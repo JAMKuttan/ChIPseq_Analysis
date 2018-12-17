@@ -61,20 +61,20 @@ def xcor(tag, paired):
     '''Use spp to calculate cross-correlation stats.'''
 
     tag_basename = os.path.basename(utils.strip_extensions(tag, ['.gz']))
-
     uncompressed_tag_filename = tag_basename
-    out, err = utils.run_pipe([
-        'gzip -dc %s > ' % (tag)], outfile=uncompressed_tag_filename)
+
 
     # Subsample tagAlign file
     NREADS = 15000000
-
     subsampled_tag_filename = \
         tag_basename + ".%d.tagAlign.gz" % (NREADS/1000000)
+
+
     steps = [
-        'grep -v "chrM" %s' % (uncompressed_tag_filename),
-        'shuf -n %d --random-source=%s' % (NREADS, uncompressed_tag_filename)
-    ]
+        'zcat %s' % (tag),
+        'grep -v "chrM"',
+        'shuf -n %d --random-source=%s' % (NREADS, tag)]
+
     if paired:
         steps.extend([r"""awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}'"""])
 
