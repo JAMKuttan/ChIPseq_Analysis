@@ -9,10 +9,10 @@ library("TxDb.Hsapiens.UCSC.hg19.knownGene")
 library("TxDb.Mmusculus.UCSC.mm10.knownGene")
 library("TxDb.Hsapiens.UCSC.hg38.knownGene")
 
-source("http://bioconductor.org/biocLite.R")
-if(!require("ChIPseeker")){
-    biocLite("ChIPseeker")
-}
+
+library("org.Hs.eg.db")
+library("org.Mm.eg.db")
+
 
 
 # Create parser object
