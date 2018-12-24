@@ -19,7 +19,7 @@ def test_map_reads_singleend():
 @pytest.mark.integration
 def test_map_reads_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF002DTU_val_1ENCFF002EFI_val_2.srt.bam'))
-    aligned_reads_report = test_output_path + 'NCFF002DTU_val_1ENCFF002EFI_val_2.srt.bam.flagstat.qc'
+    aligned_reads_report = test_output_path + 'ENCFF002DTU_val_1ENCFF002EFI_val_2.srt.bam.flagstat.qc'
     samtools_report = open(aligned_reads_report).readlines()
     assert '72660890 + 0 in total' in samtools_report[0]
     assert '72053925 + 0 mapped (99.16% : N/A)' in samtools_report[4]

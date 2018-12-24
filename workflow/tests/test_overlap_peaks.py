@@ -41,6 +41,7 @@ def test_overlap_peaks_singleend():
 
 
 @pytest.mark.integration
-def test_call_peaks_macs_pairedend():
-    # Do the same thing for paired end data
-    pass
+def test_overlap_peaks_pairedend():
+    assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA.rejected.narrowPeak'))
+    peak_file = test_output_path + 'ENCSR729LGA.replicated.narrowPeak'
+    assert utils.count_lines(peak_file) == 25655
