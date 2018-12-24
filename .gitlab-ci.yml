@@ -2,7 +2,7 @@ before_script:
   - module add  python/3.6.1-2-anaconda
   - pip install --user pytest-pythonpath pytest-cov
   - module load  nextflow/0.31.0
-  - ln -s /project/shared/bicf_workflow_ref/workflow_testdata/chipseq/*fastq.gz test_data/
+  - ln -s /work/BICF/s163035/chipseq/*fastq.gz test_data/
 
 stages:
   - unit
@@ -25,6 +25,20 @@ single_end_mouse:
 paired_end_human:
   stage: integration
   script:
-  - nextflow run workflow/main.nf --designFile "/work/BICF/s163035/builds/932983dd/0/BICF/Astrocyte/chipseq_analysis/test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38' --pairedEnd true -resume
+  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38' --pairedEnd true
+  artifacts:
+    expire_in: 2 days
+
+single_end_diff:
+  stage: integration
+  script:
+  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38'
+  artifacts:
+    expire_in: 2 days
+
+paired_end_diff:
+  stage: integration
+  script:
+  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_PE.txt" --genome 'GRCh38' --pairedEnd true
   artifacts:
     expire_in: 2 days

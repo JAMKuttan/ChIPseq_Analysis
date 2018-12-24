@@ -384,7 +384,7 @@ process consensusPeaks {
 }
 
 // Define channel to find number of unique experiments
-uniqueExperiments.splitCsv(sep: '\t', header: true).toList().map{ it.size().toInteger() }.set { noUniqueExperiments }
+noUniqueExperiments = uniqueExperiments.splitCsv(sep: '\t', header: true).toList()
 
 // Annotate Peaks
 process peakAnnotation {
@@ -426,7 +426,7 @@ process diffPeaks {
   file 'normcount_peaksets.txt' into normCountPeaks
 
   script:
-  if (noUniqueExperiments <= 1) {
+  if (noUniqueExperiments.size() == 1) {
     """
     touch design_diffpeak_annotatePeaks.tsv
     touch no_diffbind.bed
