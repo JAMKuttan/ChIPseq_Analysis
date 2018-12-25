@@ -10,10 +10,6 @@ library("TxDb.Mmusculus.UCSC.mm10.knownGene")
 library("TxDb.Hsapiens.UCSC.hg38.knownGene")
 
 
-library("org.Hs.eg.db")
-library("org.Mm.eg.db")
-
-
 
 # Create parser object
 args <- commandArgs(trailingOnly=TRUE)
@@ -29,13 +25,10 @@ genome <-args[2]
 # Load UCSC Known Genes
 if(genome=='GRCh37') {
     txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-    annodb <- org.Hs.eg.db
 } else if(genome=='GRCm38')  {
     txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
-    annodb <- org.Mm.eg.db
 } else if(genome=='GRCh38')  {
     txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
-    annodb <- org.Hs.eg.db
 }
 
 # Load design file
@@ -44,7 +37,7 @@ files <- as.list(as.character(design$Peaks))
 names(files) <- design$Condition
 
 
-peakAnnoList <- lapply(files, annotatePeak, TxDb=txdb, annoDb=annodb, tssRegion=c(-3000, 3000), verbose=FALSE)
+peakAnnoList <- lapply(files, annotatePeak, TxDb=txdb, tssRegion=c(-3000, 3000), verbose=FALSE)
 
 for(index in c(1:length(peakAnnoList))) {
   filename <- paste(names(files)[index],".chipseeker_annotation.csv",sep="")
