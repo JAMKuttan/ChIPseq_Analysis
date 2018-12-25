@@ -57,8 +57,8 @@ def motif_search(filename, genome, experiment):
 
     # Sort Bed file by
     out, err = run_pipe([
-        'sort -k %dgr,%dgr %s' % (5, 5, filename),
-        sorted_fn)
+        'sort -k %dgr,%dgr %s' % (5, 5, filename)],
+        outfile=sorted_fn)
 
     # Get fasta file
     out, err = utils.run_pipe([
