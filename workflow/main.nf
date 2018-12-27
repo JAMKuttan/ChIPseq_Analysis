@@ -419,7 +419,6 @@ process diffPeaks {
 
   output:
 
-  file 'design_diffpeak_annotatePeaks.tsv' into diffPeaksDesignAnnotatePeaks, diffPeaksDesignMeme
   file '*_diffbind.bed' into diffPeaks
   file '*_diffbind.csv' into diffPeaksCounts
   file '*.pdf' into diffPeaksStats
@@ -430,8 +429,8 @@ process diffPeaks {
     """
     touch no_diffbind.bed
     touch no_diffbind.csv
-    touch heatmap.pdf
-    touch pca.pdf
+    touch no_heatmap.pdf
+    touch no_pca.pdf
     touch normcount_peaksets.txt
     """
   }
