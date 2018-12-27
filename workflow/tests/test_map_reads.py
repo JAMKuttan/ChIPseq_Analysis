@@ -7,7 +7,7 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/alignReads/'
 
 
-@pytest.mark.integration
+@pytest.mark.singleend
 def test_map_reads_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.srt.bam'))
     aligned_reads_report = test_output_path + 'ENCFF646LXU.srt.bam.flagstat.qc'
@@ -16,7 +16,7 @@ def test_map_reads_singleend():
     assert '80050072 + 0 mapped (99.08% : N/A)' in samtools_report[4]
 
 
-@pytest.mark.integration
+@pytest.mark.pairedend
 def test_map_reads_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF002DTU_val_1ENCFF002EFI_val_2.srt.bam'))
     aligned_reads_report = test_output_path + 'ENCFF002DTU_val_1ENCFF002EFI_val_2.srt.bam.flagstat.qc'

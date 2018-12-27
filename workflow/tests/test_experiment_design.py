@@ -30,16 +30,16 @@ def test_check_update_controls_tag(design_tag):
     assert new_design.loc[0, 'control_tag_align'] == "B_1.tagAlign.gz"
 
 
-@pytest.mark.integration
-def test_experiment_design_single_end():
+@pytest.mark.singleend
+def test_experiment_design_singleend():
     design_file = os.path.join(test_output_path, 'ENCSR238SGC.tsv')
     assert os.path.exists(design_file)
     design_df = pd.read_csv(design_file, sep="\t")
     assert design_df.shape[0] == 2
 
 
-@pytest.mark.integration
-def test_experiment_design_paired_end():
+@pytest.mark.pairedend
+def test_experiment_design_pairedend():
     design_file = os.path.join(test_output_path, 'ENCSR729LGA.tsv')
     assert os.path.exists(design_file)
     design_df = pd.read_csv(design_file, sep="\t")

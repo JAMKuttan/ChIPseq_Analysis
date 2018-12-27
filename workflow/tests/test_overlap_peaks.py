@@ -33,14 +33,14 @@ def test_check_update_design(design_diff):
     assert new_design.loc[0, 'peak_caller'] == "bed"
 
 
-@pytest.mark.integration
+@pytest.mark.singleend
 def test_overlap_peaks_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC.rejected.narrowPeak'))
     peak_file = test_output_path + 'ENCSR238SGC.replicated.narrowPeak'
     assert utils.count_lines(peak_file) == 150302
 
 
-@pytest.mark.integration
+@pytest.mark.pairedend
 def test_overlap_peaks_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA.rejected.narrowPeak'))
     peak_file = test_output_path + 'ENCSR729LGA.replicated.narrowPeak'

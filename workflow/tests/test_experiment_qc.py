@@ -30,7 +30,7 @@ def test_check_update_controls(design_bam):
     assert new_design.loc[0, 'control_reads'] == "B_1.bam"
 
 
-@pytest.mark.integration
+@pytest.mark.singleend
 def test_experiment_qc_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'sample_mbs.npz'))
     assert os.path.exists(os.path.join(test_output_path, 'heatmap_SpearmanCorr.png'))
@@ -38,7 +38,7 @@ def test_experiment_qc_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB144FDT_fingerprint.png'))
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB831RUI_fingerprint.png'))
 
-@pytest.mark.integration
+@pytest.mark.pairdend
 def test_experiment_qc_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'sample_mbs.npz'))
     assert os.path.exists(os.path.join(test_output_path, 'heatmap_SpearmanCorr.png'))

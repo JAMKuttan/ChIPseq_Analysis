@@ -8,7 +8,7 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/filterReads/'
 
 
-@pytest.mark.integration
+@pytest.mark.singleend
 def test_map_qc_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.filt.nodup.bam'))
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.filt.nodup.bam.bai'))
@@ -23,7 +23,7 @@ def test_map_qc_singleend():
     assert  df_library_complexity["PBC2"].iloc[0] == 13.706885
 
 
-@pytest.mark.integration
+@pytest.mark.pairedend
 def test_map_qc_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF293YFE_val_2ENCFF330MCZ_val_1.filt.nodup.bam'))
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF293YFE_val_2ENCFF330MCZ_val_1.filt.nodup.bambai'))
