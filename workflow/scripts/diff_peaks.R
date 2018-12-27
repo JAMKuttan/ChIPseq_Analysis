@@ -8,7 +8,7 @@ args <- commandArgs(trailingOnly=TRUE)
 
 # Check input args
 if (length(args) != 1) {
-  stop("Usage: dba.r [ annotate_design.tsv ] ", call.=FALSE)
+  stop("Usage: diff_peaks.R [ annotate_design.tsv ] ", call.=FALSE)
 }
 
 # Build DBA object from design file
@@ -48,7 +48,3 @@ for (i in c(1:length(data$contrasts))) {
  write.table(report,contrast_name,sep="\t",quote=F,row.names=F)
  write.table(report[,c(1:3)],contrast_bed_name,sep="\t",quote=F,row.names=F, col.names=F)
 }
-
-# Write new design file
-newdesign = data.frame(Condition=new_SampleID, Peaks=new_Peaks)
-write.csv(newdesign,"design_diffpeak_annotatePeaks.csv",row.names=F, quote=F, sep='\t')

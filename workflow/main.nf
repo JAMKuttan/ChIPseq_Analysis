@@ -428,7 +428,6 @@ process diffPeaks {
   script:
   if (noUniqueExperiments.size() == 1) {
     """
-    touch design_diffpeak_annotatePeaks.tsv
     touch no_diffbind.bed
     touch no_diffbind.csv
     touch heatmap.pdf
@@ -438,7 +437,7 @@ process diffPeaks {
   }
   else {
     """
-    Rscript $baseDir/scripts/dba.R $designDiffPeaks
+    Rscript $baseDir/scripts/diff_peaks.R $designDiffPeaks
     """
   }
 
