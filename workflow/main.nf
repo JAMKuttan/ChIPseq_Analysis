@@ -14,6 +14,17 @@ params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?
 params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
 params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 params.cutoffRatio = 1.2
+params.topPeakCount = 600
+
+// Define regular variables
+pairedEnd = params.pairedEnd
+designFile = params.designFile
+genomeSize = params.genomeSize
+genome = params.genome
+chromSizes = params.chromSizes
+fasta = params.fasta
+cutoffRatio = params.cutoffRatio
+topPeakCount = params.topPeakCount
 
 // Check inputs
 if( params.bwaIndex ){
@@ -31,15 +42,8 @@ readsList = Channel
   .map { file -> [ file.getFileName().toString(), file.toString() ].join("\t")}
   .collectFile( name: 'fileList.tsv', newLine: true )
 
-// Define regular variables
-pairedEnd = params.pairedEnd
-designFile = params.designFile
-genomeSize = params.genomeSize
-genome = params.genome
-chromSizes = params.chromSizes
-fasta = params.fasta
-cutoffRatio = params.cutoffRatio
 
+// Check design file for errors
 process checkDesignFile {
 
   publishDir "$baseDir/output/design", mode: 'copy'
@@ -458,6 +462,6 @@ process motifSearch {
   script:
 
   """
-  python3 $baseDir/scripts/motif_search.py -i $designMotifSearch -g $fasta
+  python3 $baseDir/scripts/motif_search.py -d $designMotifSearch -g $fasta -p $topPeakCount
   """
 }

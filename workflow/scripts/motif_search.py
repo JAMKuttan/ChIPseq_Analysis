@@ -2,7 +2,7 @@
 
 '''Call Motifs on called peaks.'''
 
-
+import os
 import sys
 import re
 from re import sub
@@ -42,6 +42,10 @@ def get_args():
                         help="The genome FASTA file.",
                         required=True)
 
+    parser.add_argument('-p', '--peak',
+                        help="The number of peaks to use.",
+                        required=True)
+
     args = parser.parse_args()
     return args
 
@@ -50,33 +54,39 @@ def get_args():
 def run_wrapper(args):
   motif_search(*args)
 
-def motif_search(filename, genome, experiment):
-    sorted_fn = 'sorted-%s' % (filename)
+def motif_search(filename, genome, experiment, peak):
+
+    file_basename = os.path.basename(filename)
+    sorted_fn = 'sorted-%s' % (file_basename)
     out_fa = '%s.fa' % (experiment)
     out_motif = '%s_memechip' % (experiment)
 
-    # Sort Bed file by
-    out, err = run_pipe([
+    # Sort Bed file and limit number of peaks
+    if peak == -1:
+        peak = utils.count_lines(filename)
+
+    out, err = utils.run_pipe([
         'sort -k %dgr,%dgr %s' % (5, 5, filename),
-        sorted_fn)
+        'head -n %s' % (peak)], outfile=sorted_fn)
 
     # Get fasta file
     out, err = utils.run_pipe([
-        '"bedtools getfasta -fi %s -bed %s -fo %s' % (genome, sorted_fn, out_fa)])
+        'bedtools getfasta -fi %s -bed %s -fo %s' % (genome, sorted_fn, out_fa)])
 
     #Call memechip
     out, err = utils.run_pipe([
-        '"meme-chip -oc %s -meme-minw 5 -meme-maxw 15 -meme-nmotifs 10 %s -meme-norand' % (out_motif, out_fa)])
+        'meme-chip -oc %s -meme-minw 5 -meme-maxw 15 -meme-nmotifs 10 %s -norand' % (out_motif, out_fa)])
 
 def main():
     args = get_args()
     design = args.design
     genome = args.genome
+    peak = args.peak
 
     # Read files
     design_df = pd.read_csv(design, sep='\t')
 
-    meme_arglist =  zip(design_df['Peaks'].tolist(),[genome]*design_df.shape[0],design_df['Experiment'].tolist())
+    meme_arglist =  zip(design_df['Peaks'].tolist(), [genome]*design_df.shape[0], design_df['Condition'].tolist(), [peak]*design_df.shape[0])
     work_pool = Pool(min(12,design_df.shape[0]))
     return_list =  work_pool.map(run_wrapper, meme_arglist)
     work_pool.close()
