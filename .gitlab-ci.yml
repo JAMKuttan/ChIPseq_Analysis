@@ -35,7 +35,7 @@ single_end_diff:
   stage: integration
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' -resume
-  - pytest -m pairedend
+  - pytest -m singlediff
   - pytest --cov=./workflow/scripts
   artifacts:
     expire_in: 2 days
@@ -44,7 +44,7 @@ paired_end_diff:
   stage: integration
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_PE.txt" --genome 'GRCh38' --pairedEnd true -resume
-  - pytest -m pairedend
+  - pytest -m paireddiff
   - pytest --cov=./workflow/scripts
   artifacts:
     expire_in: 2 days
