@@ -8,11 +8,8 @@ library("ChIPseeker")
 library("TxDb.Hsapiens.UCSC.hg19.knownGene")
 library("TxDb.Mmusculus.UCSC.mm10.knownGene")
 library("TxDb.Hsapiens.UCSC.hg38.knownGene")
-
-source("http://bioconductor.org/biocLite.R")
-if(!require("ChIPseeker")){
-    biocLite("ChIPseeker")
-}
+library("org.Hs.eg.db")
+library("org.Mm.eg.db")
 
 
 # Create parser object
@@ -29,13 +26,13 @@ genome <-args[2]
 # Load UCSC Known Genes
 if(genome=='GRCh37') {
     txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-    annodb <- org.Hs.eg.db
+    annodb <- 'org.Hs.eg.db'
 } else if(genome=='GRCm38')  {
     txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
-    annodb <- org.Mm.eg.db
+    annodb <- 'org.Mm.eg.db'
 } else if(genome=='GRCh38')  {
     txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
-    annodb <- org.Hs.eg.db
+    annodb <- 'org.Hs.eg.db'
 }
 
 # Load design file
@@ -45,7 +42,6 @@ names(files) <- design$Condition
 
 
 peakAnnoList <- lapply(files, annotatePeak, TxDb=txdb, annoDb=annodb, tssRegion=c(-3000, 3000), verbose=FALSE)
-
 for(index in c(1:length(peakAnnoList))) {
   filename <- paste(names(files)[index],".chipseeker_annotation.csv",sep="")
   write.table(as.data.frame(peakAnnoList[[index]]),filename,sep=",",quote=F)
