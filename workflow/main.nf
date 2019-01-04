@@ -457,7 +457,7 @@ process motifSearch {
 
   output:
 
-  file "*meme_chip" into motifSearch
+  file "*memechip" into motifSearch
 
   script:
 
