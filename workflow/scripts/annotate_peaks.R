@@ -40,27 +40,31 @@ design <- read.csv(design_file, sep ='\t')
 files <- as.list(as.character(design$Peaks))
 names(files) <- design$Condition
 
+# Granges of files
 
-peakAnnoList <- lapply(files, annotatePeak, TxDb=txdb, annoDb=annodb, tssRegion=c(-3000, 3000), verbose=FALSE)
+peaks <- lapply(files, readPeakFile, as = "GRanges", header = FALSE)
+peakAnnoList <- lapply(peaks, annotatePeak, TxDb=txdb, annoDb=annodb, tssRegion=c(-3000, 3000), verbose=FALSE)
+
+column_names <- c("chr", "start", "end", "width", "strand_1", "name", "score", "strand", "signalValue",
+                  "pValue", "qValue", "peak", "annotation", "geneChr", "geneStart", "geneEnd",
+                  "geneLength" ,"geneStrand", "geneId", "transcriptId", "distanceToTSS",
+                  "ENSEMBL", "symbol", "geneName")
+
 for(index in c(1:length(peakAnnoList))) {
-  filename <- paste(names(files)[index],".chipseeker_annotation.csv",sep="")
-  write.table(as.data.frame(peakAnnoList[[index]]),filename,sep=",",quote=F)
+  filename <- paste(names(peaks)[index], ".chipseeker_annotation.csv", sep="")
+  df <- as.data.frame(peakAnnoList[[index]])
+  colnames(df) <- column_names
+  write.table(df[ , !(names(df) %in% c('strand_1'))], filename, sep="," ,quote=F, row.names=F)
 
   # Draw individual plots
 
   # Define names of Plots
   pie_name <- paste(names(files)[index],".chipseeker_pie.pdf",sep="")
-  vennpie_name <- paste(names(files)[index],".chipseeker_vennpie.pdf",sep="")
   upsetplot_name <- paste(names(files)[index],".chipseeker_upsetplot.pdf",sep="")
 
   # Pie Plots
   pdf(pie_name)
   plotAnnoPie(peakAnnoList[[index]])
-  dev.off()
-
-  # Venn Diagrams
-  pdf(vennpie_name)
-  vennpie(peakAnnoList[[index]])
   dev.off()
 
   # Upset Plot
