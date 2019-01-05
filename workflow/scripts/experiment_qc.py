@@ -164,7 +164,7 @@ def main():
     design_df = pd.read_csv(design, sep='\t')
 
     # Run correlation
-    mbs_filename = generate_read_summary(design_df)
+    mbs_filename = generate_read_summary(design_df, extension)
     check_correlation(mbs_filename)
 
     # Run coverage
@@ -177,7 +177,8 @@ def main():
                             row['sample_id'],
                             row['control_id'],
                             row['bam_reads'],
-                            row['control_reads'])
+                            row['control_reads'],
+                            extension)
 
 
 if __name__ == '__main__':
