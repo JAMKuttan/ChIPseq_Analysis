@@ -36,6 +36,7 @@ def get_args():
 
     parser.add_argument('-e', '--extension',
                         help="Number of base pairs to extend the reads",
+                        type=int,
                         required=True)
 
     args = parser.parse_args()
