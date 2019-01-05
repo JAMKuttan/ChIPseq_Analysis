@@ -387,9 +387,6 @@ process consensusPeaks {
 
 }
 
-// Define channel to find number of unique experiments
-noUniqueExperiments = uniqueExperiments.splitCsv(sep: '\t', header: true).toList()
-
 // Annotate Peaks
 process peakAnnotation {
 
@@ -411,41 +408,6 @@ process peakAnnotation {
 
 }
 
-
-// Calculate Differential Binding Activity
-process diffPeaks {
-
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
-
-  input:
-
-  file designDiffPeaks
-
-  output:
-
-  file '*_diffbind.bed' into diffPeaks
-  file '*_diffbind.csv' into diffPeaksCounts
-  file '*.pdf' into diffPeaksStats
-  file 'normcount_peaksets.txt' into normCountPeaks
-
-  script:
-  if (noUniqueExperiments.size() == 1) {
-    """
-    touch no_diffbind.bed
-    touch no_diffbind.csv
-    touch no_heatmap.pdf
-    touch no_pca.pdf
-    touch normcount_peaksets.txt
-    """
-  }
-  else {
-    """
-    Rscript $baseDir/scripts/diff_peaks.R $designDiffPeaks
-    """
-  }
-
-}
-
 // Motif Search  Peaks
 process motifSearch {
 
@@ -463,5 +425,34 @@ process motifSearch {
 
   """
   python3 $baseDir/scripts/motif_search.py -d $designMotifSearch -g $fasta -p $topPeakCount
+  """
+}
+
+// Define channel to find number of unique experiments
+noUniqueExperiments = uniqueExperiments.splitCsv(sep: '\t', header: true).toList()
+
+// Calculate Differential Binding Activity
+process diffPeaks {
+
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  file designDiffPeaks
+
+  output:
+
+  file '*_diffbind.bed' into diffPeaks
+  file '*_diffbind.csv' into diffPeaksCounts
+  file '*.pdf' into diffPeaksStats
+  file 'normcount_peaksets.txt' into normCountPeaks
+
+  when:
+  noUniqueExperiments.size() > 1
+
+
+  script:
+  """
+  Rscript $baseDir/scripts/diff_peaks.R $designDiffPeaks
   """
 }
