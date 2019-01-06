@@ -13,7 +13,7 @@ params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false :
 params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
 params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
 params.cutoffRatio = 1.2
-params.outDir= "$outDir"
+params.outDir= "$baseDir/output"
 params.extendReadsLen = 100
 
 // Check inputs
