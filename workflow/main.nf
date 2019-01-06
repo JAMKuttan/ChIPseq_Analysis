@@ -104,12 +104,12 @@ process trimReads {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} ${reads[1]} -p
+    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} ${reads[1]} -s $sampleId -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]}
+    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} -s $sampleId
     """
   }
 
