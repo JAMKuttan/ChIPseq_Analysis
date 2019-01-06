@@ -423,6 +423,7 @@ process motifSearch {
   output:
 
   file "*memechip" into motifSearch
+  file "sorted-*" into filteredPeaks
 
   script:
 
