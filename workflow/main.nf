@@ -38,6 +38,7 @@ readsList = Channel
 pairedEnd = params.pairedEnd
 designFile = params.designFile
 genomeSize = params.genomeSize
+genome = params.genome
 chromSizes = params.chromSizes
 fasta = params.fasta
 cutoffRatio = params.cutoffRatio

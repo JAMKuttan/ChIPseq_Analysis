@@ -21,16 +21,16 @@ if (length(args) != 2) {
 }
 
 design_file <- args[1]
-genome <-args[2]
+genome_assembly <- args[2]
 
 # Load UCSC Known Genes
-if(genome=='GRCh37') {
+if(genome_assembly=='GRCh37') {
     txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
     annodb <- 'org.Hs.eg.db'
-} else if(genome=='GRCm38')  {
+} else if(genome_assembly=='GRCm38')  {
     txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
     annodb <- 'org.Mm.eg.db'
-} else if(genome=='GRCh38')  {
+} else if(genome_assembly=='GRCh38')  {
     txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
     annodb <- 'org.Hs.eg.db'
 }
