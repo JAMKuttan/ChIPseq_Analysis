@@ -429,7 +429,12 @@ process motifSearch {
 }
 
 // Define channel to find number of unique experiments
-noUniqueExperiments = uniqueExperiments.splitCsv(sep: '\t', header: true).toList()
+noUniqueExperiments = uniqueExperiments
+                      .splitCsv(sep: '\t', header: true)
+                      .toList()
+                      .count()
+
+println noUniqueExperiments
 
 // Calculate Differential Binding Activity
 process diffPeaks {
@@ -448,7 +453,7 @@ process diffPeaks {
   file 'normcount_peaksets.txt' into normCountPeaks
 
   when:
-  noUniqueExperiments.size() > 1
+  noUniqueExperiments > 1
 
 
   script:
