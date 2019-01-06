@@ -1,11 +1,4 @@
 #!/usr/bin/env nextflow
-test = Channel
-.fromPath('/work/BICF/s163035/builds/932983dd/2/BICF/Astrocyte/chipseq_analysis/work/ce/59578d09be684276dca671e1aea716/unique_experiments.csv')
-.splitCsv(sep: '\t', header: true)
-                      .toList()
-
-println test.size()
-
 
 // Path to an input file, or a pattern for multiple inputs
 // Note - $baseDir is the location of this workflow file main.nf
