@@ -40,5 +40,8 @@ def test_experiment_qc_singleend():
 
 @pytest.mark.integration
 def test_experiment_qc_pairedend():
-    # Do the same thing for paired end data
-    pass
+    assert os.path.exists(os.path.join(test_output_path, 'sample_mbs.npz'))
+    assert os.path.exists(os.path.join(test_output_path, 'heatmap_SpearmanCorr.png'))
+    assert os.path.exists(os.path.join(test_output_path, 'coverage.png'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX_fingerprint.png'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB637LZP_fingerprint.png'))

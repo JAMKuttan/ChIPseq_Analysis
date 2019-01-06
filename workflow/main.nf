@@ -13,6 +13,7 @@ params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false :
 params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
 params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
 params.cutoffRatio = 1.2
+params.extendReadsLen = 100
 
 // Check inputs
 if( params.bwaIndex ){
@@ -36,6 +37,7 @@ designFile = params.designFile
 genomeSize = params.genomeSize
 chromSizes = params.chromSizes
 cutoffRatio = params.cutoffRatio
+extendReadsLen = params.extendReadsLen
 
 process checkDesignFile {
 
@@ -193,7 +195,7 @@ process experimentQC {
   script:
 
   """
-  python3 $baseDir/scripts/experiment_qc.py -d $dedupDesign
+  python3 $baseDir/scripts/experiment_qc.py -d $dedupDesign -e $extendReadsLen
   """
 
 }
