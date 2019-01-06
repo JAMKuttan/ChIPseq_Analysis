@@ -12,20 +12,11 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
 
 @pytest.mark.singleend
 def test_diff_peaks_singleend_single_rep():
-    assert os.path.exists(os.path.join(test_output_path, 'no_diffbind.bed'))
-    assert os.path.exists(os.path.join(test_output_path, 'no_diffbind.csv'))
-    assert os.path.exists(os.path.join(test_output_path, 'no_heatmap.pdf'))
-    assert os.path.exists(os.path.join(test_output_path, 'no_pca.pdf'))
-    assert os.path.exists(os.path.join(test_output_path, 'normcount_peaksets.pdf'))
-
+    assert os.path.isdir(test_output_path) == False
 
 @pytest.mark.pairedend
 def test_annotate_peaks_pairedend_single_rep():
-    assert os.path.exists(os.path.join(test_output_path, 'no_diffbind.bed'))
-    assert os.path.exists(os.path.join(test_output_path, 'no_diffbind.csv'))
-    assert os.path.exists(os.path.join(test_output_path, 'no_heatmap.pdf'))
-    assert os.path.exists(os.path.join(test_output_path, 'no_pca.pdf'))
-    assert os.path.exists(os.path.join(test_output_path, 'normcount_peaksets.pdf'))
+    assert os.path.isdir(test_output_path) == False
 
 @pytest.mark.singlediff
 def test_diff_peaks_singleend_multiple_rep():
