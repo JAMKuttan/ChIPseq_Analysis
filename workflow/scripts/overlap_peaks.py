@@ -212,8 +212,8 @@ def main():
     design_anno.to_csv("design_annotatePeaks.tsv", header=True, sep='\t', index=False)
 
     # Write the unique conditions
-    unique_experiments = pd.Series(design_diff['Condition'].unique)
-    unique_experiments.to_csv('unique_experiments.csv')
+    unique_experiments = pd.DataFrame(design_diff['Condition'].unique().tolist(), columns=['Condition'])
+    unique_experiments.to_csv('unique_experiments.csv', index=False)
 
 
 if __name__ == '__main__':
