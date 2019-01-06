@@ -24,16 +24,10 @@ logger.addHandler(logging.NullHandler())
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
-# the order of this list is important.
-# strip_extensions strips from the right inward, so
-# the expected right-most extensions should appear first (like .gz)
-# Modified from J. Seth Strattan
-STRIP_EXTENSIONS = ['.gz', '.fq', '.fastq', '_trimmed']
-
 
 def get_args():
     '''Define arguments.'''
-    
+
     parser = argparse.ArgumentParser(
         description=__doc__, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -45,6 +39,10 @@ def get_args():
 
     parser.add_argument('-r', '--reference',
                         help="The bwa index of the reference genome.",
+                        required=True)
+
+    parser.add_argument('-s', '--sample',
+                        help="The name of the sample.",
                         required=True)
 
     parser.add_argument('-p', '--paired',
@@ -157,6 +155,7 @@ def main():
     paired = args.paired
     fastq = args.fastq
     reference = args.reference
+    sample = args.sample
 
     # Create a file handler
     handler = logging.FileHandler('map.log')
@@ -171,23 +170,17 @@ def main():
         sai_filename = generate_sa(fq, reference)
         sai.append(sai_filename)
 
+    # Make file basename
+    fastq_basename = sample
+
     # Run alignment for either PE or SE
     if paired:  # paired-end data
-        fastq_r1_basename = os.path.basename(
-            utils.strip_extensions(fastq[0], STRIP_EXTENSIONS))
-        fastq_r2_basename = os.path.basename(
-            utils.strip_extensions(fastq[1], STRIP_EXTENSIONS))
-        fastq_basename = fastq_r1_basename + fastq_r2_basename
-
         bam_filename = align_pe(fastq, sai, reference, fastq_basename)
 
     else:
-        fastq_basename = os.path.basename(
-            utils.strip_extensions(fastq[0], STRIP_EXTENSIONS))
-
         bam_filename = align_se(fastq, sai, reference, fastq_basename)
 
-    bam_mapstats_filename = '%s.srt.bam.flagstat.qc' % (fastq_basename)
+    bam_mapstats_filename = '%s.flagstat.qc' % (fastq_basename)
     with open(bam_mapstats_filename, 'w') as fh:
         subprocess.check_call(
             shlex.split("samtools flagstat %s" % (bam_filename)),

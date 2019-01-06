@@ -129,18 +129,18 @@ process alignReads {
   output:
 
   set sampleId, file('*.bam'), experimentId, biosample, factor, treatment, replicate, controlId into mappedReads
-  file '*.srt.bam.flagstat.qc' into mappedReadsStats
+  file '*.flagstat.qc' into mappedReadsStats
 
   script:
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/map_reads.py -f ${reads[0]} ${reads[1]} -r ${index}/genome.fa -p
+    python3 $baseDir/scripts/map_reads.py -f ${reads[0]} ${reads[1]} -r ${index}/genome.fa -s $sampleId -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa
+    python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa -s $sampleId
     """
   }
 
