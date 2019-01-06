@@ -14,17 +14,9 @@ params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?
 params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
 params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 params.cutoffRatio = 1.2
+params.outDir= "$baseDir/output"
+params.extendReadsLen = 100
 params.topPeakCount = 600
-
-// Define regular variables
-pairedEnd = params.pairedEnd
-designFile = params.designFile
-genomeSize = params.genomeSize
-genome = params.genome
-chromSizes = params.chromSizes
-fasta = params.fasta
-cutoffRatio = params.cutoffRatio
-topPeakCount = params.topPeakCount
 
 // Check inputs
 if( params.bwaIndex ){
@@ -42,11 +34,21 @@ readsList = Channel
   .map { file -> [ file.getFileName().toString(), file.toString() ].join("\t")}
   .collectFile( name: 'fileList.tsv', newLine: true )
 
+// Define regular variables
+pairedEnd = params.pairedEnd
+designFile = params.designFile
+genomeSize = params.genomeSize
+chromSizes = params.chromSizes
+fasta = params.fasta
+cutoffRatio = params.cutoffRatio
+outDir = params.outDir
+extendReadsLen = params.extendReadsLen
+topPeakCount = params.topPeakCount
 
 // Check design file for errors
 process checkDesignFile {
 
-  publishDir "$baseDir/output/design", mode: 'copy'
+  publishDir "$outDir/design", mode: 'copy'
 
   input:
 
@@ -87,7 +89,7 @@ rawReads = designFilePaths
 process trimReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -117,7 +119,7 @@ process trimReads {
 process alignReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -148,7 +150,7 @@ process alignReads {
 process filterReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -181,13 +183,13 @@ process filterReads {
 dedupReads
 .map{ sampleId, bam, bai, experimentId, biosample, factor, treatment, replicate, controlId ->
 "$sampleId\t$bam\t$bai\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
-.collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+.collectFile(name:'design_dedup.tsv', seed:"sample_id\tbam_reads\tbam_index\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$outDir/design")
 .into { dedupDesign; preDiffDesign }
 
 // Quality Metrics using deeptools
 process experimentQC {
 
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -200,7 +202,7 @@ process experimentQC {
   script:
 
   """
-  python3 $baseDir/scripts/experiment_qc.py -d $dedupDesign
+  python3 $baseDir/scripts/experiment_qc.py -d $dedupDesign -e $extendReadsLen
   """
 
 }
@@ -209,7 +211,7 @@ process experimentQC {
 process convertReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -238,7 +240,7 @@ process convertReads {
 process crossReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -268,12 +270,12 @@ process crossReads {
 xcorDesign = xcorReads
               .map{ sampleId, seTagAlign, tagAlign, xcor, experimentId, biosample, factor, treatment, replicate, controlId ->
               "$sampleId\t$seTagAlign\t$tagAlign\t$xcor\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
-              .collectFile(name:'design_xcor.tsv', seed:"sample_id\tse_tag_align\ttag_align\txcor\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+              .collectFile(name:'design_xcor.tsv', seed:"sample_id\tse_tag_align\ttag_align\txcor\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$outDir/design")
 
 // Make Experiment design files to be read in for downstream analysis
 process defineExpDesignFiles {
 
-  publishDir "$baseDir/output/design", mode: 'copy'
+  publishDir "$outDir/design", mode: 'copy'
 
   input:
 
@@ -297,7 +299,7 @@ process poolAndPsuedoReads {
 
 
   tag "${experimentObjs.baseName}"
-  publishDir "$baseDir/output/design", mode: 'copy'
+  publishDir "$outDir/design", mode: 'copy'
 
   input:
 
@@ -331,7 +333,7 @@ experimentRows = experimentPoolObjs
 process callPeaksMACS {
 
   tag "$sampleId-$replicate"
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
   set sampleId, tagAlign, xcor, experimentId, biosample, factor, treatment, replicate, controlId, controlTagAlign from experimentRows
@@ -359,12 +361,12 @@ process callPeaksMACS {
 peaksDesign = experimentPeaks
               .map{ sampleId, peak, fcSignal, pvalueSignal, experimentId, biosample, factor, treatment, replicate, controlId ->
               "$sampleId\t$peak\t$fcSignal\t$pvalueSignal\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
-              .collectFile(name:'design_peak.tsv', seed:"sample_id\tpeaks\tfc_signal\tpvalue_signal\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$baseDir/output/design")
+              .collectFile(name:'design_peak.tsv', seed:"sample_id\tpeaks\tfc_signal\tpvalue_signal\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$outDir/design")
 
 // Calculate Consensus Peaks
 process consensusPeaks {
 
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
