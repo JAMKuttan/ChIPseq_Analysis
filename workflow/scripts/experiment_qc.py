@@ -34,6 +34,11 @@ def get_args():
                         help="The design file to run QC (tsv format).",
                         required=True)
 
+    parser.add_argument('-e', '--extension',
+                        help="Number of base pairs to extend the reads",
+                        type=int,
+                        required=True)
+
     args = parser.parse_args()
     return args
 
@@ -51,7 +56,7 @@ def check_tools():
         raise Exception('Missing deeptools')
 
 
-def generate_read_summary(design):
+def generate_read_summary(design, extension):
     '''Generate summary of data based on read counts.'''
 
     bam_files = ' '.join(design['bam_reads'])
@@ -59,8 +64,8 @@ def generate_read_summary(design):
     mbs_filename = 'sample_mbs.npz'
 
     mbs_command = (
-        "multiBamSummary bins -p %d --bamfiles %s --labels %s -out %s"
-        % (cpu_count(), bam_files, labels, mbs_filename)
+        "multiBamSummary bins -p %d --bamfiles %s --extendReads %d --labels %s -out %s"
+        % (cpu_count(), bam_files, extension, labels, mbs_filename)
         )
 
     logger.info("Running deeptools with %s", mbs_command)
@@ -90,7 +95,7 @@ def check_correlation(mbs):
     out, err = spearman_correlation.communicate()
 
 
-def check_coverage(design):
+def check_coverage(design, extension):
     '''Asses the sequencing depth of samples.'''
 
     bam_files = ' '.join(design['bam_reads'])
@@ -100,8 +105,8 @@ def check_coverage(design):
                     " --ignoreDuplicates --minMappingQuality 10"
 
     coverage_command = (
-        "plotCoverage -b %s --labels %s %s --plotFile %s"
-        % (bam_files, labels, coverage_params, coverage_filename)
+        "plotCoverage -b %s --extendReads %d --labels %s %s --plotFile %s"
+        % (bam_files, extension, labels, coverage_params, coverage_filename)
         )
 
     logger.info("Running deeptools with %s", coverage_command)
@@ -128,14 +133,14 @@ def update_controls(design):
     return design
 
 
-def check_enrichment(sample_id, control_id, sample_reads, control_reads):
+def check_enrichment(sample_id, control_id, sample_reads, control_reads, extension):
     '''Asses the enrichment per sample.'''
 
     fingerprint_filename = sample_id + '_fingerprint.png'
 
     fingerprint_command = (
-        "plotFingerprint -b %s %s --labels %s %s --plotFile %s"
-        % (sample_reads, control_reads, sample_id, control_id, fingerprint_filename)
+        "plotFingerprint -b %s %s --extendReads %d --labels %s %s --plotFile %s"
+        % (sample_reads, control_reads, extension, sample_id, control_id, fingerprint_filename)
         )
 
     logger.info("Running deeptools with %s", fingerprint_command)
@@ -147,6 +152,7 @@ def check_enrichment(sample_id, control_id, sample_reads, control_reads):
 def main():
     args = get_args()
     design = args.design
+    extension = args.extension
 
     # Create a file handler
     handler = logging.FileHandler('experiment_qc.log')
@@ -159,11 +165,11 @@ def main():
     design_df = pd.read_csv(design, sep='\t')
 
     # Run correlation
-    mbs_filename = generate_read_summary(design_df)
+    mbs_filename = generate_read_summary(design_df, extension)
     check_correlation(mbs_filename)
 
     # Run coverage
-    check_coverage(design_df)
+    check_coverage(design_df, extension)
 
     # Run enrichment
     new_design_df = update_controls(design_df)
@@ -172,7 +178,8 @@ def main():
                             row['sample_id'],
                             row['control_id'],
                             row['bam_reads'],
-                            row['control_reads'])
+                            row['control_reads'],
+                            extension)
 
 
 if __name__ == '__main__':
