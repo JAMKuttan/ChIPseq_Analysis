@@ -21,6 +21,12 @@ logger.addHandler(logging.NullHandler())
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
+# the order of this list is important.
+# strip_extensions strips from the right inward, so
+# the expected right-most extensions should appear first (like .gz)
+# Modified from J. Seth Strattan
+STRIP_EXTENSIONS = ['.gz', '.tagAlign', '.bedse', 'bedpe' ]
+
 
 def get_args():
     '''Define arguments.'''
@@ -99,9 +105,9 @@ def pool(tag_files, outfile, paired):
 
 
 def bedpe_to_tagalign(tag_file, outfile):
-    '''Convert read pairs to reads itno standard tagAlign file.'''
+    '''Convert read pairs to reads into standard tagAlign file.'''
 
-    se_tag_filename = outfile + "bedse.tagAlign.gz"
+    se_tag_filename = outfile + "tagAlign.gz"
 
     # Convert read pairs to reads into standard tagAlign file
     tag_steps = ["zcat -f %s" % (tag_file)]
@@ -122,7 +128,7 @@ def self_psuedoreplication(tag_file, prefix, paired):
     lines_per_rep = (no_lines+1)/2
 
     # Make an array of number of psuedoreplicatesfile names
-    pseudoreplicate_dict = {r: prefix + '.pr' + str(r) + '.bedse.tagAlign.gz'
+    pseudoreplicate_dict = {r: prefix + '.pr' + str(r) + '.tagAlign.gz'
                             for r in [0, 1]}
 
     # Shuffle and split file into equal parts
@@ -243,8 +249,6 @@ def main():
         # Drop index column
         design_new_df.drop(labels='index', axis=1, inplace=True)
 
-
-
     else:
         # Make pool of replicates
         replicate_files = design_df.tag_align.unique()
@@ -284,7 +288,7 @@ def main():
 
         if not single_control:
             path_to_pool_control = cwd + '/' + pool_control
-            if control_df.values.max() > 1.2:
+            if control_df.values.max() > cutoff_ratio:
                 logger.info("Number of reads in controls differ by " +
                     " > factor of %f. Using pooled controls." % (cutoff_ratio))
                 design_new_df['control_tag_align'] = path_to_pool_control
@@ -302,7 +306,7 @@ def main():
                         if paired:
                             control = row['control_tag_align']
                             control_basename = os.path.basename(
-                                utils.strip_extensions(control, ['.filt.nodup.bedpe.gz']))
+                                utils.strip_extensions(control, STRIP_EXTENSIONS))
                             control_tmp = bedpe_to_tagalign(control , "control_basename")
                             path_to_control = cwd + '/' + control_tmp
                             design_new_df.loc[index, 'control_tag_align'] = \
