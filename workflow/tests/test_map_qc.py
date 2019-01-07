@@ -26,7 +26,7 @@ def test_map_qc_singleend():
 @pytest.mark.pairedend
 def test_map_qc_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF293YFE_val_2ENCFF330MCZ_val_1.filt.nodup.bam'))
-    assert os.path.exists(os.path.join(test_output_path, 'ENCFF293YFE_val_2ENCFF330MCZ_val_1.filt.nodup.bambai'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCFF293YFE_val_2ENCFF330MCZ_val_1.filt.nodup.bam.bai'))
     filtered_reads_report = test_output_path + 'ENCFF293YFE_val_2ENCFF330MCZ_val_1.filt.nodup.flagstat.qc'
     samtools_report = open(filtered_reads_report).readlines()
     assert '47389080 + 0 in total' in samtools_report[0]

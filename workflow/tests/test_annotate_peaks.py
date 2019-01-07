@@ -16,7 +16,7 @@ def test_annotate_peaks_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC.chipseeker_upsetplot.pdf'))
     annotation_file = test_output_path + 'ENCSR238SGC.chipseeker_annotation.csv'
     assert os.path.exists(annotation_file)
-    assert utils.count_lines(annotation_file) == 152840
+    assert utils.count_lines(annotation_file) == 149820
 
 
 @pytest.mark.pairedend
