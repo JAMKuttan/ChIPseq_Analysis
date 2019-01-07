@@ -24,7 +24,7 @@ def test_trim_reads_singleend():
 @pytest.mark.pairedend
 def test_trim_reads_pairedend():
     raw_fastq = test_data_path + 'ENCFF582IOZ.fastq.gz'
-    trimmed_fastq = test_output_path + ' ENCLB637LZP_val_2.fq.gz'
+    trimmed_fastq = test_output_path + 'ENCFF582IOZ_val_2.fq.gz'
     trimmed_fastq_report = test_output_path + \
                             'ENCLB637LZP.fastq.gz_trimming_report.txt'
     assert os.path.getsize(raw_fastq) != os.path.getsize(trimmed_fastq)
