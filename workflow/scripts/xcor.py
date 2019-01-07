@@ -22,6 +22,13 @@ logger.propagate = False
 logger.setLevel(logging.INFO)
 
 
+# the order of this list is important.
+# strip_extensions strips from the right inward, so
+# the expected right-most extensions should appear first (like .gz)
+# Modified from J. Seth Strattan
+STRIP_EXTENSIONS = ['.gz', '.tagAlign', '.bedse', 'bedpe' ]
+
+
 def get_args():
     '''Define arguments.'''
 
@@ -60,7 +67,8 @@ def check_tools():
 def xcor(tag, paired):
     '''Use spp to calculate cross-correlation stats.'''
 
-    tag_basename = os.path.basename(utils.strip_extensions(tag, ['.gz']))
+    extension
+    tag_basename = os.path.basename(utils.strip_extensions(tag, STRIP_EXTENSIONS))
     uncompressed_tag_filename = tag_basename
 
 
@@ -83,8 +91,8 @@ def xcor(tag, paired):
     out, err = utils.run_pipe(steps, outfile=subsampled_tag_filename)
 
     # Calculate Cross-correlation QC scores
-    cc_scores_filename = subsampled_tag_filename + ".cc.qc"
-    cc_plot_filename = subsampled_tag_filename + ".cc.plot.pdf"
+    cc_scores_filename = tag_basename + ".cc.qc"
+    cc_plot_filename = tag_basename + ".cc.plot.pdf"
 
     # CC_SCORE FILE format
     # Filename <tab>
