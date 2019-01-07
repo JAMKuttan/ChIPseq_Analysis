@@ -23,4 +23,4 @@ def test_call_peaks_macs_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX.pvalue_signal.bw'))
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX.xls'))
     peak_file = test_output_path + 'ENCLB568IYX.narrowPeak'
-    assert utils.count_lines(peak_file) == 112652
+    assert utils.count_lines(peak_file) == 138827

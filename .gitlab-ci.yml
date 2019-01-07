@@ -6,7 +6,8 @@ before_script:
 
 stages:
   - unit
-  - integration
+  - single
+  - multiple
 
 user_configuration:
   stage: unit
@@ -15,7 +16,7 @@ user_configuration:
   -pytest -m unit --cov=./workflow/scripts
 
 single_end_mouse:
-  stage: integration
+  stage: single
   script:
   - nextflow run workflow/main.nf -resume
   - pytest -m singleend
@@ -23,7 +24,7 @@ single_end_mouse:
     expire_in: 2 days
 
 paired_end_human:
-  stage: integration
+  stage: single
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38' --pairedEnd true -resume
   - pytest -m pairedend
@@ -31,7 +32,7 @@ paired_end_human:
     expire_in: 2 days
 
 single_end_diff:
-  stage: integration
+  stage: multiple
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' -resume
   - pytest -m singlediff
@@ -39,7 +40,7 @@ single_end_diff:
     expire_in: 2 days
 
 paired_end_diff:
-  stage: integration
+  stage: multiple
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_PE.txt" --genome 'GRCh38' --pairedEnd true -resume
   - pytest -m paireddiff

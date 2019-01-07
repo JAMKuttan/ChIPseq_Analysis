@@ -33,7 +33,7 @@ def test_annotate_peaks_pairedend_single_rep():
     assert os.path.exists(os.path.join(test_output_path, 'heatmap.pdf'))
     assert os.path.exists(os.path.join(test_output_path, 'pca.pdf'))
     assert os.path.exists(os.path.join(test_output_path, 'normcount_peaksets.txt'))
-    assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA_vs_ENCSR757EMK_diffbind.bed'))
-    diffbind_file = test_output_path + 'ENCSR729LGA_vs_ENCSR757EMK_diffbind.csv'
+    assert os.path.exists(os.path.join(test_output_path, 'ENCSR757EMK_vs_ENCSR729LGA_diffbind.bed'))
+    diffbind_file = test_output_path + 'ENCSR757EMK_vs_ENCSR729LGA_diffbind.csv'
     assert os.path.exists(diffbind_file)
-    assert utils.count_lines(diffbind_file) == 112652
+    assert utils.count_lines(diffbind_file) == 66201
