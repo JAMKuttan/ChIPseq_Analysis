@@ -457,7 +457,6 @@ process diffPeaks {
   when:
   noUniqueExperiments > 1
 
-
   script:
   """
   Rscript $baseDir/scripts/diff_peaks.R $designDiffPeaks
