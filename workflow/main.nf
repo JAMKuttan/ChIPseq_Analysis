@@ -342,6 +342,7 @@ process callPeaksMACS {
   output:
 
   set sampleId, file('*.narrowPeak'), file('*.fc_signal.bw'), file('*.pvalue_signal.bw'), experimentId, biosample, factor, treatment, replicate, controlId into experimentPeaks
+  file '*.xls' into summit
 
   script:
 
