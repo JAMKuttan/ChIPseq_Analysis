@@ -109,7 +109,7 @@ def main():
 
     # Convert PE or SE to tagAlign
     bam_basename = os.path.basename(
-        utils.strip_extensions(bam, ['.bam']))
+        utils.strip_extensions(bam, ['.bam', '.dedup']))
 
     tag_filename = bam_basename + '.tagAlign.gz'
     convert_mapped(bam, tag_filename)
