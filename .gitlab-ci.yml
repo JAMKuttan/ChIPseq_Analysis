@@ -13,7 +13,7 @@ user_configuration:
   stage: unit
   script:
   - pytest -m unit
-  -pytest -m unit --cov=./workflow/scripts
+  - pytest -m unit --cov=./workflow/scripts
 
 single_end_mouse:
   stage: single
