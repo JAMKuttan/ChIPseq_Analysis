@@ -273,7 +273,7 @@ def main():
         pool_pseudoreplicates_dict = {}
         for index, row in pseudoreplicates_df.iterrows():
             replicate_id = index + 1
-            pr_filename = experiment_id + ".pr" + str(replicate_id) + '.bedse.gz'
+            pr_filename = experiment_id + ".pr" + str(replicate_id) + '.tagAlign.gz'
             pool_replicate = pool(row, pr_filename, False)
             pool_pseudoreplicates_dict[replicate_id] = pool_replicate
 
