@@ -169,7 +169,7 @@ def dedup_mapped(bam, bam_basename, paired):
 
 
     # Remove duplicates
-    final_bam_prefix = bam_basename + ".filt.nodup"
+    final_bam_prefix = bam_basename + ".dedup"
     final_bam_filename = final_bam_prefix + ".bam"
 
     if paired:  # paired-end data
@@ -206,7 +206,7 @@ def dedup_mapped(bam, bam_basename, paired):
 def compute_complexity(bam, paired, bam_basename):
     '''Calculate library complexity .'''
 
-    pbc_file_qc_filename = bam_basename + ".filt.nodup.pbc.qc"
+    pbc_file_qc_filename = bam_basename + ".pbc.qc"
     tmp_pbc_file_qc_filename = "tmp.%s" % (pbc_file_qc_filename)
 
     # Sort by name

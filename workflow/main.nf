@@ -161,9 +161,9 @@ process filterReads {
 
   set sampleId, file('*.bam'), file('*.bai'), experimentId, biosample, factor, treatment, replicate, controlId into dedupReads
   set sampleId, file('*.bam'), experimentId, biosample, factor, treatment, replicate, controlId into convertReads
-  file '*flagstat.qc' into dedupReadsStats
-  file '*pbc.qc' into dedupReadsComplexity
-  file '*dup.qc' into dupReads
+  file '*.flagstat.qc' into dedupReadsStats
+  file '*.pbc.qc' into dedupReadsComplexity
+  file '*.dedup.qc' into dupReads
 
   script:
 
