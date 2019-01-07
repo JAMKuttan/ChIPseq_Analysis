@@ -27,6 +27,13 @@ logger.propagate = False
 logger.setLevel(logging.INFO)
 
 
+# the order of this list is important.
+# strip_extensions strips from the right inward, so
+# the expected right-most extensions should appear first (like .gz)
+# Modified from J. Seth Strattan
+STRIP_EXTENSIONS = ['.narrowPeak', '.replicated' ]
+
+
 def get_args():
     '''Define arguments.'''
 
@@ -55,9 +62,11 @@ def run_wrapper(args):
   motif_search(*args)
 
 def motif_search(filename, genome, experiment, peak):
+    '''Run motif serach on peaks.'''
 
-    file_basename = os.path.basename(filename)
-    sorted_fn = 'sorted-%s' % (file_basename)
+    file_basename = os.path.basename(
+        utils.strip_extensions(filename, STRIP_EXTENSIONS))
+    sorted_fn = '%s.%d.narrowPeak' % (file_basename, peak)
     out_fa = '%s.fa' % (experiment)
     out_motif = '%s_memechip' % (experiment)
 
