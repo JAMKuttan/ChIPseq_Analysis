@@ -9,7 +9,6 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
 
 
 @pytest.mark.singleend
-<<<<<<< HEAD
 def test_cross_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF833BLU.cc.plot.pdf'))
     qc_file = os.path.join(test_output_path,"ENCFF833BLU.cc.qc")
