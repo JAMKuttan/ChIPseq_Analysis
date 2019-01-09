@@ -21,8 +21,8 @@ def test_annotate_peaks_singleend():
 
 @pytest.mark.pairedend
 def test_annotate_peaks_pairedend():
-    assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA..chipseeker_pie.pdf'))
-    assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA..chipseeker_upsetplot.pdf'))
-    annotation_file = test_output_path + 'ENCSR729LGA..chipseeker_annotation.csv'
+    assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA.chipseeker_pie.pdf'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA.chipseeker_upsetplot.pdf'))
+    annotation_file = test_output_path + 'ENCSR729LGA.chipseeker_annotation.csv'
     assert os.path.exists(annotation_file)
-    assert utils.count_lines(annotation_file) == 25391
+    assert utils.count_lines(annotation_file) == 25614
