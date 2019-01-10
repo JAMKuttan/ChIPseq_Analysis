@@ -51,10 +51,10 @@ column_names <- c("chr", "start", "end", "width", "strand_1", "name", "score", "
                   "ENSEMBL", "symbol", "geneName")
 
 for(index in c(1:length(peakAnnoList))) {
-  filename <- paste(names(peaks)[index], ".chipseeker_annotation.csv", sep="")
+  filename <- paste(names(peaks)[index], ".chipseeker_annotation.tsv", sep="")
   df <- as.data.frame(peakAnnoList[[index]])
   colnames(df) <- column_names
-  write.table(df[ , !(names(df) %in% c('strand_1'))], filename, sep="," ,quote=F, row.names=F)
+  write.table(df[ , !(names(df) %in% c('strand_1'))], filename, sep="\t" ,quote=F, row.names=F)
 
   # Draw individual plots
 
