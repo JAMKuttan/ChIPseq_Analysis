@@ -68,7 +68,7 @@ for(index in c(1:length(peakAnnoList))) {
   dev.off()
 
   # Upset Plot
-  pdf(upsetplot_name)
+  pdf(upsetplot_name, onefile=F)
   upsetplot(peakAnnoList[[index]])
   dev.off()
 }
