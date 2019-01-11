@@ -26,7 +26,7 @@ def test_diff_peaks_singleend_multiple_rep():
     if os.path.isfile(os.path.join(test_output_path, 'ENCSR272GNQ_vs_ENCSR238SGC_diffbind.bed')):
         assert os.path.exists(os.path.join(test_output_path, 'ENCSR272GNQ_vs_ENCSR238SGC_diffbind.bed'))
         diffbind_file = test_output_path + 'ENCSR272GNQ_vs_ENCSR238SGC_diffbind.csv'
-    else os.path.isfile(os.path.join(test_output_path, 'ENCSR238SGC_vs_ENCSR272GNQ_diffbind.bed')):
+    elif os.path.isfile(os.path.join(test_output_path, 'ENCSR238SGC_vs_ENCSR272GNQ_diffbind.bed')):
         assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC_vs_ENCSR272GNQ_diffbind.bed'))
         diffbind_file = test_output_path + 'ENCSR238SGC_vs_ENCSR272GNQ_diffbind.csv'
     assert os.path.exists(diffbind_file)
@@ -40,7 +40,7 @@ def test_annotate_peaks_pairedend_single_rep():
     if os.path.isfile(os.path.join(test_output_path, 'ENCSR757EMK_vs_ENCSR729LGA_diffbind.bed')):
         assert os.path.exists(os.path.join(test_output_path, 'ENCSR757EMK_vs_ENCSR729LGA_diffbind.bed'))
         diffbind_file = test_output_path + 'ENCSR757EMK_vs_ENCSR729LGA_diffbind.csv'
-    else os.path.isfile(os.path.join(test_output_path, 'ENCSR729LGA_vs_ENCSR757EMK_diffbind.bed')):
+    elif os.path.isfile(os.path.join(test_output_path, 'ENCSR729LGA_vs_ENCSR757EMK_diffbind.bed')):
         assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA_vs_ENCSR757EMK_diffbind.bed'))
         diffbind_file = test_output_path + 'ENCSR729LGA_vs_ENCSR757EMK_diffbind.csv'
     assert os.path.exists(diffbind_file)
