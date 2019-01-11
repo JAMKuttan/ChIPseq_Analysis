@@ -124,7 +124,7 @@ def main():
     check_tools()
 
     # Rename fastq files by sample
-    fastq_rename = rename_reads(fastq, sample paired)
+    fastq_rename = rename_reads(fastq, sample, paired)
 
     # Run trim_reads
     trim_reads(fastq_rename, paired)
