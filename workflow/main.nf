@@ -12,9 +12,11 @@ params.genomes = []
 params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
 params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
 params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
+params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 params.cutoffRatio = 1.2
 params.outDir= "$baseDir/output"
 params.extendReadsLen = 100
+params.topPeakCount = 600
 
 // Check inputs
 if( params.bwaIndex ){
@@ -36,11 +38,15 @@ readsList = Channel
 pairedEnd = params.pairedEnd
 designFile = params.designFile
 genomeSize = params.genomeSize
+genome = params.genome
 chromSizes = params.chromSizes
+fasta = params.fasta
 cutoffRatio = params.cutoffRatio
 outDir = params.outDir
 extendReadsLen = params.extendReadsLen
+topPeakCount = params.topPeakCount
 
+// Check design file for errors
 process checkDesignFile {
 
   publishDir "$outDir/design", mode: 'copy'
@@ -372,7 +378,9 @@ process consensusPeaks {
 
   file '*.replicated.*' into consensusPeaks
   file '*.rejected.*' into rejectedPeaks
-  file("design_diffPeaks.tsv") into designDiffPeaks
+  file 'design_diffPeaks.csv'  into designDiffPeaks
+  file 'design_annotatePeaks.tsv'  into designAnnotatePeaks, designMotifSearch
+  file 'unique_experiments.csv' into uniqueExperiments
 
   script:
 
@@ -380,4 +388,77 @@ process consensusPeaks {
   python3 $baseDir/scripts/overlap_peaks.py -d $peaksDesign -f $preDiffDesign
   """
 
+}
+
+// Annotate Peaks
+process peakAnnotation {
+
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  file designAnnotatePeaks
+
+  output:
+
+  file "*chipseeker*" into peakAnnotation
+
+  script:
+
+  """
+  Rscript $baseDir/scripts/annotate_peaks.R $designAnnotatePeaks $genome
+  """
+
+}
+
+// Motif Search  Peaks
+process motifSearch {
+
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  file designMotifSearch
+
+  output:
+
+  file "*memechip" into motifSearch
+  file "sorted-*" into filteredPeaks
+
+  script:
+
+  """
+  python3 $baseDir/scripts/motif_search.py -d $designMotifSearch -g $fasta -p $topPeakCount
+  """
+}
+
+// Define channel to find number of unique experiments
+uniqueExperimentsList = uniqueExperiments
+                      .splitCsv(sep: '\t', header: true)
+
+// Calculate Differential Binding Activity
+process diffPeaks {
+
+  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+
+  input:
+
+  file designDiffPeaks
+  val noUniqueExperiments from uniqueExperimentsList.count()
+
+  output:
+
+  file '*_diffbind.bed' into diffPeaks
+  file '*_diffbind.csv' into diffPeaksCounts
+  file '*.pdf' into diffPeaksStats
+  file 'normcount_peaksets.txt' into normCountPeaks
+
+  when:
+  noUniqueExperiments > 1
+
+
+  script:
+  """
+  Rscript $baseDir/scripts/diff_peaks.R $designDiffPeaks
+  """
 }

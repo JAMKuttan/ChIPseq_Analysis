@@ -1,35 +1,34 @@
 # Astrocyte ChIPseq analysis Workflow Package
 
-This SOP describes the analysis pipeline of downstream analysis of ChIP-seq sequencing data. This pipeline includes (1) Quality control using Deeptools, (2) Peak annotation, (3) Differential peak analysis, and (4) motif analysis. BAM files and SORTED peak BED files selected as input. For each sample this workflow:
+## Introduction
+**ChIP-seq Analysis** is a bioinformatics best-practice analysis pipeline used for chromatin immunoprecipitation (ChIP-seq) data analysis.
 
-    1) Annotate all peaks using ChipSeeker
-    2) Qulity control and signal profiling with Deeptools 
-    3) Find differential expressed peaks using DiffBind
-    4) Annotate all differentially expressed peaks
-    5) Using MEME-ChIP in motif finding for both original peaks and differently expressed peaks
+The pipeline uses [Nextflow](https://www.nextflow.io), a bioinformatics workflow tool. It pre-processes raw data from FastQ inputs, aligns the reads and performs extensive quality-control on the results.
 
+### Pipeline Steps
 
+1) Trim adaptors TrimGalore!
+2) Align with BWA
+3) Filter reads with Sambamba  S
+4) Quality control with DeepTools
+5) Calculate Cross-correlation using SPP and PhantomPeakQualTools
+6) Signal profiling using MACS2
+7) Call consenus peaks
+8) Annotate all peaks using ChipSeeker
+9) Use MEME-ChIP to find motifs in original peaks
+10) Find differential expressed peaks using DiffBind (If more than 1 experiment)
 
-## Annotations used in the pipeline
-
-    ChipSeeker - Known gene from Bioconductor [TxDb annotation](https://bioconductor.org/packages/release/BiocViews.html#___TxDb)
-    Deeptools - RefGene downloaded from UCSC Table browser
-
-
- 
 
 ## Workflow Parameters
 
-    bam - Choose all ChIP-seq alignment files for analysis.
+    reads - Choose all ChIP-seq fastq files for analysis.
+    pairedEnd - Choose True/False if data is paired-end
+    design - Choose the file with the experiment design information. TSV format
     genome - Choose a genomic reference (genome).
-    peaks - Choose all the peak files for analysis. All peaks should be sorted by the user
-    design - Choose the file with the experiment design information. CSV format
-    toppeak - The number of top peaks used for motif analysis. Default is all
-    
 
 
 ## Design file
- 
+
  The following columns are necessary, must be named as in template. An design file template can be downloaded [HERE](https://git.biohpc.swmed.edu/bchen4/chipseq_analysis/raw/master/docs/design_example.csv)
 
     SampleID
@@ -52,7 +51,7 @@ This SOP describes the analysis pipeline of downstream analysis of ChIP-seq sequ
         The id of the control sample
     PeakCaller
         The peak caller used
-	
+
 
 
 ### Credits
@@ -64,5 +63,3 @@ This example worklow is derived from original scripts kindly contributed by the 
 * DiffBind: http://bioconductor.org/packages/release/bioc/html/DiffBind.html
 * Deeptools: https://deeptools.github.io/
 * MEME-ChIP: http://meme-suite.org/doc/meme-chip.html
-
-

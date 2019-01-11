@@ -7,14 +7,13 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/convertReads/'
 
 
-@pytest.mark.integration
+@pytest.mark.singleend
 def test_convert_reads_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.filt.nodup.tagAlign.gz'))
     assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.filt.nodup.bedse.gz'))
 
 
-@pytest.mark.integration
+@pytest.mark.pairedend
 def test_map_qc_pairedend():
-    # Do the same thing for paired end data
-    # Also check that bedpe exists
-    pass
+    assert os.path.exists(os.path.join(test_output_path, 'ENCFF293YFE_val_2ENCFF330MCZ_val_1.filt.nodup.tagAlign.gz'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCFF293YFE_val_2ENCFF330MCZ_val_1.filt.nodup.bedpe.gz'))
