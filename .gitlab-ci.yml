@@ -24,7 +24,6 @@ astrocyte:
   - cd ..
   - astrocyte_cli validate chipseq_analysis
   - astrocyte_cli test chipseq_analysis
-  - pytest -m singleend
   artifacts:
     expire_in: 2 days
 

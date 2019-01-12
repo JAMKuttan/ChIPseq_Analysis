@@ -128,11 +128,10 @@ workflow_parameters:
       Reference species and genome used for alignment and subsequent analysis.
 
   - id: astrocyte
-    type: select
+    type: string
     required: true
-    choices:
-      - [ 'true', 'True']
     default: 'true'
+    regex: "true"
     description: |
       Ensure configuraton for astrocyte
 
@@ -156,6 +155,6 @@ vizapp_cran_packages:
 # List of any Bioconductor packages, not provided by the modules,
 # that must be made available to the vizapp
 vizapp_bioc_packages:
-
+  - none 
 vizapp_github_packages:
   - js229/Vennerable
