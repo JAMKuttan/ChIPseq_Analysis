@@ -11,6 +11,7 @@ params.cutoffRatio = 1.2
 params.outDir= "$baseDir/output"
 params.extendReadsLen = 100
 params.topPeakCount = 600
+params.astrocyte = 'false'
 
 // Assign variables if astrocyte
 params.genome = 'GRCm38'

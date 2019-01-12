@@ -155,6 +155,7 @@ vizapp_cran_packages:
 # List of any Bioconductor packages, not provided by the modules,
 # that must be made available to the vizapp
 vizapp_bioc_packages:
-  - none 
+  - none
+  
 vizapp_github_packages:
   - js229/Vennerable

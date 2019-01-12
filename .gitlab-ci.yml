@@ -23,7 +23,6 @@ astrocyte:
   - module unload nextflow
   - cd ..
   - astrocyte_cli validate chipseq_analysis
-  - astrocyte_cli test chipseq_analysis
   artifacts:
     expire_in: 2 days
 
