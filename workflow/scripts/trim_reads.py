@@ -89,7 +89,7 @@ def rename_reads(fastq, sample, paired):
         # Great symbolic links
         os.symlink(fastq[0], renamed_fastq[0])
 
-    return fastq_rename
+    return renamed_fastq
 
 
 def trim_reads(fastq, paired):
