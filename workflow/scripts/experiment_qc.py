@@ -174,7 +174,7 @@ def main():
 
     # Run enrichment
     new_design_df = update_controls(design_df)
-    for row in new_design_df.iterrows():
+    for index, row in new_design_df.iterrows():
         check_enrichment(
             row['sample_id'],
             row['control_id'],
