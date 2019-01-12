@@ -5,7 +5,6 @@
 import argparse
 import logging
 import pandas as pd
-import re
 
 EPILOG = '''
 For more details:
@@ -84,7 +83,7 @@ def check_samples(design):
     malformated_samples = []
     chars = set('-.')
     for sample in samples.index.values:
-        if ( any(char.isspace() for char in sample) | any((char in chars) for char in sample) ):
+        if(any(char.isspace() for char in sample) | any((char in chars) for char in sample)):
             malformated_samples.append(sample)
 
     if len(malformated_samples) > 0:
@@ -104,7 +103,7 @@ def check_experiments(design):
     malformated_experiments = []
     chars = set('-.')
     for experiment in experiments.index.values:
-        if ( any(char.isspace() for char in experiment) | any((char in chars) for char in experiment) ):
+        if(any(char.isspace() for char in experiment) | any((char in chars) for char in experiment)):
             malformated_experiments.append(experiment)
 
     if len(malformated_experiments) > 0:
@@ -187,8 +186,8 @@ def main():
     logger.addHandler(handler)
 
     # Read files as dataframes
-    design_df = pd.read_csv(args.design, sep='\t')
-    fastq_df = pd.read_csv(args.fastq, sep='\t', names=['name', 'path'])
+    design_df = pd.read_csv(design, sep='\t')
+    fastq_df = pd.read_csv(fastq, sep='\t', names=['name', 'path'])
 
     # Check design file
     check_design_headers(design_df, paired)

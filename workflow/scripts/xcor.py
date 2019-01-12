@@ -26,7 +26,7 @@ logger.setLevel(logging.INFO)
 # strip_extensions strips from the right inward, so
 # the expected right-most extensions should appear first (like .gz)
 # Modified from J. Seth Strattan
-STRIP_EXTENSIONS = ['.gz', '.tagAlign', '.bedse', 'bedpe' ]
+STRIP_EXTENSIONS = ['.gz', '.tagAlign', '.bedse', 'bedpe']
 
 
 def get_args():
@@ -67,21 +67,20 @@ def check_tools():
 def xcor(tag, paired):
     '''Use spp to calculate cross-correlation stats.'''
 
-    extension
     tag_basename = os.path.basename(utils.strip_extensions(tag, STRIP_EXTENSIONS))
     uncompressed_tag_filename = tag_basename
 
 
     # Subsample tagAlign file
-    NREADS = 15000000
+    number_reads = 15000000
     subsampled_tag_filename = \
-        tag_basename + ".%d.tagAlign.gz" % (NREADS/1000000)
+        tag_basename + ".%d.tagAlign.gz" % (number_reads/1000000)
 
 
     steps = [
         'zcat %s' % (tag),
         'grep -v "chrM"',
-        'shuf -n %d --random-source=%s' % (NREADS, tag)]
+        'shuf -n %d --random-source=%s' % (number_reads, tag)]
 
     if paired:
         steps.extend([r"""awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}'"""])
@@ -114,7 +113,6 @@ def xcor(tag, paired):
          cc_plot_filename, cc_scores_filename)
     ])
 
-    return cc_scores_filename
 
 
 def main():
@@ -130,7 +128,7 @@ def main():
     check_tools()
 
     # Calculate Cross-correlation
-    xcor_filename = xcor(tag, paired)
+    xcor(tag, paired)
 
 
 if __name__ == '__main__':

@@ -16,7 +16,6 @@ logger.propagate = True
 
 
 def run_pipe(steps, outfile=None):
-    # TODO:  capture stderr
     from subprocess import Popen, PIPE
     p = None
     p_next = None
@@ -98,13 +97,13 @@ def rescale_scores(filename, scores_col, new_min=10, new_max=1000):
         'head -n 1 %s' % (sorted_fn),
         'cut -f %s' % (scores_col)])
     max_score = float(out.strip())
-    logger.info("rescale_scores: max_score = %s" % (max_score))
+    logger.info("rescale_scores: max_score = %s", max_score)
 
     out, err = run_pipe([
         'tail -n 1 %s' % (sorted_fn),
         'cut -f %s' % (scores_col)])
     min_score = float(out.strip())
-    logger.info("rescale_scores: min_score = %s" % (min_score))
+    logger.info("rescale_scores: min_score = %s", min_score)
 
     a = min_score
     b = max_score

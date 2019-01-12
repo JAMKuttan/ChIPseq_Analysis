@@ -3,11 +3,11 @@
 '''Generate pooled and pseudoreplicate from data.'''
 
 import argparse
-import utils
 import logging
+import os
 import pandas as pd
 import numpy as np
-import os
+import utils
 
 EPILOG = '''
 For more details:
@@ -25,7 +25,7 @@ logger.setLevel(logging.INFO)
 # strip_extensions strips from the right inward, so
 # the expected right-most extensions should appear first (like .gz)
 # Modified from J. Seth Strattan
-STRIP_EXTENSIONS = ['.gz', '.tagAlign', '.bedse', 'bedpe' ]
+STRIP_EXTENSIONS = ['.gz', '.tagAlign', '.bedse', 'bedpe']
 
 
 def get_args():
@@ -98,8 +98,7 @@ def pool(tag_files, outfile, paired):
     # Merge files
     out, err = utils.run_pipe([
         'gzip -dc %s' % (' '.join(tag_files)),
-        'gzip -cn'],
-        outfile=pooled_filename)
+        'gzip -cn'], outfile=pooled_filename)
 
     return pooled_filename
 
@@ -219,7 +218,7 @@ def main():
         # Update tagAlign with single end data
         if paired:
             design_new_df['tag_align'] = design_new_df['se_tag_align']
-        design_new_df.drop(labels = 'se_tag_align', axis = 1, inplace = True)
+        design_new_df.drop(labels='se_tag_align', axis=1, inplace=True)
 
         design_new_df['replicate'] = design_new_df['replicate'].astype(str)
         design_new_df.at[1, 'sample_id'] = experiment_id + '_pr1'
@@ -281,7 +280,7 @@ def main():
         # Update tagAlign with single end data
         if paired:
             design_new_df['tag_align'] = design_new_df['se_tag_align']
-        design_new_df.drop(labels = 'se_tag_align', axis = 1, inplace = True)
+        design_new_df.drop(labels='se_tag_align', axis=1, inplace=True)
         # Check controls against cutoff_ratio
         # if so replace with pool_control
         # unless single control was used
@@ -290,7 +289,7 @@ def main():
             path_to_pool_control = cwd + '/' + pool_control
             if control_df.values.max() > cutoff_ratio:
                 logger.info("Number of reads in controls differ by " +
-                    " > factor of %f. Using pooled controls." % (cutoff_ratio))
+                            " > factor of %f. Using pooled controls." % (cutoff_ratio))
                 design_new_df['control_tag_align'] = path_to_pool_control
             else:
                 for index, row in design_new_df.iterrows():
@@ -307,13 +306,13 @@ def main():
                             control = row['control_tag_align']
                             control_basename = os.path.basename(
                                 utils.strip_extensions(control, STRIP_EXTENSIONS))
-                            control_tmp = bedpe_to_tagalign(control , "control_basename")
+                            control_tmp = bedpe_to_tagalign(control, control_basename)
                             path_to_control = cwd + '/' + control_tmp
                             design_new_df.loc[index, 'control_tag_align'] = \
                                                                 path_to_control
 
         else:
-            path_to_pool_control =  pool_control
+            path_to_pool_control = pool_control
 
         # Add in pseudo replicates
         tmp_metadata = design_new_df.loc[0].copy()
@@ -337,7 +336,7 @@ def main():
 
     # Write out new dataframe
     design_new_df.to_csv(experiment_id + '_ppr.tsv',
-                        header=True, sep='\t', index=False)
+                         header=True, sep='\t', index=False)
 
 
 if __name__ == '__main__':

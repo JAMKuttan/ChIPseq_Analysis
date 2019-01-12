@@ -3,16 +3,13 @@
 '''Call Motifs on called peaks.'''
 
 import os
-import sys
-import re
-from re import sub
-import string
 import argparse
 import logging
-import subprocess
+import shutil
+from multiprocessing import Pool
 import pandas as pd
 import utils
-from multiprocessing import Pool
+
 
 EPILOG = '''
 For more details:
@@ -31,7 +28,7 @@ logger.setLevel(logging.INFO)
 # strip_extensions strips from the right inward, so
 # the expected right-most extensions should appear first (like .gz)
 # Modified from J. Seth Strattan
-STRIP_EXTENSIONS = ['.narrowPeak', '.replicated' ]
+STRIP_EXTENSIONS = ['.narrowPeak', '.replicated']
 
 
 def get_args():
@@ -58,8 +55,29 @@ def get_args():
 
 # Functions
 
+def check_tools():
+    '''Checks for required componenets on user system'''
+
+    logger.info('Checking for required libraries and components on this system')
+
+    meme_path = shutil.which("meme")
+    if meme_path:
+        logger.info('Found meme: %s', meme_path)
+    else:
+        logger.error('Missing meme')
+        raise Exception('Missing meme')
+
+    bedtools_path = shutil.which("bedtools")
+    if bedtools_path:
+        logger.info('Found bedtools: %s', bedtools_path)
+    else:
+        logger.error('Missing bedtools')
+        raise Exception('Missing bedtools')
+
+
 def run_wrapper(args):
-  motif_search(*args)
+    motif_search(*args)
+
 
 def motif_search(filename, genome, experiment, peak):
     '''Run motif serach on peaks.'''
@@ -82,9 +100,16 @@ def motif_search(filename, genome, experiment, peak):
     out, err = utils.run_pipe([
         'bedtools getfasta -fi %s -bed %s -fo %s' % (genome, sorted_fn, out_fa)])
 
+    if err:
+        logger.error("bedtools error: %s", err)
+
+
     #Call memechip
     out, err = utils.run_pipe([
         'meme-chip -oc %s -meme-minw 5 -meme-maxw 15 -meme-nmotifs 10 %s -norand' % (out_motif, out_fa)])
+    if err:
+        logger.error("meme-chip error: %s", err)
+
 
 def main():
     args = get_args()
@@ -92,14 +117,22 @@ def main():
     genome = args.genome
     peak = args.peak
 
+    # Create a file handler
+    handler = logging.FileHandler('motif.log')
+    logger.addHandler(handler)
+
+    # Check if tools are present
+    check_tools()
+
     # Read files
     design_df = pd.read_csv(design, sep='\t')
 
-    meme_arglist =  zip(design_df['Peaks'].tolist(), [genome]*design_df.shape[0], design_df['Condition'].tolist(), [peak]*design_df.shape[0])
-    work_pool = Pool(min(12,design_df.shape[0]))
-    return_list =  work_pool.map(run_wrapper, meme_arglist)
+    meme_arglist = zip(design_df['Peaks'].tolist(), [genome]*design_df.shape[0], design_df['Condition'].tolist(), [peak]*design_df.shape[0])
+    work_pool = Pool(min(12, design_df.shape[0]))
+    return_list = work_pool.map(run_wrapper, meme_arglist)
     work_pool.close()
     work_pool.join()
 
-if __name__=="__main__":
-  main()
+
+if __name__ == '__main__':
+    main()

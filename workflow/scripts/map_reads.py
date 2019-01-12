@@ -9,7 +9,6 @@ import shutil
 import shlex
 import logging
 from multiprocessing import cpu_count
-import json
 import utils
 
 EPILOG = '''
@@ -23,6 +22,12 @@ logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 logger.propagate = False
 logger.setLevel(logging.INFO)
+
+# the order of this list is important.
+# strip_extensions strips from the right inward, so
+# the expected right-most extensions should appear first (like .gz)
+# Modified from J. Seth Strattan
+STRIP_EXTENSIONS = ['.gz', '.fq', '.fastq', '_trimmed']
 
 
 def get_args():
@@ -110,7 +115,7 @@ def align_se(fastq, sai, reference, fastq_basename):
 
     out, err = utils.run_pipe(steps)
     if err:
-        logger.error("samse/samtools error: %s" % (err))
+        logger.error("samse/samtools error: %s", err)
 
     return bam_filename
 
@@ -124,17 +129,17 @@ def align_pe(fastq, sai, reference, fastq_basename):
 
     # Remove read pairs with bad CIGAR strings and sort by position
     steps = [
-            "bwa sampe -P %s %s %s %s %s"
-            % (reference, sai[0], sai[1],
-               fastq[0], fastq[1]),
-            "tee %s" % (sam_filename),
-            r"""awk 'BEGIN {FS="\t" ; OFS="\t"} ! /^@/ && $6!="*" { cigar=$6; gsub("[0-9]+D","",cigar); n = split(cigar,vals,"[A-Z]"); s = 0; for (i=1;i<=n;i++) s=s+vals[i]; seqlen=length($10) ; if (s!=seqlen) print $1"\t" ; }'""",
-            "sort",
-            "uniq"]
+        "bwa sampe -P %s %s %s %s %s"
+        % (reference, sai[0], sai[1],
+           fastq[0], fastq[1]),
+        "tee %s" % (sam_filename),
+        r"""awk 'BEGIN {FS="\t" ; OFS="\t"} ! /^@/ && $6!="*" { cigar=$6; gsub("[0-9]+D","",cigar); n = split(cigar,vals,"[A-Z]"); s = 0; for (i=1;i<=n;i++) s=s+vals[i]; seqlen=length($10) ; if (s!=seqlen) print $1"\t" ; }'""",
+        "sort",
+        "uniq"]
 
     out, err = utils.run_pipe(steps, badcigar_filename)
     if err:
-        logger.error("sampe error: %s" % (err))
+        logger.error("sampe error: %s", err)
 
     steps = [
         "cat %s" % (sam_filename),
@@ -145,7 +150,7 @@ def align_pe(fastq, sai, reference, fastq_basename):
 
     out, err = utils.run_pipe(steps)
     if err:
-        logger.error("samtools error: %s" % (err))
+        logger.error("samtools error: %s", err)
 
     return bam_filename
 
@@ -166,8 +171,8 @@ def main():
 
     # Run Suffix Array generation
     sai = []
-    for fq in fastq:
-        sai_filename = generate_sa(fq, reference)
+    for fastq_file in fastq:
+        sai_filename = generate_sa(fastq_file, reference)
         sai.append(sai_filename)
 
     # Make file basename
@@ -181,10 +186,10 @@ def main():
         bam_filename = align_se(fastq, sai, reference, fastq_basename)
 
     bam_mapstats_filename = '%s.flagstat.qc' % (fastq_basename)
-    with open(bam_mapstats_filename, 'w') as fh:
+    with open(bam_mapstats_filename, 'w') as temp_file:
         subprocess.check_call(
             shlex.split("samtools flagstat %s" % (bam_filename)),
-            stdout=fh)
+            stdout=temp_file)
 
     # Remove sai files
     for sai_file in sai:

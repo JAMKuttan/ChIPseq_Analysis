@@ -106,7 +106,7 @@ def filter_mapped_pe(bam, bam_basename):
         # Will produce name sorted BAM
         "samtools sort -n -@ %d -o %s" % (cpu_count(), tmp_filt_bam_filename)])
     if err:
-        logger.error("samtools filter error: %s" % (err))
+        logger.error("samtools filter error: %s", err)
 
     # Remove orphan reads (pair was removed)
     # and read pairs mapping to different chromosomes
@@ -136,7 +136,7 @@ def filter_mapped_se(bam, bam_basename):
     # not primary alignment, reads failing platform
     # Remove low MAPQ reads
     # Obtain name sorted BAM file
-    with open(filt_bam_filename, 'w') as fh:
+    with open(filt_bam_filename, 'w') as temp_file:
         samtools_filter_command = (
             "samtools view -F 1804 -q 30 -b %s"
             % (bam)
@@ -144,7 +144,7 @@ def filter_mapped_se(bam, bam_basename):
         logger.info(samtools_filter_command)
         subprocess.check_call(
             shlex.split(samtools_filter_command),
-            stdout=fh)
+            stdout=temp_file)
 
     return filt_bam_filename
 
@@ -157,7 +157,7 @@ def dedup_mapped(bam, bam_basename, paired):
     tmp_dup_mark_filename = bam_basename + ".dupmark.bam"
     sambamba_params = "--hash-table-size=17592186044416" + \
                     " --overflow-list-size=20000000 --io-buffer-size=256"
-    with open(dup_file_qc_filename, 'w') as fh:
+    with open(dup_file_qc_filename, 'w') as temp_file:
         sambamba_markdup_command = (
             "sambamba markdup -t %d %s --tmpdir=%s %s %s"
             % (cpu_count(), sambamba_params, os.getcwd(), bam, tmp_dup_mark_filename)
@@ -165,7 +165,7 @@ def dedup_mapped(bam, bam_basename, paired):
         logger.info(sambamba_markdup_command)
         subprocess.check_call(
             shlex.split(sambamba_markdup_command),
-            stderr=fh)
+            stderr=temp_file)
 
 
     # Remove duplicates
@@ -179,11 +179,11 @@ def dedup_mapped(bam, bam_basename, paired):
         samtools_dedupe_command = \
             "samtools view -F 1804 -b %s" % (tmp_dup_mark_filename)
 
-    with open(final_bam_filename, 'w') as fh:
+    with open(final_bam_filename, 'w') as temp_file:
         logger.info(samtools_dedupe_command)
         subprocess.check_call(
             shlex.split(samtools_dedupe_command),
-            stdout=fh)
+            stdout=temp_file)
 
     # Index final bam file
     sambamba_index_command = \
@@ -192,12 +192,12 @@ def dedup_mapped(bam, bam_basename, paired):
     subprocess.check_output(shlex.split(sambamba_index_command))
 
     # Generate mapping statistics
-    final_bam_file_mapstats_filename = final_bam_prefix + ".flagstat.qc"
-    with open(final_bam_file_mapstats_filename, 'w') as fh:
+    mapstats_filename = final_bam_prefix + ".flagstat.qc"
+    with open(mapstats_filename, 'w') as temp_file:
         flagstat_command = "sambamba flagstat -t %d %s" \
                             % (cpu_count(), final_bam_filename)
         logger.info(flagstat_command)
-        subprocess.check_call(shlex.split(flagstat_command), stdout=fh)
+        subprocess.check_call(shlex.split(flagstat_command), stdout=temp_file)
 
     os.remove(bam)
     return tmp_dup_mark_filename
@@ -223,12 +223,12 @@ def compute_complexity(bam, paired, bam_basename):
     # PBC1=OnePair/Distinct [tab]
     # PBC2=OnePair/TwoPair
     pbc_headers = ['TotalReadPairs',
-                    'DistinctReadPairs',
-                    'OneReadPair',
-                    'TwoReadPairs',
-                    'NRF',
-                    'PBC1',
-                    'PBC2']
+                   'DistinctReadPairs',
+                   'OneReadPair',
+                   'TwoReadPairs',
+                   'NRF',
+                   'PBC1',
+                   'PBC2']
 
     if paired:
         steps = [
@@ -247,11 +247,11 @@ def compute_complexity(bam, paired, bam_basename):
         ])
     out, err = utils.run_pipe(steps, tmp_pbc_file_qc_filename)
     if err:
-        logger.error("PBC file error: %s" % (err))
+        logger.error("PBC file error: %s", err)
 
     # Add headers
     pbc_file = pd.read_csv(tmp_pbc_file_qc_filename, sep='\t', header=None,
-                          names=pbc_headers)
+                           names=pbc_headers)
     pbc_file.to_csv(pbc_file_qc_filename, header=True, sep='\t', index=False)
     os.remove(bam)
     os.remove(bam + '.bai')

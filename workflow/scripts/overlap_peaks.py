@@ -113,9 +113,9 @@ def overlap(experiment, design):
     # with any one of the overlapping peak pairs  >= 0.5
 
     steps_true = ['intersectBed -wo -a %s -b %s' % (pool_peaks, true_rep_peaks[0]),
-                    awk_command,
-                    cut_command,
-                    'sort -u']
+                  awk_command,
+                  cut_command,
+                  'sort -u']
 
     iter_true_peaks = iter(true_rep_peaks)
     next(iter_true_peaks)
@@ -123,13 +123,13 @@ def overlap(experiment, design):
     if len(true_rep_peaks) > 1:
         for true_peak in true_rep_peaks[1:]:
             steps_true.extend(['intersectBed -wo -a stdin -b %s' % (true_peak),
-                                awk_command,
-                                cut_command,
-                                'sort -u'])
+                               awk_command,
+                               cut_command,
+                               'sort -u'])
 
     out, err = utils.run_pipe(steps_true, outfile=overlap_tr_fn)
     print("%d peaks overlap with both true replicates" %
-        (utils.count_lines(overlap_tr_fn)))
+          (utils.count_lines(overlap_tr_fn)))
 
     # Find pooled peaks that overlap PseudoRep1 and PseudoRep2
     # where overlap is defined as the fractional overlap
@@ -146,7 +146,7 @@ def overlap(experiment, design):
 
     out, err = utils.run_pipe(steps_pseudo, outfile=overlap_pr_fn)
     print("%d peaks overlap with both pooled pseudoreplicates"
-            % (utils.count_lines(overlap_pr_fn)))
+          % (utils.count_lines(overlap_pr_fn)))
 
     # Make union of peak lists
     out, err = utils.run_pipe([
@@ -154,7 +154,7 @@ def overlap(experiment, design):
                 'sort -u'
                 ], overlapping_peaks_fn)
     print("%d peaks overlap with true replicates or with pooled pseudorepliates"
-            % (utils.count_lines(overlapping_peaks_fn)))
+          % (utils.count_lines(overlapping_peaks_fn)))
 
     # Make rejected peak list
     out, err = utils.run_pipe([
@@ -187,7 +187,7 @@ def main():
 
     # Make a design file for annotating Peaks
     anno_cols = ['Condition', 'Peaks']
-    design_anno = pd.DataFrame(columns = anno_cols)
+    design_anno = pd.DataFrame(columns=anno_cols)
 
     # Find consenus overlap peaks for each experiment
     for experiment, df_experiment in design_peaks_df.groupby('experiment_id'):
@@ -197,16 +197,16 @@ def main():
 
     # Write out design files
     design_diff.columns = ['SampleID',
-                            'bamReads',
-                            'Condition',
-                            'Tissue',
-                            'Factor',
-                            'Treatment',
-                            'Replicate',
-                            'ControlID',
-                            'bamControl',
-                            'Peaks',
-                            'PeakCaller']
+                           'bamReads',
+                           'Condition',
+                           'Tissue',
+                           'Factor',
+                           'Treatment',
+                           'Replicate',
+                           'ControlID',
+                           'bamControl',
+                           'Peaks',
+                           'PeakCaller']
 
     design_diff.to_csv("design_diffPeaks.csv", header=True, sep=',', index=False)
     design_anno.to_csv("design_annotatePeaks.tsv", header=True, sep='\t', index=False)

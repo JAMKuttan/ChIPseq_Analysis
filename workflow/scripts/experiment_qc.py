@@ -7,8 +7,9 @@ import argparse
 import logging
 import subprocess
 import shutil
-import pandas as pd
 from multiprocessing import cpu_count
+import pandas as pd
+
 
 EPILOG = '''
 For more details:
@@ -173,13 +174,13 @@ def main():
 
     # Run enrichment
     new_design_df = update_controls(design_df)
-    for index, row in new_design_df.iterrows():
+    for row in new_design_df.iterrows():
         check_enrichment(
-                            row['sample_id'],
-                            row['control_id'],
-                            row['bam_reads'],
-                            row['control_reads'],
-                            extension)
+            row['sample_id'],
+            row['control_id'],
+            row['bam_reads'],
+            row['control_reads'],
+            extension)
 
 
 if __name__ == '__main__':
