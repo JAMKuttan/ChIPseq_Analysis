@@ -76,15 +76,15 @@ def rename_reads(fastq, sample, paired):
 
     if paired:  # paired-end data
         # Set file names
-        renamed_fastq[0] = cwd + '/' + sample + '_R1.fastq.gz'
-        renamed_fastq[1] = cwd + '/' + sample + '_R2.fastq.gz'
+        renamed_fastq.append(cwd + '/' + sample + '_R1.fastq.gz')
+        renamed_fastq.append(cwd + '/' + sample + '_R2.fastq.gz')
 
         # Great symbolic links
         os.symlink(fastq[0], renamed_fastq[0])
         os.symlink(fastq[1], renamed_fastq[1])
     else:
         # Set file names
-        renamed_fastq[0] = cwd + '/' + sample + '_R1.fastq.gz'
+        renamed_fastq.append(cwd + '/' + sample + '_R1.fastq.gz')
 
         # Great symbolic links
         os.symlink(fastq[0], renamed_fastq[0])
