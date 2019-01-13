@@ -84,13 +84,18 @@ def motif_search(filename, genome, experiment, peak):
 
     file_basename = os.path.basename(
         utils.strip_extensions(filename, STRIP_EXTENSIONS))
-    sorted_fn = '%s.%d.narrowPeak' % (file_basename, peak)
+
     out_fa = '%s.fa' % (experiment)
     out_motif = '%s_memechip' % (experiment)
 
     # Sort Bed file and limit number of peaks
     if peak == -1:
         peak = utils.count_lines(filename)
+        peak_no = 'all'
+    else:
+        peak_no = peak
+
+    sorted_fn = '%s.%s.narrowPeak' % (file_basename, peak)
 
     out, err = utils.run_pipe([
         'sort -k %dgr,%dgr %s' % (5, 5, filename),
