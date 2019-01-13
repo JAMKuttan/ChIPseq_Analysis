@@ -26,7 +26,7 @@ logger.setLevel(logging.INFO)
 # strip_extensions strips from the right inward, so
 # the expected right-most extensions should appear first (like .gz)
 # Modified from J. Seth Strattan
-STRIP_EXTENSIONS = ['.gz', '.tagAlign', '.bedse', 'bedpe']
+STRIP_EXTENSIONS = ['.gz', '.tagAlign', '.bedse', '.bedpe']
 
 
 def get_args():
@@ -112,6 +112,8 @@ def xcor(tag, paired):
         (run_spp_command, subsampled_tag_filename, cpu_count(),
          cc_plot_filename, cc_scores_filename)
     ])
+
+    return cc_scores_filename
 
 
 

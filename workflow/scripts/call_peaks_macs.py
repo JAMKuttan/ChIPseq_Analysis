@@ -125,11 +125,12 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
     # MACS2 sometimes calls features off the end of chromosomes.
     # Remove coordinates outside chromosome sizes
 
-    narrowpeak_fn = '%s.narrowPeak' % (prefix)
+    int_narrowpeak_fn = '%s_peaks.narrowPeak' % (prefix)
+    narrowpeak_fn = '%s_peaks.narrowPeak' % (prefix)
     clipped_narrowpeak_fn = 'clipped-%s' % (narrowpeak_fn)
 
 
-    steps = ['slopBed -i %s -g %s -b 0' % (narrowpeak_fn, chrom_sizes),
+    steps = ['slopBed -i %s -g %s -b 0' % (int_narrowpeak_fn, chrom_sizes),
              'bedClip stdin %s %s' % (chrom_sizes, clipped_narrowpeak_fn)]
 
     out, err = utils.run_pipe(steps)

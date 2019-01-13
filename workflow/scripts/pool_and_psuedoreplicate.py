@@ -25,7 +25,7 @@ logger.setLevel(logging.INFO)
 # strip_extensions strips from the right inward, so
 # the expected right-most extensions should appear first (like .gz)
 # Modified from J. Seth Strattan
-STRIP_EXTENSIONS = ['.gz', '.tagAlign', '.bedse', 'bedpe']
+STRIP_EXTENSIONS = ['.gz', '.tagAlign', '.bedse', '.bedpe']
 
 
 def get_args():
@@ -93,7 +93,10 @@ def pool(tag_files, outfile, paired):
     else:
         file_extension = '.bedse.gz'
 
-    pooled_filename = outfile + file_extension
+    pool_basename = os.path.basename(
+        utils.strip_extensions(outfile, STRIP_EXTENSIONS))
+
+    pooled_filename = pool_basename + file_extension
 
     # Merge files
     out, err = utils.run_pipe([
@@ -106,7 +109,7 @@ def pool(tag_files, outfile, paired):
 def bedpe_to_tagalign(tag_file, outfile):
     '''Convert read pairs to reads into standard tagAlign file.'''
 
-    se_tag_filename = outfile + "tagAlign.gz"
+    se_tag_filename = outfile + ".tagAlign.gz"
 
     # Convert read pairs to reads into standard tagAlign file
     tag_steps = ["zcat -f %s" % (tag_file)]

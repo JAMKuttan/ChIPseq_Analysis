@@ -153,7 +153,7 @@ def dedup_mapped(bam, bam_basename, paired):
     '''Use sambamba and samtools to remove duplicates.'''
 
     # Markduplicates
-    dup_file_qc_filename = bam_basename + ".dup.qc"
+    dup_file_qc_filename = bam_basename + ".dedup.qc"
     tmp_dup_mark_filename = bam_basename + ".dupmark.bam"
     sambamba_params = "--hash-table-size=17592186044416" + \
                     " --overflow-list-size=20000000 --io-buffer-size=256"
