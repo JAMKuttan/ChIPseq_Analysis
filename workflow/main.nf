@@ -369,6 +369,7 @@ peaksDesign = experimentPeaks
 process consensusPeaks {
 
   publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/design", mode: 'copy',  pattern: '*.{csv|tsv}'
 
   input:
 
