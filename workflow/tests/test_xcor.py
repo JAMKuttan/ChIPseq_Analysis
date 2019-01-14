@@ -10,8 +10,8 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
 
 @pytest.mark.singleend
 def test_cross_singleend():
-    assert os.path.exists(os.path.join(test_output_path, 'ENCFF833BLU.cc.plot.pdf'))
-    qc_file = os.path.join(test_output_path,"ENCFF833BLU.cc.qc")
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB144FDT.cc.plot.pdf'))
+    qc_file = os.path.join(test_output_path,"ENCLB144FDT.cc.qc")
     df_xcor = pd.read_csv(qc_file, sep="\t", header=None)
     assert df_xcor[2].iloc[0] == '190,200,210'
     assert df_xcor[8].iloc[0] == 1.025906

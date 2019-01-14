@@ -13,9 +13,9 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
 @pytest.mark.singleend
 def test_trim_reads_singleend():
     raw_fastq = test_data_path + 'ENCFF833BLU.fastq.gz'
-    trimmed_fastq = test_output_path + 'ENCLB144FDT_trimmed.fq.gz'
+    trimmed_fastq = test_output_path + 'ENCLB144FDT_R1_trimmed.fq.gz'
     trimmed_fastq_report = test_output_path + \
-                            'ENCLB144FDT.fastq.gz_trimming_report.txt'
+                            'ENCLB144FDT_R1_trimmed.fq.gz_trimming_report.txt'
     assert os.path.getsize(raw_fastq) != os.path.getsize(trimmed_fastq)
     assert os.path.getsize(trimmed_fastq) == 2512853101
     assert 'Trimming mode: single-end' in open(trimmed_fastq_report).readlines()[4]
@@ -24,9 +24,9 @@ def test_trim_reads_singleend():
 @pytest.mark.pairedend
 def test_trim_reads_pairedend():
     raw_fastq = test_data_path + 'ENCFF582IOZ.fastq.gz'
-    trimmed_fastq = test_output_path + 'ENCFF582IOZ_val_2.fq.gz'
+    trimmed_fastq = test_output_path + 'ENCLB637LZP_R2_trimmed.fq.gz'
     trimmed_fastq_report = test_output_path + \
-                            'ENCLB637LZP.fastq.gz_trimming_report.txt'
+                            'ENCLB637LZP_R2_trimmed.fq.gz_trimming_report.txt'
     assert os.path.getsize(raw_fastq) != os.path.getsize(trimmed_fastq)
     assert os.path.getsize(trimmed_fastq) == 2229312710
     assert 'Trimming mode: paired-end' in open(trimmed_fastq_report).readlines()[4]

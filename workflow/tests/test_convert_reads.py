@@ -9,8 +9,8 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
 
 @pytest.mark.singleend
 def test_convert_reads_singleend():
-    assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.tagAlign.gz'))
-    assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.bedse.gz'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB831RUI.tagAlign.gz'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB831RUI.bedse.gz'))
 
 
 @pytest.mark.pairedend
