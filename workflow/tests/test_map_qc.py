@@ -31,8 +31,8 @@ def test_map_qc_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX.dedup.qc'))
     filtered_reads_report = test_output_path + 'ENCLB568IYX.dedup.flagstat.qc'
     samtools_report = open(filtered_reads_report).readlines()
-    assert '47389080 + 0 in total' in samtools_report[0]
-    assert '47389080 + 0 mapped (100.00%:N/A)' in samtools_report[4]
+    assert '47388510 + 0 in total' in samtools_report[0]
+    assert '47388510 + 0 mapped (100.00%:N/A)' in samtools_report[4]
     library_complexity = test_output_path + 'ENCLB568IYX.pbc.qc'
     df_library_complexity = pd.read_csv(library_complexity, sep='\t')
     assert  df_library_complexity["NRF"].iloc[0] == 0.947064
