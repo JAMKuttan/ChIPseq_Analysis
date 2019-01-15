@@ -11,18 +11,33 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
 
 
 @pytest.mark.singleend
-def test_annotate_peaks_singleend():
+def test_pie_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC.chipseeker_pie.pdf'))
+
+
+@pytest.mark.singleend
+def test_upsetplot_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC.chipseeker_upsetplot.pdf'))
+
+@pytest.mark.singleend
+def test_annotation_singleend():
     annotation_file = test_output_path + 'ENCSR238SGC.chipseeker_annotation.tsv'
     assert os.path.exists(annotation_file)
     assert utils.count_lines(annotation_file) == 149820
 
 
 @pytest.mark.pairedend
-def test_annotate_peaks_pairedend():
+def test_pie_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA.chipseeker_pie.pdf'))
+
+
+@pytest.mark.pairedend
+def test_upsetplot_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA.chipseeker_upsetplot.pdf'))
+
+
+@pytest.mark.pairedend
+def test_annotation_pairedend():
     annotation_file = test_output_path + 'ENCSR729LGA.chipseeker_annotation.tsv'
     assert os.path.exists(annotation_file)
     assert utils.count_lines(annotation_file) == 25579
