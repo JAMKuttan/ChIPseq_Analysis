@@ -198,7 +198,7 @@ process experimentQC {
 
   output:
 
-  file '*.{png,npz}' into deepToolsStats
+  file '*.{pdf,npz}' into deepToolsStats
 
   script:
 
