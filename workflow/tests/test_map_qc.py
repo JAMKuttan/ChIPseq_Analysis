@@ -52,5 +52,5 @@ def test_library_complexity_pairedend():
     library_complexity = test_output_path + 'ENCLB568IYX.pbc.qc'
     df_library_complexity = pd.read_csv(library_complexity, sep='\t')
     assert  df_library_complexity["NRF"].iloc[0] == 0.947064
-    assert  round(df_library_complexity["PBC1"].iloc[0],6 == 0.946723
+    assert  round(df_library_complexity["PBC1"].iloc[0],6) == 0.946723
     assert  df_library_complexity["PBC2"].iloc[0] == 18.643039
