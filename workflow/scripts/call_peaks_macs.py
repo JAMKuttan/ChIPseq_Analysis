@@ -126,7 +126,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
     # Remove coordinates outside chromosome sizes
 
     int_narrowpeak_fn = '%s_peaks.narrowPeak' % (prefix)
-    narrowpeak_fn = '%s_peaks.narrowPeak' % (prefix)
+    narrowpeak_fn = '%s.narrowPeak' % (prefix)
     clipped_narrowpeak_fn = 'clipped-%s' % (narrowpeak_fn)
 
 
@@ -239,6 +239,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
     # Remove temporary files
     os.remove(clipped_narrowpeak_fn)
     os.remove(rescaled_narrowpeak_fn)
+    os.remove(int_narrowpeak_fn)
 
 
 def main():

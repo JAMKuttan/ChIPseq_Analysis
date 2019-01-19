@@ -104,7 +104,7 @@ def generate_sa(fastq, reference):
 def align_se(fastq, sai, reference, fastq_basename):
     '''Use BWA to align SE data.'''
 
-    bam_filename = '%s.srt.bam' % (fastq_basename)
+    bam_filename = '%s.bam' % (fastq_basename)
 
     steps = [
         "bwa samse %s %s %s"
@@ -125,7 +125,7 @@ def align_pe(fastq, sai, reference, fastq_basename):
 
     sam_filename = "%s.sam" % (fastq_basename)
     badcigar_filename = "%s.badReads" % (fastq_basename)
-    bam_filename = '%s.srt.bam' % (fastq_basename)
+    bam_filename = '%s.bam' % (fastq_basename)
 
     # Remove read pairs with bad CIGAR strings and sort by position
     steps = [

@@ -8,12 +8,20 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
 
 
 @pytest.mark.singleend
-def test_convert_reads_singleend():
-    assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.tagAlign.gz'))
-    assert os.path.exists(os.path.join(test_output_path, 'ENCFF646LXU.bedse.gz'))
+def test_tag_reads_singleend():
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB831RUI.tagAlign.gz'))
+
+
+@pytest.mark.singleend
+def test_bed_reads_singleend():
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB831RUI.bedse.gz'))
 
 
 @pytest.mark.pairedend
-def test_map_qc_pairedend():
+def test_tag_reads_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX.tagAlign.gz'))
+
+
+@pytest.mark.pairedend
+def test_bed_reads_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX.bedpe.gz'))
