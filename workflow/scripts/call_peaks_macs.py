@@ -108,6 +108,8 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
         frag_lengths = firstline.split()[2]  # third column
         fragment_length = frag_lengths.split(',')[0]  # grab first value
         logger.info("Fraglen %s", fragment_length)
+        if int(fragment_length) < 1:
+            fragment_length = "200"
 
 
     # Generate narrow peaks and preliminary signal tracks
