@@ -35,15 +35,15 @@ def test_experiment_qc_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'sample_mbs.npz'))
     assert os.path.exists(os.path.join(test_output_path, 'heatmap_SpearmanCorr.pdf'))
     assert os.path.exists(os.path.join(test_output_path, 'heatmap_PearsonCorr.pdf'))
-    assert os.path.exists(os.path.join(test_output_path, 'coverage.png'))
-    assert os.path.exists(os.path.join(test_output_path, 'ENCLB144FDT_fingerprint.png'))
-    assert os.path.exists(os.path.join(test_output_path, 'ENCLB831RUI_fingerprint.png'))
+    assert os.path.exists(os.path.join(test_output_path, 'coverage.pdf'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB144FDT_fingerprint.pdf'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB831RUI_fingerprint.pdf'))
 
 @pytest.mark.pairdend
 def test_experiment_qc_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'sample_mbs.npz'))
     assert os.path.exists(os.path.join(test_output_path, 'heatmap_SpearmanCorr.pdf'))
     assert os.path.exists(os.path.join(test_output_path, 'heatmap_PearsonCorr.pdf'))
-    assert os.path.exists(os.path.join(test_output_path, 'coverage.png'))
-    assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX_fingerprint.png'))
-    assert os.path.exists(os.path.join(test_output_path, 'ENCLB637LZP_fingerprint.png'))
+    assert os.path.exists(os.path.join(test_output_path, 'coverage.pdf'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX_fingerprint.pdf'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB637LZP_fingerprint.pdf'))
