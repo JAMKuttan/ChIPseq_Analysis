@@ -16,7 +16,7 @@ BICF ChIPseq is a bioinformatics best-practice analysis pipeline used for ChIP-s
 
 The pipeline uses [Nextflow](https://www.nextflow.io), a bioinformatics workflow tool. It pre-processes raw data from FastQ inputs, aligns the reads and performs extensive quality-control on the results.
 
-This pipeline is primarily used with a SLURM cluster on the [BioHPC Cluster](https://biohpc.swmed.edu/). However, the pipeline should be able to run on any system that Nextflow supports.
+This pipeline is primarily used with a SLURM cluster on the [BioHPC Cluster](https://portal.biohpc.swmed.edu/content/). However, the pipeline should be able to run on any system that Nextflow supports.
 
 Additionally, the pipeline is designed to work with [Astrocyte Workflow System](https://astrocyte-test.biohpc.swmed.edu/static/docs/index.html) using a simple web interface.
 
@@ -46,6 +46,7 @@ $ git clone git@git.biohpc.swmed.edu:BICF/Astrocyte/chipseq_analysis.git
 
 
   + See [HERE](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/test_data/design_ENCSR729LGA_PE.txt) for an example design file, paired-end
+  + See [HERE](test_data/design_ENCSR729LGA_PE.txt) for an example design file, paired-end
   + See [HERE](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/test_data/design_ENCSR238SGC_SE.txt) for an example design file, single-end
 
 ##### 3) Bash Script
