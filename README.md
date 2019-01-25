@@ -73,7 +73,7 @@ $ git clone git@git.biohpc.swmed.edu:BICF/Astrocyte/chipseq_analysis.git
     10. Calculate Differential Binding Activity
     11. Motif Search Peaks
 
-See [FLOWCHART](docs/flowchar.pdf)
+See [FLOWCHART](docs/flowchart.pdf)
 
 ## Output Files
 Folder | File | Description
