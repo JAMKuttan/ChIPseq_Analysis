@@ -119,7 +119,7 @@ def check_coverage(design, extension):
 
     bam_files = ' '.join(design['bam_reads'])
     labels = ' '.join(design['sample_id'])
-    coverage_filename = 'coverage.png'
+    coverage_filename = 'coverage.pdf'
     coverage_params = "-n 1000000 --plotTitle \"Sample Coverage\"" + \
                     " --ignoreDuplicates --minMappingQuality 10"
 
@@ -155,7 +155,7 @@ def update_controls(design):
 def check_enrichment(sample_id, control_id, sample_reads, control_reads, extension):
     '''Asses the enrichment per sample.'''
 
-    fingerprint_filename = sample_id + '_fingerprint.png'
+    fingerprint_filename = sample_id + '_fingerprint.pdf'
 
     fingerprint_command = (
         "plotFingerprint -b %s %s --extendReads %d --labels %s %s --plotFile %s"
