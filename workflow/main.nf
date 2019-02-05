@@ -395,7 +395,7 @@ process consensusPeaks {
 // Annotate Peaks
 process peakAnnotation {
 
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -416,7 +416,7 @@ process peakAnnotation {
 // Motif Search  Peaks
 process motifSearch {
 
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -441,7 +441,7 @@ uniqueExperimentsList = uniqueExperiments
 // Calculate Differential Binding Activity
 process diffPeaks {
 
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
