@@ -42,6 +42,11 @@ def test_spearman_singleend():
 
 
 @pytest.mark.singleend
+def test_pearson_singleend():
+    assert os.path.exists(os.path.join(test_output_path, 'heatmap_PearsonCorr.png'))
+
+
+@pytest.mark.singleend
 def test_fingerprint_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB144FDT_fingerprint.png'))
     assert os.path.exists(os.path.join(test_output_path, 'ENCLB831RUI_fingerprint.png'))
@@ -56,6 +61,11 @@ def test_coverage_pairedend():
 @pytest.mark.pairdend
 def test_spearman_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'heatmap_SpearmanCorr.png'))
+
+
+@pytest.mark.pairdend
+def test_pearson_pairedend():
+    assert os.path.exists(os.path.join(test_output_path, 'heatmap_PearsonCorr.png'))
 
 
 @pytest.mark.pairdend

@@ -77,10 +77,10 @@ def generate_read_summary(design, extension):
     return mbs_filename
 
 
-def check_correlation(mbs):
+def check_spearman_correlation(mbs):
     '''Check Spearman pairwise correlation of samples based on read counts.'''
 
-    spearman_filename = 'heatmap_SpearmanCorr.png'
+    spearman_filename = 'heatmap_SpearmanCorr.pdf'
     spearman_params = "--corMethod spearman --skipZero" + \
                     " --plotTitle \"Spearman Correlation of Read Counts\"" + \
                     " --whatToPlot heatmap --colorMap RdYlBu --plotNumbers"
@@ -96,12 +96,31 @@ def check_correlation(mbs):
     out, err = spearman_correlation.communicate()
 
 
+def check_pearson_correlation(mbs):
+    '''Check Pearson pairwise correlation of samples based on read counts.'''
+
+    pearson_filename = 'heatmap_PearsonCorr.pdf'
+    pearson_params = "--corMethod pearson --skipZero" + \
+                    " --plotTitle \"Pearson Correlation of Read Counts\"" + \
+                    " --whatToPlot heatmap --colorMap RdYlBu --plotNumbers"
+
+    pearson_command = (
+        "plotCorrelation -in %s %s -o %s"
+        % (mbs, pearson_params, pearson_filename)
+    )
+
+    logger.info("Running deeptools with %s", pearson_command)
+
+    pearson_correlation = subprocess.Popen(pearson_command, shell=True)
+    out, err = pearson_correlation.communicate()
+
+
 def check_coverage(design, extension):
     '''Asses the sequencing depth of samples.'''
 
     bam_files = ' '.join(design['bam_reads'])
     labels = ' '.join(design['sample_id'])
-    coverage_filename = 'coverage.png'
+    coverage_filename = 'coverage.pdf'
     coverage_params = "-n 1000000 --plotTitle \"Sample Coverage\"" + \
                     " --ignoreDuplicates --minMappingQuality 10"
 
@@ -137,7 +156,7 @@ def update_controls(design):
 def check_enrichment(sample_id, control_id, sample_reads, control_reads, extension):
     '''Asses the enrichment per sample.'''
 
-    fingerprint_filename = sample_id + '_fingerprint.png'
+    fingerprint_filename = sample_id + '_fingerprint.pdf'
 
     fingerprint_command = (
         "plotFingerprint -b %s %s --extendReads %d --labels %s %s --plotFile %s"
@@ -167,7 +186,9 @@ def main():
 
     # Run correlation
     mbs_filename = generate_read_summary(design_df, extension)
-    check_correlation(mbs_filename)
+    check_spearman_correlation(mbs_filename)
+    check_pearson_correlation(mbs_filename)
+
 
     # Run coverage
     check_coverage(design_df, extension)
