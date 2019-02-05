@@ -1,6 +1,6 @@
 before_script:
   - module add  python/3.6.1-2-anaconda
-  - pip install --user pytest pytest-pythonpath pytest-cov
+  - pip install --user pytest-pythonpath=0.7.1 pytest-cov=2.5.1
   - module load  nextflow/0.31.0
   - ln -s /project/shared/bicf_workflow_ref/workflow_testdata/chipseq/*fastq.gz test_data/
 
