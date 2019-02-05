@@ -142,7 +142,7 @@ def self_psuedoreplication(tag_file, prefix, paired):
 
     out, err = utils.run_pipe([
         'gzip -dc %s' % (tag_file),
-        'shuf --random-source=%s' % (tag_file),
+        'shuf --random-source=<(openssl enc -aes-256-ctr -pass pass:$(zcat -f %s | wc -c) -nosalt </dev/zero 2>/dev/null)' % (tag_file),
         'split -d -l %d - %s' % (lines_per_rep, splits_prefix)])
 
     # Convert read pairs to reads into standard tagAlign file
