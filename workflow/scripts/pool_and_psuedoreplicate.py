@@ -5,6 +5,9 @@
 import argparse
 import logging
 import os
+import subprocess
+import shutil
+import shlex
 import pandas as pd
 import numpy as np
 import utils
@@ -140,21 +143,29 @@ def self_psuedoreplication(tag_file, prefix, paired):
 
     splits_prefix = 'temp_split'
 
-    out, err = utils.run_pipe([
-        'gzip -dc %s' % (tag_file),
-        'shuf --random-source=<(openssl enc -aes-256-ctr -pass pass:$(zcat -f %s | wc -c) -nosalt </dev/zero 2>/dev/null)' % (tag_file),
-        'split -d -l %d - %s' % (lines_per_rep, splits_prefix)])
+    psuedo_command = 'bash -c "zcat {} | shuf --random-source=<(openssl enc -aes-256-ctr -pass pass:$(zcat -f {} | wc -c) -nosalt </dev/zero 2>/dev/null) | '
+    psuedo_command += 'split -d -l {} - {}."'
+    psuedo_command = psuedo_command.format(
+        tag_file,
+        tag_file,
+        int(lines_per_rep),
+        splits_prefix)
+    logger.info("Running psuedo with %s", psuedo_command)
+    subprocess.check_call(shlex.split(psuedo_command))
+
+    logger.info("Running bwa with %s", bwa_command)
+    subprocess.check_call(shlex.split(bwa_command), stdout=sai_file)
+
 
     # Convert read pairs to reads into standard tagAlign file
 
     for i, index in enumerate([0, 1]):
-        string_index = '0' + str(index)
+        string_index = '.0' + str(index)
         steps = ['cat %s' % (splits_prefix + string_index)]
         if paired:
             steps.extend([r"""awk 'BEGIN{OFS="\t"}{printf "%s\t%s\t%s\tN\t1000\t%s\n%s\t%s\t%s\tN\t1000\t%s\n",$1,$2,$3,$9,$4,$5,$6,$10}'"""])
         steps.extend(['gzip -cn'])
         out, err = utils.run_pipe(steps, outfile=pseudoreplicate_dict[i])
-        os.remove(splits_prefix + string_index)
 
     return pseudoreplicate_dict
 
