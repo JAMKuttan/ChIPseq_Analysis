@@ -153,9 +153,6 @@ def self_psuedoreplication(tag_file, prefix, paired):
     logger.info("Running psuedo with %s", psuedo_command)
     subprocess.check_call(shlex.split(psuedo_command))
 
-    logger.info("Running bwa with %s", bwa_command)
-    subprocess.check_call(shlex.split(bwa_command), stdout=sai_file)
-
 
     # Convert read pairs to reads into standard tagAlign file
 
