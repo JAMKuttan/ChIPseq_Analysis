@@ -21,7 +21,7 @@ def test_trim_reads_singleend():
 @pytest.mark.singleend
 def test_trim_report_singleend():
     trimmed_fastq_report = test_output_path + \
-                            'ENCLB144FDT_R1_trimmed.fq.gz_trimming_report.txt'
+                            'ENCLB144FDT_R1.fastq.gz_trimming_report.txt'
     assert 'Trimming mode: single-end' in open(trimmed_fastq_report).readlines()[4]
 
 
