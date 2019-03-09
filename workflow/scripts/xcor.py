@@ -79,7 +79,7 @@ def check_tools():
 
         # Get Version
         spp_version_command = "R -e \"packageVersion('spp')\""
-        spp_version = subprocess.check_output(spp_version_command, shell=True, stderr=subprocess.STDOUT)
+        spp_version = subprocess.check_output(spp_version_command, shell=True)
 
         # Write to file
         spp_file = open("version_spp.txt", "wb")
