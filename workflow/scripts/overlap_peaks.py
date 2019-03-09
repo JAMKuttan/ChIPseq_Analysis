@@ -49,6 +49,15 @@ def check_tools():
     bedtools_path = shutil.which("bedtools")
     if bedtools_path:
         logger.info('Found bedtools: %s', bedtools_path)
+
+        # Get Version
+        bedtools_version_command = "bedtools --version"
+        bedtools_version = subprocess.check_output(bedtools_version_command, shell=True)
+
+        # Write to file
+        bedtools_file = open("version_bedtools.txt", "wb")
+        bedtools_file.write(bedtools_version)
+        bedtools_file.close()
     else:
         logger.error('Missing bedtools')
         raise Exception('Missing bedtools')

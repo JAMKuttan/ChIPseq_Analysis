@@ -62,6 +62,15 @@ def check_tools():
     samtools_path = shutil.which("samtools")
     if samtools_path:
         logger.info('Found samtools: %s', samtools_path)
+
+        # Get Version
+        samtools_version_command = "samtools --version"
+        samtools_version = subprocess.check_output(samtools_version_command, shell=True)
+
+        # Write to file
+        samtools_file = open("version_samtools.txt", "wb")
+        samtools_file.write(samtools_version)
+        samtools_file.close()
     else:
         logger.error('Missing samtools')
         raise Exception('Missing samtools')
@@ -69,6 +78,18 @@ def check_tools():
     sambamba_path = shutil.which("sambamba")
     if sambamba_path:
         logger.info('Found sambamba: %s', sambamba_path)
+
+        # Get Version
+        sambamba_version_command = "sambamba"
+        try:
+            subprocess.check_output(sambamba_version_command, shell=True, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            sambamba_version = e.output
+
+        # Write to file
+        sambamba_file = open("version_sambamba.txt", "wb")
+        sambamba_file.write(sambamba_version)
+        sambamba_file.close()
     else:
         logger.error('Missing sambamba')
         raise Exception('Missing sambamba')
@@ -76,6 +97,15 @@ def check_tools():
     bedtools_path = shutil.which("bedtools")
     if bedtools_path:
         logger.info('Found bedtools: %s', bedtools_path)
+
+        # Get Version
+        bedtools_version_command = "bedtools --version"
+        bedtools_version = subprocess.check_output(bedtools_version_command, shell=True)
+
+        # Write to file
+        bedtools_file = open("version_bedtools.txt", "wb")
+        bedtools_file.write(bedtools_version)
+        bedtools_file.close()
     else:
         logger.error('Missing bedtools')
         raise Exception('Missing bedtools')

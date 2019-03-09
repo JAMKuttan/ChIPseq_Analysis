@@ -5,6 +5,7 @@
 import os
 import argparse
 import shutil
+import subprocess
 import logging
 import utils
 from xcor import xcor as calculate_xcor
@@ -69,16 +70,19 @@ def check_tools():
 
     logger.info('Checking for required libraries and components on this system')
 
-    r_path = shutil.which("R")
-    if r_path:
-        logger.info('Found R: %s', r_path)
-    else:
-        logger.error('Missing R')
-        raise Exception('Missing R')
-
     macs_path = shutil.which("macs2")
     if r_path:
         logger.info('Found MACS2: %s', macs_path)
+
+        # Get Version
+        macs_version_command = "macs2  --version"
+        macs_version = subprocess.check_output(macs_version_command, shell=True, stderr=subprocess.STDOUT)
+
+        # Write to file
+        macs_file = open("version_macs.txt", "wb")
+        macs_file.write(macs_version)
+        macs_file.close()
+
     else:
         logger.error('Missing MACS2')
         raise Exception('Missing MACS2')
@@ -86,6 +90,18 @@ def check_tools():
     bg_bw_path = shutil.which("bedGraphToBigWig")
     if bg_bw_path:
         logger.info('Found bedGraphToBigWig: %s', bg_bw_path)
+
+        # Get Version
+        bg_bw_version_command = "bedGraphToBigWig"
+        try:
+            subprocess.check_output(bg_bw_version_command, shell=True, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            bg_bw_version = e.output
+
+        # Write to file
+        bg_bw_file = open("version_bedGraphToBigWig.txt", "wb")
+        bg_bw_file.write(bg_bw_version)
+        bg_bw_file.close()
     else:
         logger.error('Missing bedGraphToBigWig')
         raise Exception('Missing bedGraphToBigWig')
@@ -93,6 +109,16 @@ def check_tools():
     bedtools_path = shutil.which("bedtools")
     if bedtools_path:
         logger.info('Found bedtools: %s', bedtools_path)
+
+        # Get Version
+        bedtools_version_command = "bedtools --version"
+        bedtools_version = subprocess.check_output(bedtools_version_command, shell=True)
+
+        # Write to file
+        bedtools_file = open("version_bedtools.txt", "wb")
+        bedtools_file.write(bedtools_version)
+        bedtools_file.close()
+
     else:
         logger.error('Missing bedtools')
         raise Exception('Missing bedtools')

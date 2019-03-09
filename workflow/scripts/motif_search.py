@@ -6,6 +6,7 @@ import os
 import argparse
 import logging
 import shutil
+import subprocess
 from multiprocessing import Pool
 import pandas as pd
 import utils
@@ -63,6 +64,15 @@ def check_tools():
     meme_path = shutil.which("meme")
     if meme_path:
         logger.info('Found meme: %s', meme_path)
+
+        # Get Version
+        memechip_version_command = "meme-chip --version"
+        memechip_version = subprocess.check_output(memechip_version_command, shell=True)
+
+        # Write to file
+        meme_file = open("version_memechip.txt", "wb")
+        meme_file.write("Version %s" % (memechip_version))
+        meme_file.close()
     else:
         logger.error('Missing meme')
         raise Exception('Missing meme')
@@ -70,6 +80,15 @@ def check_tools():
     bedtools_path = shutil.which("bedtools")
     if bedtools_path:
         logger.info('Found bedtools: %s', bedtools_path)
+
+        # Get Version
+        bedtools_version_command = "bedtools --version"
+        bedtools_version = subprocess.check_output(bedtools_version_command, shell=True)
+
+        # Write to file
+        bedtools_file = open("version_bedtools.txt", "wb")
+        bedtools_file.write(bedtools_version)
+        bedtools_file.close()
     else:
         logger.error('Missing bedtools')
         raise Exception('Missing bedtools')

@@ -5,6 +5,7 @@
 import os
 import argparse
 import shutil
+import subprocess
 import logging
 from multiprocessing import cpu_count
 import utils
@@ -59,9 +60,34 @@ def check_tools():
     r_path = shutil.which("R")
     if r_path:
         logger.info('Found R: %s', r_path)
+
+        # Get Version
+        r_version_command = "R --version"
+        r_version = subprocess.check_output(r_version_command, shell=True)
+
+        # Write to file
+        r_file = open("version_r.txt", "wb")
+        r_file.write(r_version)
+        r_file.close()
     else:
         logger.error('Missing R')
         raise Exception('Missing R')
+
+    phantompeak_path = shutil.which("run_spp.R")
+    if phantompeak_path:
+        logger.info('Found phantompeak: %s', phantompeak_path)
+
+        # Get Version
+        spp_version_command = "R -e \"packageVersion('spp')\""
+        spp_version = subprocess.check_output(spp_version_command, shell=True, stderr=subprocess.STDOUT)
+
+        # Write to file
+        spp_file = open("version_spp.txt", "wb")
+        spp_file.write(spp_version)
+        spp_file.close()
+    else:
+        logger.error('Missing phantompeak')
+        raise Exception('Missing phantompeak')
 
 
 def xcor(tag, paired):
