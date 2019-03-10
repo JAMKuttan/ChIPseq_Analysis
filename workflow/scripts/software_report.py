@@ -18,7 +18,7 @@ regexes = {
     'bedGraphToBigWig': ['version_bedGraphToBigWig.txt', r"bedGraphToBigWig v (\S+)"],
     'ChIPseeker': ['version_ChIPseeker.txt', r"Version (\S+)\""],
     'MEME-ChIP': ['version_memechip.txt', r"Version (\S+)"],
-    'DiffBind': ['version_DiffBind.txt', r"Version (\S+)"],
+    'DiffBind': ['version_DiffBind.txt', r"Version (\S+)\""],
     'deepTools': ['version_deeptools.txt', r"deeptools (\S+)"],
 }
 
@@ -52,8 +52,8 @@ for k, v in regexes.items():
 # Dump to YAML
 print(
     '''
-    id: 'BICF ChIP-seq Analaysis'
-    section_name: 'BICF ChIP-seq Analaysis Software Versions'
+    id: 'BICF ChIP-seq Analysis'
+    section_name: 'Software Versions'
     section_href: 'https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/'
     plot_type: 'html'
     description: 'are collected at run time from the software output.'
