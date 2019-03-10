@@ -105,12 +105,12 @@ process trimReads {
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} ${reads[1]} -p
+    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} ${reads[1]} -s $sampleId -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]}
+    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} -s $sampleId
     """
   }
 
@@ -130,18 +130,18 @@ process alignReads {
   output:
 
   set sampleId, file('*.bam'), experimentId, biosample, factor, treatment, replicate, controlId into mappedReads
-  file '*.srt.bam.flagstat.qc' into mappedReadsStats
+  file '*.flagstat.qc' into mappedReadsStats
 
   script:
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/map_reads.py -f ${reads[0]} ${reads[1]} -r ${index}/genome.fa -p
+    python3 $baseDir/scripts/map_reads.py -f ${reads[0]} ${reads[1]} -r ${index}/genome.fa -s $sampleId -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa
+    python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa -s $sampleId
     """
   }
 
@@ -161,9 +161,9 @@ process filterReads {
 
   set sampleId, file('*.bam'), file('*.bai'), experimentId, biosample, factor, treatment, replicate, controlId into dedupReads
   set sampleId, file('*.bam'), experimentId, biosample, factor, treatment, replicate, controlId into convertReads
-  file '*flagstat.qc' into dedupReadsStats
-  file '*pbc.qc' into dedupReadsComplexity
-  file '*dup.qc' into dupReads
+  file '*.flagstat.qc' into dedupReadsStats
+  file '*.pbc.qc' into dedupReadsComplexity
+  file '*.dedup.qc' into dupReads
 
   script:
 
@@ -342,6 +342,7 @@ process callPeaksMACS {
   output:
 
   set sampleId, file('*.narrowPeak'), file('*.fc_signal.bw'), file('*.pvalue_signal.bw'), experimentId, biosample, factor, treatment, replicate, controlId into experimentPeaks
+  file '*.xls' into summit
 
   script:
 
@@ -368,6 +369,7 @@ peaksDesign = experimentPeaks
 process consensusPeaks {
 
   publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/design", mode: 'copy',  pattern: '*.{csv|tsv}'
 
   input:
 
@@ -393,7 +395,7 @@ process consensusPeaks {
 // Annotate Peaks
 process peakAnnotation {
 
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -414,7 +416,7 @@ process peakAnnotation {
 // Motif Search  Peaks
 process motifSearch {
 
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -423,7 +425,7 @@ process motifSearch {
   output:
 
   file "*memechip" into motifSearch
-  file "sorted-*" into filteredPeaks
+  file "*narrowPeak" into filteredPeaks
 
   script:
 
@@ -439,7 +441,7 @@ uniqueExperimentsList = uniqueExperiments
 // Calculate Differential Binding Activity
 process diffPeaks {
 
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -455,7 +457,6 @@ process diffPeaks {
 
   when:
   noUniqueExperiments > 1
-
 
   script:
   """

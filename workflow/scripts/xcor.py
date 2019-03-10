@@ -22,6 +22,13 @@ logger.propagate = False
 logger.setLevel(logging.INFO)
 
 
+# the order of this list is important.
+# strip_extensions strips from the right inward, so
+# the expected right-most extensions should appear first (like .gz)
+# Modified from J. Seth Strattan
+STRIP_EXTENSIONS = ['.gz', '.tagAlign', '.bedse', '.bedpe']
+
+
 def get_args():
     '''Define arguments.'''
 
@@ -60,20 +67,20 @@ def check_tools():
 def xcor(tag, paired):
     '''Use spp to calculate cross-correlation stats.'''
 
-    tag_basename = os.path.basename(utils.strip_extensions(tag, ['.gz']))
+    tag_basename = os.path.basename(utils.strip_extensions(tag, STRIP_EXTENSIONS))
     uncompressed_tag_filename = tag_basename
 
 
     # Subsample tagAlign file
-    NREADS = 15000000
+    number_reads = 15000000
     subsampled_tag_filename = \
-        tag_basename + ".%d.tagAlign.gz" % (NREADS/1000000)
+        tag_basename + ".%d.tagAlign.gz" % (number_reads/1000000)
 
 
     steps = [
         'zcat %s' % (tag),
         'grep -v "chrM"',
-        'shuf -n %d --random-source=%s' % (NREADS, tag)]
+        'shuf -n %d --random-source=%s' % (number_reads, tag)]
 
     if paired:
         steps.extend([r"""awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}'"""])
@@ -83,8 +90,8 @@ def xcor(tag, paired):
     out, err = utils.run_pipe(steps, outfile=subsampled_tag_filename)
 
     # Calculate Cross-correlation QC scores
-    cc_scores_filename = subsampled_tag_filename + ".cc.qc"
-    cc_plot_filename = subsampled_tag_filename + ".cc.plot.pdf"
+    cc_scores_filename = tag_basename + ".cc.qc"
+    cc_plot_filename = tag_basename + ".cc.plot.pdf"
 
     # CC_SCORE FILE format
     # Filename <tab>
@@ -109,6 +116,7 @@ def xcor(tag, paired):
     return cc_scores_filename
 
 
+
 def main():
     args = get_args()
     paired = args.paired
@@ -122,7 +130,7 @@ def main():
     check_tools()
 
     # Calculate Cross-correlation
-    xcor_filename = xcor(tag, paired)
+    xcor(tag, paired)
 
 
 if __name__ == '__main__':

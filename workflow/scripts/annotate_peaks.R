@@ -17,7 +17,7 @@ args <- commandArgs(trailingOnly=TRUE)
 
 # Check input args
 if (length(args) != 2) {
-  stop("Usage: annotate_peaks.R [ annotate_design.tsv ] [ genome_assembly ]", call.=FALSE)
+  stop("Usage: annotate_peaks.R annotate_design.tsv genome_assembly", call.=FALSE)
 }
 
 design_file <- args[1]

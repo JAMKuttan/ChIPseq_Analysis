@@ -8,7 +8,7 @@ args <- commandArgs(trailingOnly=TRUE)
 
 # Check input args
 if (length(args) != 1) {
-  stop("Usage: diff_peaks.R [ annotate_design.tsv ] ", call.=FALSE)
+  stop("Usage: diff_peaks.R annotate_design.tsv ", call.=FALSE)
 }
 
 # Build DBA object from design file

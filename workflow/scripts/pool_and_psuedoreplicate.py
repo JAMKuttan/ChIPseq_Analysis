@@ -3,11 +3,14 @@
 '''Generate pooled and pseudoreplicate from data.'''
 
 import argparse
-import utils
 import logging
+import os
+import subprocess
+import shutil
+import shlex
 import pandas as pd
 import numpy as np
-import os
+import utils
 
 EPILOG = '''
 For more details:
@@ -20,6 +23,12 @@ logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 logger.propagate = False
 logger.setLevel(logging.INFO)
+
+# the order of this list is important.
+# strip_extensions strips from the right inward, so
+# the expected right-most extensions should appear first (like .gz)
+# Modified from J. Seth Strattan
+STRIP_EXTENSIONS = ['.gz', '.tagAlign', '.bedse', '.bedpe']
 
 
 def get_args():
@@ -87,21 +96,23 @@ def pool(tag_files, outfile, paired):
     else:
         file_extension = '.bedse.gz'
 
-    pooled_filename = outfile + file_extension
+    pool_basename = os.path.basename(
+        utils.strip_extensions(outfile, STRIP_EXTENSIONS))
+
+    pooled_filename = pool_basename + file_extension
 
     # Merge files
     out, err = utils.run_pipe([
         'gzip -dc %s' % (' '.join(tag_files)),
-        'gzip -cn'],
-        outfile=pooled_filename)
+        'gzip -cn'], outfile=pooled_filename)
 
     return pooled_filename
 
 
 def bedpe_to_tagalign(tag_file, outfile):
-    '''Convert read pairs to reads itno standard tagAlign file.'''
+    '''Convert read pairs to reads into standard tagAlign file.'''
 
-    se_tag_filename = outfile + "bedse.tagAlign.gz"
+    se_tag_filename = outfile + ".tagAlign.gz"
 
     # Convert read pairs to reads into standard tagAlign file
     tag_steps = ["zcat -f %s" % (tag_file)]
@@ -122,7 +133,7 @@ def self_psuedoreplication(tag_file, prefix, paired):
     lines_per_rep = (no_lines+1)/2
 
     # Make an array of number of psuedoreplicatesfile names
-    pseudoreplicate_dict = {r: prefix + '.pr' + str(r) + '.bedse.tagAlign.gz'
+    pseudoreplicate_dict = {r: prefix + '.pr' + str(r) + '.tagAlign.gz'
                             for r in [0, 1]}
 
     # Shuffle and split file into equal parts
@@ -132,21 +143,26 @@ def self_psuedoreplication(tag_file, prefix, paired):
 
     splits_prefix = 'temp_split'
 
-    out, err = utils.run_pipe([
-        'gzip -dc %s' % (tag_file),
-        'shuf --random-source=%s' % (tag_file),
-        'split -d -l %d - %s' % (lines_per_rep, splits_prefix)])
+    psuedo_command = 'bash -c "zcat {} | shuf --random-source=<(openssl enc -aes-256-ctr -pass pass:$(zcat -f {} | wc -c) -nosalt </dev/zero 2>/dev/null) | '
+    psuedo_command += 'split -d -l {} - {}."'
+    psuedo_command = psuedo_command.format(
+        tag_file,
+        tag_file,
+        int(lines_per_rep),
+        splits_prefix)
+    logger.info("Running psuedo with %s", psuedo_command)
+    subprocess.check_call(shlex.split(psuedo_command))
+
 
     # Convert read pairs to reads into standard tagAlign file
 
     for i, index in enumerate([0, 1]):
-        string_index = '0' + str(index)
+        string_index = '.0' + str(index)
         steps = ['cat %s' % (splits_prefix + string_index)]
         if paired:
             steps.extend([r"""awk 'BEGIN{OFS="\t"}{printf "%s\t%s\t%s\tN\t1000\t%s\n%s\t%s\t%s\tN\t1000\t%s\n",$1,$2,$3,$9,$4,$5,$6,$10}'"""])
         steps.extend(['gzip -cn'])
         out, err = utils.run_pipe(steps, outfile=pseudoreplicate_dict[i])
-        os.remove(splits_prefix + string_index)
 
     return pseudoreplicate_dict
 
@@ -213,7 +229,7 @@ def main():
         # Update tagAlign with single end data
         if paired:
             design_new_df['tag_align'] = design_new_df['se_tag_align']
-        design_new_df.drop(labels = 'se_tag_align', axis = 1, inplace = True)
+        design_new_df.drop(labels='se_tag_align', axis=1, inplace=True)
 
         design_new_df['replicate'] = design_new_df['replicate'].astype(str)
         design_new_df.at[1, 'sample_id'] = experiment_id + '_pr1'
@@ -243,8 +259,6 @@ def main():
         # Drop index column
         design_new_df.drop(labels='index', axis=1, inplace=True)
 
-
-
     else:
         # Make pool of replicates
         replicate_files = design_df.tag_align.unique()
@@ -269,7 +283,7 @@ def main():
         pool_pseudoreplicates_dict = {}
         for index, row in pseudoreplicates_df.iterrows():
             replicate_id = index + 1
-            pr_filename = experiment_id + ".pr" + str(replicate_id) + '.bedse.gz'
+            pr_filename = experiment_id + ".pr" + str(replicate_id) + '.tagAlign.gz'
             pool_replicate = pool(row, pr_filename, False)
             pool_pseudoreplicates_dict[replicate_id] = pool_replicate
 
@@ -277,16 +291,16 @@ def main():
         # Update tagAlign with single end data
         if paired:
             design_new_df['tag_align'] = design_new_df['se_tag_align']
-        design_new_df.drop(labels = 'se_tag_align', axis = 1, inplace = True)
+        design_new_df.drop(labels='se_tag_align', axis=1, inplace=True)
         # Check controls against cutoff_ratio
         # if so replace with pool_control
         # unless single control was used
 
         if not single_control:
             path_to_pool_control = cwd + '/' + pool_control
-            if control_df.values.max() > 1.2:
+            if control_df.values.max() > cutoff_ratio:
                 logger.info("Number of reads in controls differ by " +
-                    " > factor of %f. Using pooled controls." % (cutoff_ratio))
+                            " > factor of %f. Using pooled controls." % (cutoff_ratio))
                 design_new_df['control_tag_align'] = path_to_pool_control
             else:
                 for index, row in design_new_df.iterrows():
@@ -302,14 +316,14 @@ def main():
                         if paired:
                             control = row['control_tag_align']
                             control_basename = os.path.basename(
-                                utils.strip_extensions(control, ['.filt.nodup.bedpe.gz']))
-                            control_tmp = bedpe_to_tagalign(control , "control_basename")
+                                utils.strip_extensions(control, STRIP_EXTENSIONS))
+                            control_tmp = bedpe_to_tagalign(control, control_basename)
                             path_to_control = cwd + '/' + control_tmp
                             design_new_df.loc[index, 'control_tag_align'] = \
                                                                 path_to_control
 
         else:
-            path_to_pool_control =  pool_control
+            path_to_pool_control = pool_control
 
         # Add in pseudo replicates
         tmp_metadata = design_new_df.loc[0].copy()
@@ -333,7 +347,7 @@ def main():
 
     # Write out new dataframe
     design_new_df.to_csv(experiment_id + '_ppr.tsv',
-                        header=True, sep='\t', index=False)
+                         header=True, sep='\t', index=False)
 
 
 if __name__ == '__main__':

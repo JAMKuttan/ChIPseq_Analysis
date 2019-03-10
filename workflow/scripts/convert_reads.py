@@ -91,8 +91,7 @@ def convert_mapped_pe(bam, bam_basename):
 
     out, err = utils.run_pipe([
         "bamToBed -bedpe -mate1 -i %s" % (nmsrt_bam_filename),
-        "gzip -nc"],
-        outfile=bedpe_filename)
+        "gzip -nc"], outfile=bedpe_filename)
 
 
 def main():
@@ -109,7 +108,7 @@ def main():
 
     # Convert PE or SE to tagAlign
     bam_basename = os.path.basename(
-        utils.strip_extensions(bam, ['.bam']))
+        utils.strip_extensions(bam, ['.bam', '.dedup']))
 
     tag_filename = bam_basename + '.tagAlign.gz'
     convert_mapped(bam, tag_filename)
@@ -117,7 +116,7 @@ def main():
     if paired:  # paired-end data
         convert_mapped_pe(bam, bam_basename)
     else:
-        bedse_filename =  bam_basename + ".bedse.gz"
+        bedse_filename = bam_basename + ".bedse.gz"
         shutil.copy(tag_filename, bedse_filename)
 
 
