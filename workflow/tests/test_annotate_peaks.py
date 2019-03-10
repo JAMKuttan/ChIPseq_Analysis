@@ -19,6 +19,7 @@ def test_pie_singleend():
 def test_upsetplot_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC.chipseeker_upsetplot.pdf'))
 
+
 @pytest.mark.singleend
 def test_annotation_singleend():
     annotation_file = test_output_path + 'ENCSR238SGC.chipseeker_annotation.tsv'

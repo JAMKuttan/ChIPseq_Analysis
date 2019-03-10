@@ -11,29 +11,32 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
 
 
 @pytest.mark.singleend
+@pytest.mark.singleskip_true
 def test_diff_peaks_singleend_single_rep():
     assert os.path.isdir(test_output_path) == False
+
 
 @pytest.mark.pairedend
 def test_diff_peaks_pairedend_single_rep():
     assert os.path.isdir(test_output_path) == False
 
-@pytest.mark.singlediff
+
+@pytest.mark.singlediff_true
 def test_heatmap_singleend_multiple_rep():
     assert os.path.exists(os.path.join(test_output_path, 'heatmap.pdf'))
 
 
-@pytest.mark.singlediff
+@pytest.mark.singlediff_true
 def test_pca_singleend_multiple_rep():
     assert os.path.exists(os.path.join(test_output_path, 'pca.pdf'))
 
 
-@pytest.mark.singlediff
+@pytest.mark.singlediff_true
 def test_normcount_singleend_multiple_rep():
     assert os.path.exists(os.path.join(test_output_path, 'normcount_peaksets.txt'))
 
 
-@pytest.mark.singlediff
+@pytest.mark.singlediff_true
 def test_diffbind_singleend_multiple_rep():
     if os.path.isfile(os.path.join(test_output_path, 'ENCSR272GNQ_vs_ENCSR238SGC_diffbind.bed')):
         assert os.path.exists(os.path.join(test_output_path, 'ENCSR272GNQ_vs_ENCSR238SGC_diffbind.bed'))

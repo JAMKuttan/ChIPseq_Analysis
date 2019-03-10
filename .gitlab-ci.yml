@@ -8,6 +8,7 @@ stages:
   - unit
   - single
   - multiple
+  - skip
 
 user_configuration:
   stage: unit
@@ -47,7 +48,7 @@ single_end_diff:
     - master
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' -resume
-  - pytest -m singlediff
+  - pytest -m singlediff singlediff_true
   artifacts:
     expire_in: 2 days
 
@@ -60,5 +61,17 @@ paired_end_diff:
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_PE.txt" --genome 'GRCh38' --pairedEnd true -resume
   - pytest -m paireddiff
+  artifacts:
+    expire_in: 2 days
+
+single_end_skip:
+  stage: multiple
+  only:
+    - branches
+  except:
+    - master
+  script:
+  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' --skipDiff true --skipMotif true -resume
+  - pytest -m singlediff singleskip_true
   artifacts:
     expire_in: 2 days
