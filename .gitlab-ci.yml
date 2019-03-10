@@ -65,7 +65,7 @@ paired_end_diff:
     expire_in: 2 days
 
 single_end_skip:
-  stage: multiple
+  stage: skip
   only:
     - branches
   except:
