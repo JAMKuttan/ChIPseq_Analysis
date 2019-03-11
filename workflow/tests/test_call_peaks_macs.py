@@ -41,7 +41,7 @@ def test_pvalue_signal_pairedend():
 
 @pytest.mark.pairedend
 def test_peaks_xls_pairedend():
-    assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX_peak.xls'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX_peaks.xls'))
 
 
 @pytest.mark.pairedend
