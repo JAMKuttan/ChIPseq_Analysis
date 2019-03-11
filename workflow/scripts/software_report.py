@@ -7,6 +7,7 @@ from __future__ import print_function
 from collections import OrderedDict
 import re
 
+
 software_regex = {
     'Trim Galore!': ['version_trimgalore.txt', r"version (\S+)"],
     'Cutadapt': ['version_cutadapt.txt', r"Version (\S+)"],

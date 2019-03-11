@@ -17,6 +17,8 @@ params.cutoffRatio = 1.2
 params.outDir= "$baseDir/output"
 params.extendReadsLen = 100
 params.topPeakCount = 600
+params.references = "$baseDir/../docs/references.md"
+
 
 // Check inputs
 if( params.bwaIndex ){
@@ -475,7 +477,7 @@ process diffPeaks {
   """
 }
 
-// Collect Software Versions
+// Collect Software Versions and references
 process softwareVersions {
 
   input:
