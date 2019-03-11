@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
@@ -52,7 +52,7 @@ for k, v in regexes.items():
 # Dump to YAML
 print(
     '''
-    id: 'BICF ChIP-seq Analysis'
+    id: 'Software Versions'
     section_name: 'Software Versions'
     section_href: 'https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/'
     plot_type: 'html'
