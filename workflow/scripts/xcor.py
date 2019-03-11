@@ -96,12 +96,10 @@ def xcor(tag, paired):
     tag_basename = os.path.basename(utils.strip_extensions(tag, STRIP_EXTENSIONS))
     uncompressed_tag_filename = tag_basename
 
-
     # Subsample tagAlign file
     number_reads = 15000000
     subsampled_tag_filename = \
         tag_basename + ".%d.tagAlign.gz" % (number_reads/1000000)
-
 
     steps = [
         'zcat %s' % (tag),
@@ -140,7 +138,6 @@ def xcor(tag, paired):
     ])
 
     return cc_scores_filename
-
 
 
 def main():

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+'''Make YAML of software versions.'''
+
 from __future__ import print_function
 from collections import OrderedDict
 import re
 
-regexes = {
+software_regex = {
     'Trim Galore!': ['version_trimgalore.txt', r"version (\S+)"],
     'Cutadapt': ['version_cutadapt.txt', r"Version (\S+)"],
     'BWA': ['version_bwa.txt', r"Version: (\S+)"],
@@ -42,7 +44,7 @@ results['DiffBind'] = '<span style="color:#999999;\">N/A</span>'
 results['deepTools'] = '<span style="color:#999999;\">N/A</span>'
 
 # Search each file using its regex
-for k, v in regexes.items():
+for k, v in software_regex.items():
     with open(v[0]) as x:
         versions = x.read()
         match = re.search(v[1], versions)
@@ -61,6 +63,6 @@ print(
         <dl class="dl-horizontal">
     '''
 )
-for k,v in results.items():
-    print("        <dt>{}</dt><dd>{}</dd>".format(k,v))
+for k, v in results.items():
+    print("        <dt>{}</dt><dd>{}</dd>".format(k, v))
 print("        </dl>")

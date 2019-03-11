@@ -197,7 +197,6 @@ def dedup_mapped(bam, bam_basename, paired):
             shlex.split(sambamba_markdup_command),
             stderr=temp_file)
 
-
     # Remove duplicates
     final_bam_prefix = bam_basename + ".dedup"
     final_bam_filename = final_bam_prefix + ".bam"

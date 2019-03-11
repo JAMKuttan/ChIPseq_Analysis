@@ -71,7 +71,7 @@ def check_tools():
     logger.info('Checking for required libraries and components on this system')
 
     macs_path = shutil.which("macs2")
-    if r_path:
+    if macs_path:
         logger.info('Found MACS2: %s', macs_path)
 
         # Get Version
@@ -135,7 +135,6 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
         fragment_length = frag_lengths.split(',')[0]  # grab first value
         logger.info("Fraglen %s", fragment_length)
 
-
     # Generate narrow peaks and preliminary signal tracks
 
     command = 'macs2 callpeak ' + \
@@ -154,7 +153,6 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
     int_narrowpeak_fn = '%s_peaks.narrowPeak' % (prefix)
     narrowpeak_fn = '%s.narrowPeak' % (prefix)
     clipped_narrowpeak_fn = 'clipped-%s' % (narrowpeak_fn)
-
 
     steps = ['slopBed -i %s -g %s -b 0' % (int_narrowpeak_fn, chrom_sizes),
              'bedClip stdin %s %s' % (chrom_sizes, clipped_narrowpeak_fn)]

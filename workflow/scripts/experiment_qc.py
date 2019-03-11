@@ -198,7 +198,6 @@ def main():
     check_spearman_correlation(mbs_filename)
     check_pearson_correlation(mbs_filename)
 
-
     # Run coverage
     check_coverage(design_df, extension)
 

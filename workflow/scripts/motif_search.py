@@ -56,6 +56,7 @@ def get_args():
 
 # Functions
 
+
 def check_tools():
     '''Checks for required componenets on user system'''
 
@@ -114,7 +115,7 @@ def motif_search(filename, genome, experiment, peak):
     else:
         peak_no = peak
 
-    sorted_fn = '%s.%s.narrowPeak' % (file_basename, peak)
+    sorted_fn = '%s.%s.narrowPeak' % (file_basename, peak_no)
 
     out, err = utils.run_pipe([
         'sort -k %dgr,%dgr %s' % (5, 5, filename),
@@ -127,8 +128,7 @@ def motif_search(filename, genome, experiment, peak):
     if err:
         logger.error("bedtools error: %s", err)
 
-
-    #Call memechip
+    # Call memechip
     out, err = utils.run_pipe([
         'meme-chip -oc %s -meme-minw 5 -meme-maxw 15 -meme-nmotifs 10 %s -norand' % (out_motif, out_fa)])
     if err:
