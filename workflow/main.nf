@@ -134,7 +134,7 @@ process alignReads {
   output:
 
   set sampleId, file('*.bam'), experimentId, biosample, factor, treatment, replicate, controlId into mappedReads
-  file '*.flagstat.qc' into mappedReadsStats
+  file('*.flagstat.qc') into mappedReadsStats
   file('version_*.txt') into alignReadsVersions
 
   script:
@@ -166,9 +166,9 @@ process filterReads {
 
   set sampleId, file('*.bam'), file('*.bai'), experimentId, biosample, factor, treatment, replicate, controlId into dedupReads
   set sampleId, file('*.bam'), experimentId, biosample, factor, treatment, replicate, controlId into convertReads
-  file '*.flagstat.qc' into dedupReadsStats
-  file '*.pbc.qc' into dedupReadsComplexity
-  file '*.dedup.qc' into dupReads
+  file('*.flagstat.qc') into dedupReadsStats
+  file('*.pbc.qc') into dedupReadsComplexity
+  file('*.dedup.qc') into dupReads
   file('version_*.txt') into filterReadsVersions
 
   script:
@@ -204,7 +204,7 @@ process experimentQC {
 
   output:
 
-  file '*.{pdf,npz}' into experimentQCStats
+  file('*.{pdf,npz}') into experimentQCStats
   file('version_*.txt') into experimentQCVersions
 
   script:
@@ -293,7 +293,7 @@ process defineExpDesignFiles {
 
   output:
 
-  file '*.tsv' into experimentObjs mode flatten
+  file('*.tsv') into experimentObjs mode flatten
 
   script:
 
@@ -317,7 +317,7 @@ process poolAndPsuedoReads {
 
   output:
 
-  file '*.tsv' into experimentPoolObjs
+  file('*.tsv') into experimentPoolObjs
 
   script:
 
@@ -351,7 +351,7 @@ process callPeaksMACS {
   output:
 
   set sampleId, file('*.narrowPeak'), file('*.fc_signal.bw'), file('*.pvalue_signal.bw'), experimentId, biosample, factor, treatment, replicate, controlId into experimentPeaks
-  file '*.xls' into callPeaksMACSsummit
+  file('*.xls') into callPeaksMACSsummit
   file('version_*.txt') into callPeaksMACSVersions
 
   script:
@@ -388,11 +388,11 @@ process consensusPeaks {
 
   output:
 
-  file '*.replicated.*' into consensusPeaks
-  file '*.rejected.*' into rejectedPeaks
-  file 'design_diffPeaks.csv'  into designDiffPeaks
-  file 'design_annotatePeaks.tsv'  into designAnnotatePeaks, designMotifSearch
-  file 'unique_experiments.csv' into uniqueExperiments
+  file('*.replicated.*') into consensusPeaks
+  file('*.rejected.*') into rejectedPeaks
+  file('design_diffPeaks.csv')  into designDiffPeaks
+  file('design_annotatePeaks.tsv')  into designAnnotatePeaks, designMotifSearch
+  file('unique_experiments.csv') into uniqueExperiments
   file('version_*.txt') into consensusPeaksVersions
 
   script:
@@ -414,7 +414,7 @@ process peakAnnotation {
 
   output:
 
-  file "*chipseeker*" into peakAnnotation
+  file("*chipseeker*") into peakAnnotation
   file('version_*.txt') into peakAnnotationVersions
 
   script:
@@ -436,8 +436,8 @@ process motifSearch {
 
   output:
 
-  file "*memechip" into motifSearch
-  file "*narrowPeak" into filteredPeaks
+  file("*memechip") into motifSearch
+  file("*narrowPeak") into filteredPeaks
   file('version_*.txt') into motifSearchVersions
 
   script:
@@ -463,10 +463,10 @@ process diffPeaks {
 
   output:
 
-  file '*_diffbind.bed' into diffPeaks
-  file '*_diffbind.csv' into diffPeaksCounts
-  file '*.pdf' into diffPeaksStats
-  file 'normcount_peaksets.txt' into normCountPeaks
+  file('*_diffbind.bed') into diffPeaks
+  file('*_diffbind.csv') into diffPeaksCounts
+  file('*.pdf') into diffPeaksStats
+  file('normcount_peaksets.txt') into normCountPeaks
   file('version_*.txt') into diffPeaksVersions
 
   when:
@@ -494,10 +494,12 @@ process softwareReport {
   motifSearchVersions
   diffPeaksVersions
   experimentQCVersions
+  references
+
 
   output:
-  file '*_mqc.yaml' into softwareVersions
-  file '*_mqc.yaml' into softwareReferences
+  file('*_mqc.yaml') into softwareVersions
+  file('*_mqc.txt') into softwareReferences
 
   script:
   """
