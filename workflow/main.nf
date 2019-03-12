@@ -493,7 +493,6 @@ process softwareVersions {
   motifSearchVersions
   diffPeaksVersions
   experimentQCVersions
-  references
 
   output:
 
