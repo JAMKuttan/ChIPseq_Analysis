@@ -496,15 +496,16 @@ process softwareReport {
   experimentQCVersions
   references
 
-
   output:
 
   file('*_mqc.yaml') into softwareVersions
   file('*_mqc.txt') into softwareReferences
 
   script:
+
   """
   python3 $baseDir/scripts/generate_versions.py -o software_versions
   python3 $baseDir/scripts/generate_references.py -r $references -o software_references
   """
+
 }
