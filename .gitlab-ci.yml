@@ -6,9 +6,9 @@ before_script:
 
 stages:
   - unit
+  - skip
   - single
   - multiple
-  - skip
 
 user_configuration:
   stage: unit
