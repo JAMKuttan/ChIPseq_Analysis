@@ -47,6 +47,7 @@ cutoffRatio = params.cutoffRatio
 outDir = params.outDir
 extendReadsLen = params.extendReadsLen
 topPeakCount = params.topPeakCount
+references = params.references
 
 // Check design file for errors
 process checkDesignFile {
@@ -478,7 +479,7 @@ process diffPeaks {
 }
 
 // Collect Software Versions and references
-process softwareVersions {
+process softwareReport {
 
   input:
 
