@@ -483,17 +483,17 @@ process softwareReport {
 
   input:
 
-  trimReadsVersions
-  alignReadsVersions
-  filterReadsVersions
-  convertReadsVersions
-  crossReadsVersions
-  callPeaksMACSVersions
-  consensusPeaksVersions
-  peakAnnotationVersions
-  motifSearchVersions
-  diffPeaksVersions
-  experimentQCVersions
+  trimReadsVersions.collect()
+  alignReadsVersions.collect()
+  filterReadsVersions.collect()
+  convertReadsVersions.collect()
+  crossReadsVersions.collect()
+  callPeaksMACSVersions.collect()
+  consensusPeaksVersions.collect()
+  peakAnnotationVersions.collect()
+  motifSearchVersions.collect()
+  diffPeaksVersions.collect()
+  experimentQCVersions.collect()
 
   output:
 
@@ -502,7 +502,7 @@ process softwareReport {
 
   script:
   """
-  python3 $baseDir/scripts/generate_versions.py -o software_versions
+  python3 $baseDir/scripts/generate_versions.py -f *.txt -o software_versions
   python3 $baseDir/scripts/generate_references.py -r $references -o software_references
   """
 }

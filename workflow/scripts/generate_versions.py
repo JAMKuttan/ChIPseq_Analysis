@@ -8,6 +8,7 @@ from collections import OrderedDict
 import re
 import logging
 import argparse
+import numpy as np
 
 EPILOG = '''
 For more details:
@@ -46,6 +47,11 @@ def get_args():
         description=__doc__, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
+    parser.add_argument('-f', '--files',
+                        help="The version files.",
+                        required=True,
+                        nargs='*')
+
     parser.add_argument('-o', '--output',
                         help="The out file name.",
                         required=True)
@@ -54,8 +60,29 @@ def get_args():
     return args
 
 
+def check_files(files):
+    '''Check if version files are found.'''
+
+    logger.info("Running file check.")
+
+    software_files = np.array(list(SOFTWARE_REGEX.values()))[:,0]
+
+    missing_files = set(software_files) - set(files)
+
+    if len(missing_files) > 0:
+            logger.error('Missing version files: %s', list(missing_files))
+            raise Exception("Missing version files: %s" % list(missing_files))
+
+    extra_files =  set(files) - set(software_files)
+
+    if len(extra_files) > 0:
+            logger.error('Missing regex: %s', list(extra_files))
+            raise Exception("Missing regex: %s" % list(extra_files))
+
+
 def main():
     args = get_args()
+    files = args.files
     output = args.output
 
     out_filename = output + '_mqc.yaml'
@@ -78,6 +105,9 @@ def main():
     results['MEME-ChIP'] = '<span style="color:#999999;\">N/A</span>'
     results['DiffBind'] = '<span style="color:#999999;\">N/A</span>'
     results['deepTools'] = '<span style="color:#999999;\">N/A</span>'
+
+    # Check for version files:
+    check_files(files)
 
     # Search each file using its regex
     for k, v in SOFTWARE_REGEX.items():
