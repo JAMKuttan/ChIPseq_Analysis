@@ -10,13 +10,15 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/diffPeaks/'
 
 
-@pytest.mark.singleend
+@pytest.mark.singleskip_true
 def test_diff_peaks_singleend_single_rep():
     assert os.path.isdir(test_output_path) == False
+
 
 @pytest.mark.pairedend
 def test_diff_peaks_pairedend_single_rep():
     assert os.path.isdir(test_output_path) == False
+
 
 @pytest.mark.singlediff
 def test_heatmap_singleend_multiple_rep():

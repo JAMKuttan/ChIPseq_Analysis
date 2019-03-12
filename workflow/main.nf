@@ -17,6 +17,8 @@ params.cutoffRatio = 1.2
 params.outDir= "$baseDir/output"
 params.extendReadsLen = 100
 params.topPeakCount = 600
+params.skipDiff = false
+params.skipMotif = false
 
 // Check inputs
 if( params.bwaIndex ){
@@ -45,6 +47,8 @@ cutoffRatio = params.cutoffRatio
 outDir = params.outDir
 extendReadsLen = params.extendReadsLen
 topPeakCount = params.topPeakCount
+skipDiff = params.skipDiff
+skipMotif = params.skipMotif
 
 // Check design file for errors
 process checkDesignFile {
@@ -427,6 +431,9 @@ process motifSearch {
   file "*memechip" into motifSearch
   file "*narrowPeak" into filteredPeaks
 
+  when:
+  !skipMotif
+
   script:
 
   """
@@ -456,7 +463,7 @@ process diffPeaks {
   file 'normcount_peaksets.txt' into normCountPeaks
 
   when:
-  noUniqueExperiments > 1
+  noUniqueExperiments > 1 && !skipDiff
 
   script:
   """
