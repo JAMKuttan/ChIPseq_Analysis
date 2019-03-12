@@ -17,8 +17,9 @@ params.cutoffRatio = 1.2
 params.outDir= "$baseDir/output"
 params.extendReadsLen = 100
 params.topPeakCount = 600
+params.skipDiff = false
+params.skipMotif = false
 params.references = "$baseDir/../docs/references.md"
-
 
 // Check inputs
 if( params.bwaIndex ){
@@ -47,6 +48,8 @@ cutoffRatio = params.cutoffRatio
 outDir = params.outDir
 extendReadsLen = params.extendReadsLen
 topPeakCount = params.topPeakCount
+skipDiff = params.skipDiff
+skipMotif = params.skipMotif
 references = params.references
 
 // Check design file for errors
@@ -440,6 +443,9 @@ process motifSearch {
   file "*narrowPeak" into filteredPeaks
   file('version_*.txt') into motifSearchVersions
 
+  when:
+  !skipMotif
+
   script:
 
   """
@@ -470,7 +476,7 @@ process diffPeaks {
   file('version_*.txt') into diffPeaksVersions
 
   when:
-  noUniqueExperiments > 1
+  noUniqueExperiments > 1 && !skipDiff
 
   script:
   """
