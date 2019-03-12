@@ -498,6 +498,7 @@ process softwareReport {
 
 
   output:
+
   file('*_mqc.yaml') into softwareVersions
   file('*_mqc.txt') into softwareReferences
 
