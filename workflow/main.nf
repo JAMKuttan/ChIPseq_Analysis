@@ -388,7 +388,7 @@ process consensusPeaks {
 
   output:
 
-  file('*.replicated.*') into consensusPeaks
+  file('*.replicated.*') into replicatedPeaks
   file('*.rejected.*') into rejectedPeaks
   file('design_diffPeaks.csv')  into designDiffPeaks
   file('design_annotatePeaks.tsv')  into designAnnotatePeaks, designMotifSearch
