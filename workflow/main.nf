@@ -47,6 +47,7 @@ cutoffRatio = params.cutoffRatio
 outDir = params.outDir
 extendReadsLen = params.extendReadsLen
 topPeakCount = params.topPeakCount
+references = params.references
 
 // Check design file for errors
 process checkDesignFile {
@@ -478,7 +479,7 @@ process diffPeaks {
 }
 
 // Collect Software Versions and references
-process softwareVersions {
+process softwareReport {
 
   input:
 
@@ -495,10 +496,12 @@ process softwareVersions {
   experimentQCVersions
 
   output:
-  file 'software_versions_mqc.yaml' into softwareVersions
+  file '*_mqc.yaml' into softwareVersions
+  file '*_mqc.yaml' into softwareReferences
 
   script:
   """
-  software_report.py > software_versions_mqc.yaml
+  python3 $baseDir/scripts/software_report.py -o software_versions
+  python3 $baseDir/scripts/generate_references.py -r $references -o software_references
   """
 }
