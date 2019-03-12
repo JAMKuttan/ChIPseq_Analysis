@@ -48,7 +48,7 @@ single_end_diff:
     - master
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' -resume
-  - pytest -m singlediff singlediff_true
+  - pytest -m singlediff
   artifacts:
     expire_in: 2 days
 
@@ -72,6 +72,6 @@ single_end_skip:
     - master
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' --skipDiff true --skipMotif true -resume
-  - pytest -m singlediff singleskip_true
+  - pytest -m singleskip_true
   artifacts:
     expire_in: 2 days
