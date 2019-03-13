@@ -79,7 +79,7 @@ def check_tools():
         macs_version = subprocess.check_output(macs_version_command, shell=True, stderr=subprocess.STDOUT)
 
         # Write to file
-        macs_file = open("version_macs.txt", "wb")
+        macs_file = open("version_macs.txt", "w")
         macs_file.write(macs_version)
         macs_file.close()
 
@@ -99,7 +99,7 @@ def check_tools():
             bg_bw_version = e.output
 
         # Write to file
-        bg_bw_file = open("version_bedGraphToBigWig.txt", "wb")
+        bg_bw_file = open("version_bedGraphToBigWig.txt", "w")
         bg_bw_file.write(bg_bw_version)
         bg_bw_file.close()
     else:
