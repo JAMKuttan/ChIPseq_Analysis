@@ -489,17 +489,17 @@ process softwareReport {
 
   input:
 
-  trimReadsVersions.collect()
-  alignReadsVersions.collect()
-  filterReadsVersions.collect()
-  convertReadsVersions.collect()
-  crossReadsVersions.collect()
-  callPeaksMACSVersions.collect()
-  consensusPeaksVersions.collect()
-  peakAnnotationVersions.collect()
-  motifSearchVersions.collect()
-  diffPeaksVersions.collect()
-  experimentQCVersions.collect()
+  file trimReads_vf from trimReadsVersions.collect()
+  file alignReads_vf from alignReadsVersions.collect()
+  file filterReads_vf from filterReadsVersions.collect()
+  file convertReads_vf from convertReadsVersions.collect()
+  file crossReads_vf from crossReadsVersions.collect()
+  file callPeaksMACS_vf from callPeaksMACSVersions.collect()
+  file consensusPeaks_vf from consensusPeaksVersions.collect()
+  file peakAnnotation_vf from peakAnnotationVersions.collect()
+  file motifSearch_vf from motifSearchVersions.collect()
+  file diffPeaks_vf from diffPeaksVersions.collect()
+  file experimentQC_vf from experimentQCVersions.collect()
 
   output:
 
@@ -509,7 +509,19 @@ process softwareReport {
   script:
   """
   echo $workflow.nextflow.version > version_nextflow.txt
-  python3 $baseDir/scripts/generate_versions.py -f *.txt -o software_versions
   python3 $baseDir/scripts/generate_references.py -r $references -o software_references
+  python3 $baseDir/scripts/generate_versions.py -f $trimReads_vf \
+                                                  $alignReads_vf \
+                                                  $filterReads_vf \
+                                                  $convertReads_vf \
+                                                  $crossReads_vf \
+                                                  $callPeaksMACS_vf \
+                                                  $consensusPeaks_vf \
+                                                  $motifSearch_vf \
+                                                  $diffPeaks_vf \
+                                                  $experimentQC_vf \
+                                                  version_nextflow.txt \
+                                                  -o software_versions
+
   """
 }

@@ -4,7 +4,7 @@
   * Anaconda (Anaconda Software Distribution, [https://anaconda.com](https://anaconda.com))
 
 2. **trimgalore**:
-  * trimgalore/0.4.1 [https://github.com/FelixKrueger/TrimGalore](https://github.com/FelixKrueger/TrimGalore)
+  * trimgalore [https://github.com/FelixKrueger/TrimGalore](https://github.com/FelixKrueger/TrimGalore)
 
 3. **cutadapt**:
   * Marcel, M. 2011. Cutadapt removes adapter sequences from high-throughput sequencing reads. EMBnet.journal 17(1):10-12. doi:[10.14806/ej.17.1.200](http://dx.doi.org/10.14806/ej.17.1.200)

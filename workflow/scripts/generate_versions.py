@@ -68,12 +68,6 @@ def check_files(files):
 
     software_files = np.array(list(SOFTWARE_REGEX.values()))[:,0]
 
-    missing_files = set(software_files) - set(files)
-
-    if len(missing_files) > 0:
-            logger.error('Missing version files: %s', list(missing_files))
-            raise Exception("Missing version files: %s" % list(missing_files))
-
     extra_files =  set(files) - set(software_files)
 
     if len(extra_files) > 0:
