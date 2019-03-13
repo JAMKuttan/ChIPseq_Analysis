@@ -95,7 +95,7 @@ def check_tools():
         samtools_version = subprocess.check_output(samtools_version_command, shell=True)
 
         # Write to file
-        samtools_file = open("version_samtools.txt", "w")
+        samtools_file = open("version_samtools.txt", "wb")
         samtools_file.write(samtools_version)
         samtools_file.close()
     else:

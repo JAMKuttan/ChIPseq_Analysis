@@ -60,7 +60,7 @@ def check_tools():
         trimgalore_version = subprocess.check_output(trim_version_command, shell=True)
 
         # Write to file
-        trimgalore_file = open("version_trimgalore.txt", "w")
+        trimgalore_file = open("version_trimgalore.txt", "wb")
         trimgalore_file.write(trimgalore_version)
         trimgalore_file.close()
     else:
@@ -76,7 +76,7 @@ def check_tools():
         cutadapt_version = subprocess.check_output(cutadapt_version_command, shell=True)
 
         # Write to file
-        cutadapt_file = open("version_cutadapt.txt", "w")
+        cutadapt_file = open("version_cutadapt.txt", "wb")
         cutadapt_file.write("Version %s" % (cutadapt_version))
         cutadapt_file.close()
     else:

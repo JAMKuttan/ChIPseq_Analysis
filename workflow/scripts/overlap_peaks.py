@@ -56,7 +56,7 @@ def check_tools():
         bedtools_version = subprocess.check_output(bedtools_version_command, shell=True)
 
         # Write to file
-        bedtools_file = open("version_bedtools.txt", "w")
+        bedtools_file = open("version_bedtools.txt", "wb")
         bedtools_file.write(bedtools_version)
         bedtools_file.close()
     else:

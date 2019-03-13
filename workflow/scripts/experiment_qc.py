@@ -58,7 +58,7 @@ def check_tools():
         deeptools_version = subprocess.check_output(deeptools_version_command, shell=True, stderr=subprocess.STDOUT)
 
         # Write to file
-        deeptools_file = open("version_deeptools.txt", "w")
+        deeptools_file = open("version_deeptools.txt", "wb")
         deeptools_file.write(deeptools_version)
         deeptools_file.close()
     else:

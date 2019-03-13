@@ -99,7 +99,7 @@ def check_tools():
             bg_bw_version = e.output
 
         # Write to file
-        bg_bw_file = open("version_bedGraphToBigWig.txt", "w")
+        bg_bw_file = open("version_bedGraphToBigWig.txt", "wb")
         bg_bw_file.write(bg_bw_version)
         bg_bw_file.close()
     else:

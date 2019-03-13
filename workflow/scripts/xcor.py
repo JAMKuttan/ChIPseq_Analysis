@@ -66,7 +66,7 @@ def check_tools():
         r_version = subprocess.check_output(r_version_command, shell=True)
 
         # Write to file
-        r_file = open("version_r.txt", "w")
+        r_file = open("version_r.txt", "wb")
         r_file.write(r_version)
         r_file.close()
     else:
@@ -82,7 +82,7 @@ def check_tools():
         spp_version = subprocess.check_output(spp_version_command, shell=True)
 
         # Write to file
-        spp_file = open("version_spp.txt", "w")
+        spp_file = open("version_spp.txt", "wb")
         spp_file.write(spp_version)
         spp_file.close()
     else:
