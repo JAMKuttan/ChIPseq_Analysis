@@ -23,6 +23,7 @@ logger.propagate = False
 logger.setLevel(logging.INFO)
 
 SOFTWARE_REGEX = {
+    'Nextflow': ['version_nextflow.txt', r"(\S+)"],
     'Trim Galore!': ['version_trimgalore.txt', r"version (\S+)"],
     'Cutadapt': ['version_cutadapt.txt', r"Version (\S+)"],
     'BWA': ['version_bwa.txt', r"Version: (\S+)"],
@@ -88,6 +89,7 @@ def main():
     out_filename = output + '_mqc.yaml'
 
     results = OrderedDict()
+    results['Nextflow'] = '<span style="color:#999999;\">N/A</span>'
     results['Trim Galore!'] = '<span style="color:#999999;\">N/A</span>'
     results['Cutadapt'] = '<span style="color:#999999;\">N/A</span>'
     results['BWA'] = '<span style="color:#999999;\">N/A</span>'

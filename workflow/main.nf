@@ -508,6 +508,7 @@ process softwareReport {
 
   script:
   """
+  echo $workflow.nextflow.version > version_nextflow.txt
   python3 $baseDir/scripts/generate_versions.py -f *.txt -o software_versions
   python3 $baseDir/scripts/generate_references.py -r $references -o software_references
   """
