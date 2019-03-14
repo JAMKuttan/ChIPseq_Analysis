@@ -487,6 +487,8 @@ process diffPeaks {
 // Collect Software Versions and references
 process softwareReport {
 
+  publishDir "$outDir/${task.process}", mode: 'copy'
+
   input:
 
   file trimReads_vf from trimReadsVersions.collect()
