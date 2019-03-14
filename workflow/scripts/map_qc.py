@@ -68,7 +68,7 @@ def check_tools():
         samtools_version = subprocess.check_output(samtools_version_command, shell=True)
 
         # Write to file
-        samtools_file = open("version_samtools.txt", "w")
+        samtools_file = open("version_samtools.txt", "wb")
         samtools_file.write(samtools_version)
         samtools_file.close()
     else:
@@ -87,7 +87,7 @@ def check_tools():
             sambamba_version = e.output
 
         # Write to file
-        sambamba_file = open("version_sambamba.txt", "w")
+        sambamba_file = open("version_sambamba.txt", "wb")
         sambamba_file.write(sambamba_version)
         sambamba_file.close()
     else:

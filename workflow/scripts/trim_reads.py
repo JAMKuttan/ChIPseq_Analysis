@@ -77,7 +77,7 @@ def check_tools():
 
         # Write to file
         cutadapt_file = open("version_cutadapt.txt", "wb")
-        cutadapt_file.write("Version %s" % (cutadapt_version))
+        cutadapt_file.write(b"Version %s" % (cutadapt_version))
         cutadapt_file.close()
     else:
         logger.error('Missing cutadapt')

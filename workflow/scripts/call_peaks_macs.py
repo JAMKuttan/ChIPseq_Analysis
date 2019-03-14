@@ -79,7 +79,7 @@ def check_tools():
         macs_version = subprocess.check_output(macs_version_command, shell=True, stderr=subprocess.STDOUT)
 
         # Write to file
-        macs_file = open("version_macs.txt", "w")
+        macs_file = open("version_macs.txt", "wb")
         macs_file.write(macs_version)
         macs_file.close()
 

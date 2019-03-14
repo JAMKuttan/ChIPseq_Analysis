@@ -71,8 +71,8 @@ def check_tools():
         memechip_version = subprocess.check_output(memechip_version_command, shell=True)
 
         # Write to file
-        meme_file = open("version_memechip.txt", "w")
-        meme_file.write("Version %s" % (memechip_version))
+        meme_file = open("version_memechip.txt", "wb")
+        meme_file.write(b"Version %s" % (memechip_version))
         meme_file.close()
     else:
         logger.error('Missing meme')

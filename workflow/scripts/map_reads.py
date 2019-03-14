@@ -79,7 +79,7 @@ def check_tools():
             bwa_version = e.output
 
         # Write to file
-        bwa_file = open("version_bwa.txt", "w")
+        bwa_file = open("version_bwa.txt", "wb")
         bwa_file.write(bwa_version)
         bwa_file.close()
     else:
