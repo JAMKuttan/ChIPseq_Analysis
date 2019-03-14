@@ -14,11 +14,6 @@ def test_software_references():
 
 
 @pytest.mark.singleend
-def test_nextflow_version():
-    assert os.path.exists(os.path.join(test_output_path, 'version_nextflow.txt'))
-
-
-@pytest.mark.singleend
 def test_software_versions():
     assert os.path.exists(os.path.join(test_output_path, 'software_versions_mqc.yaml'))
 
