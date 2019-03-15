@@ -188,6 +188,9 @@ def main():
     handler = logging.FileHandler('consensus_peaks.log')
     logger.addHandler(handler)
 
+    # Check if tools are present
+    check_tools()
+
     # Read files as dataframes
     design_peaks_df = pd.read_csv(design, sep='\t')
     design_files_df = pd.read_csv(files, sep='\t')
