@@ -12,7 +12,7 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
 
 @pytest.mark.singleend
 def test_trim_reads_singleend():
-    raw_fastq = test_data_path + 'ENCLB144FDT/ENCFF833BLU.fastq.gz'
+    raw_fastq = test_data_path + 'ENCFF833BLU.fastq.gz'
     trimmed_fastq = test_output_path + 'ENCLB144FDT/ENCLB144FDT_R1_trimmed.fq.gz'
     assert os.path.getsize(raw_fastq) != os.path.getsize(trimmed_fastq)
     assert os.path.getsize(trimmed_fastq) == 2512853101
@@ -27,7 +27,7 @@ def test_trim_report_singleend():
 
 @pytest.mark.pairedend
 def test_trim_reads_pairedend():
-    raw_fastq = test_data_path + 'ENCLB637LZP/ENCFF582IOZ.fastq.gz'
+    raw_fastq = test_data_path + 'ENCFF582IOZ.fastq.gz'
     trimmed_fastq = test_output_path + 'ENCLB637LZP/ENCLB637LZP_R2_val_2.fq.gz'
     assert os.path.getsize(raw_fastq) != os.path.getsize(trimmed_fastq)
     assert os.path.getsize(trimmed_fastq) == 2229312710
