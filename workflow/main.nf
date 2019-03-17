@@ -499,8 +499,8 @@ process softwareReport {
   file callPeaksMACS_vf from callPeaksMACSVersions.collect()
   file consensusPeaks_vf from consensusPeaksVersions.collect()
   file peakAnnotation_vf from peakAnnotationVersions.collect()
-  file motifSearch_vf from motifSearchVersions.collect()
-  file diffPeaks_vf from diffPeaksVersions.collect()
+  file motifSearch_vf from motifSearchVersions.collect().ifEmpty([])
+  file diffPeaks_vf from diffPeaksVersions.collect().ifEmpty([])
   file experimentQC_vf from experimentQCVersions.collect()
 
   output:
