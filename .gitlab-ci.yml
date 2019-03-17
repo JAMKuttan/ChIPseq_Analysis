@@ -6,9 +6,9 @@ before_script:
 
 stages:
   - unit
-  - skip
   - single
   - multiple
+  - skip
 
 user_configuration:
   stage: unit
@@ -20,8 +20,6 @@ single_end_mouse:
   stage: single
   only:
     - master
-  except:
-    - branches
   script:
   - nextflow run workflow/main.nf -resume
   - pytest -m singleend
@@ -32,8 +30,6 @@ paired_end_human:
   stage: single
   only:
     - branches
-  except:
-    - master
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38' --pairedEnd true -resume
   - pytest -m pairedend
@@ -44,8 +40,6 @@ single_end_diff:
   stage: multiple
   only:
     - branches
-  except:
-    - master
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' -resume
   - pytest -m singlediff
@@ -55,8 +49,6 @@ single_end_diff:
 paired_end_diff:
   only:
     - master
-  except:
-    - branches
   stage: multiple
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_PE.txt" --genome 'GRCh38' --pairedEnd true -resume
@@ -67,8 +59,6 @@ paired_end_diff:
 single_end_skip:
   stage: skip
   only:
-    - branches
-  except:
     - master
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' --skipDiff true --skipMotif true -resume

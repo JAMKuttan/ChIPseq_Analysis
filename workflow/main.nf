@@ -96,7 +96,7 @@ rawReads = designFilePaths
 process trimReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
   input:
 
@@ -127,7 +127,7 @@ process trimReads {
 process alignReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
   input:
 
@@ -159,7 +159,7 @@ process alignReads {
 process filterReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
   input:
 
@@ -222,7 +222,7 @@ process experimentQC {
 process convertReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
   input:
 
@@ -252,7 +252,7 @@ process convertReads {
 process crossReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
   input:
 
@@ -346,7 +346,7 @@ experimentRows = experimentPoolObjs
 process callPeaksMACS {
 
   tag "$sampleId-$replicate"
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}/${experimentId}/${replicate}", mode: 'copy'
 
   input:
   set sampleId, tagAlign, xcor, experimentId, biosample, factor, treatment, replicate, controlId, controlTagAlign from experimentRows
