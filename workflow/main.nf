@@ -505,8 +505,8 @@ process softwareReport {
 
   output:
 
-  file('*_mqc.yaml') into softwareVersions
-  file('*_mqc.txt') into softwareReferences
+  file('software_versions_mqc.yaml') into softwareVersions
+  file('software_references_mqc.yaml') into softwareReferences
 
   script:
   """

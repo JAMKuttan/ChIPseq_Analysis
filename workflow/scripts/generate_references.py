@@ -44,20 +44,21 @@ def main():
     reference = args.reference
     output = args.output
 
-    out_filename = output + '_mqc.txt'
+    out_filename = output + '_mqc.yaml'
 
     # Header for HTML
     print('''
-        # id: 'References'
-        # section_name: 'References'
-        # description: 'This section describes references for the tools used.'
-        # plot_type: 'html'
+        id: 'Software References'
+        section_name: 'Software References'
+        description: 'This section describes references for the tools used.'
+        plot_type: 'html'
+        data: |
         '''
     , file = open(out_filename, "w")
     )
 
     # Turn Markdown into HTML
-    references_html = 'bash -c "pandoc {} >> {}"'
+    references_html = 'bash -c "pandoc -p {} | sed \'s/^/                /\' >> {}"'
     references_html = references_html.format(reference, out_filename)
     subprocess.check_call(shlex.split(references_html))
 
