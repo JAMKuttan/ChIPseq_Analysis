@@ -491,17 +491,17 @@ process softwareReport {
 
   input:
 
-  file 'trimReads_vf/*txt' from trimReadsVersions.first()
-  file 'alignReads_vf/*' from alignReadsVersions.first()
-  file 'filterReads_vf/*' from filterReadsVersions.first()
-  file 'convertReads_vf/*' from convertReadsVersions.first()
-  file 'crossReads_vf/*' from crossReadsVersions.first()
-  file 'callPeaksMACS_vf/*' from callPeaksMACSVersions.first()
-  file 'consensusPeaks_vf/*' from consensusPeaksVersions.first()
-  file 'peakAnnotation_vf/*' from peakAnnotationVersions.first()
-  file 'motifSearch_vf/*' from motifSearchVersions.first().ifEmpty()
-  file 'diffPeaks_vf/*' from diffPeaksVersions.first().ifEmpty()
-  file 'experimentQC_vf/*' from experimentQCVersions.first()
+  file trimReads_vf from trimReadsVersions.collect().first()
+  file alignReads_vf from alignReadsVersions.collect().first()
+  file filterReads_vf from filterReadsVersions.collect().first()
+  file convertReads_vf from convertReadsVersions.collect().first()
+  file crossReads_vf from crossReadsVersions.collect().first()
+  file callPeaksMACS_vf from callPeaksMACSVersions.collect().first()
+  file consensusPeaks_vf from consensusPeaksVersions.collect().first()
+  file peakAnnotation_vf from peakAnnotationVersions.collect().first()
+  file motifSearch_vf from motifSearchVersions.collect().first().ifEmpty()
+  file diffPeaks_vf from diffPeaksVersions.collect().first().ifEmpty()
+  file experimentQC_vf from experimentQCVersions.collect().first()
 
   output:
 
@@ -512,16 +512,7 @@ process softwareReport {
   """
   echo $workflow.nextflow.version > version_nextflow.txt
   python3 $baseDir/scripts/generate_references.py -r $references -o software_references
-  python3 $baseDir/scripts/generate_versions.py -f $trimReads_vf \
-                                                  $alignReads_vf \
-                                                  $filterReads_vf \
-                                                  $convertReads_vf \
-                                                  $crossReads_vf \
-                                                  $callPeaksMACS_vf \
-                                                  $consensusPeaks_vf \
-                                                  $motifSearch_vf \
-                                                  $diffPeaks_vf \
-                                                  $experimentQC_vf \
+  python3 $baseDir/scripts/generate_versions.py -f version*txt \
                                                   version_nextflow.txt \
                                                   -o software_versions
 
