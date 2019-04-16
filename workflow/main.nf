@@ -132,7 +132,7 @@ process alignReads {
   input:
 
   set sampleId, reads, experimentId, biosample, factor, treatment, replicate, controlId from trimmedReads
-  file index from bwaIndex.first()
+  file index from bwaIndex.distinct()
 
   output:
 
@@ -491,17 +491,17 @@ process softwareReport {
 
   input:
 
-  file trimReads_vf from trimReadsVersions.collect().first()
-  file alignReads_vf from alignReadsVersions.collect().first()
-  file filterReads_vf from filterReadsVersions.collect().first()
-  file convertReads_vf from convertReadsVersions.collect().first()
-  file crossReads_vf from crossReadsVersions.collect().first()
-  file callPeaksMACS_vf from callPeaksMACSVersions.collect().first()
-  file consensusPeaks_vf from consensusPeaksVersions.collect().first()
-  file peakAnnotation_vf from peakAnnotationVersions.collect().first()
-  file motifSearch_vf from motifSearchVersions.collect().first().ifEmpty()
-  file diffPeaks_vf from diffPeaksVersions.collect().first().ifEmpty()
-  file experimentQC_vf from experimentQCVersions.collect().first()
+  file ('version_*.txt') from trimReadsVersions.collect().distinct()
+  file ('version_*.txt') from alignReadsVersions.collect().distinct()
+  file ('version_*.txt') from filterReadsVersions.collect().distinct()
+  file ('version_*.txt') from convertReadsVersions.collect().distinct()
+  file ('version_*.txt') from crossReadsVersions.collect().distinct()
+  file ('version_*.txt') from callPeaksMACSVersions.collect().distinct()
+  file ('version_*.txt') from consensusPeaksVersions.collect().distinct()
+  file ('version_*.txt') from peakAnnotationVersions.collect().distinct()
+  file ('version_*.txt') from motifSearchVersions.collect().distinct().ifEmpty()
+  file ('version_*.txt') from diffPeaksVersions.collect().distinct().ifEmpty()
+  file ('version_*.txt') from experimentQCVersions.collect().distinct()
 
   output:
 
