@@ -491,17 +491,17 @@ process softwareReport {
 
   input:
 
-  file trimReadsVersions.distinct().collect()
-  file alignReadsVersions.distinct().collect()
-  file filterReadsVersions.distinct().collect()
-  file convertReadsVersions.distinct().collect()
-  file crossReadsVersions.distinct().collect()
-  file callPeaksMACSVersions.distinct().collect()
-  file consensusPeaksVersions.distinct().collect()
-  file peakAnnotationVersions.distinct().collect()
-  file motifSearchVersions.distinct().collect().ifEmpty()
-  file diffPeaksVersions.distinct().collect().ifEmpty()
-  file experimentQCVersions.distinct().collect()
+    file trimReads_vf from trimReadsVersions.distinct().collect()
+    file alignReads_vf from alignReadsVersions.distinct().collect()
+    file filterReads_vf from filterReadsVersions.distinct().collect()
+    file convertReads_vf from convertReadsVersions.distinct().collect()
+    file crossReads_vf from crossReadsVersions.distinct().collect()
+    file callPeaksMACS_vf from callPeaksMACSVersions.distinct().collect()
+    file consensusPeaks_vf from consensusPeaksVersions.distinct().collect()
+    file peakAnnotation_vf from peakAnnotationVersions.distinct().collect()
+    file motifSearch_vf from motifSearchVersions.distinct().collect().ifEmpty()
+    file diffPeaks_vf from diffPeaksVersions.distinct().collect().ifEmpty()
+    file experimentQC_vf from experimentQCVersions.distinct().collect()
 
   output:
 
