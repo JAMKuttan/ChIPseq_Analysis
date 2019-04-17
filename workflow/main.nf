@@ -132,7 +132,7 @@ process alignReads {
   input:
 
   set sampleId, reads, experimentId, biosample, factor, treatment, replicate, controlId from trimmedReads
-  file index from bwaIndex.distinct()
+  file index from bwaIndex.first()
 
   output:
 
