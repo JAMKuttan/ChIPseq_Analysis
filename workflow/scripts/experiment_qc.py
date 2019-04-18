@@ -52,6 +52,15 @@ def check_tools():
     deeptools_path = shutil.which("deeptools")
     if deeptools_path:
         logger.info('Found deeptools: %s', deeptools_path)
+
+        # Get Version
+        deeptools_version_command = "deeptools --version"
+        deeptools_version = subprocess.check_output(deeptools_version_command, shell=True, stderr=subprocess.STDOUT)
+
+        # Write to file
+        deeptools_file = open("version_deeptools.txt", "wb")
+        deeptools_file.write(deeptools_version)
+        deeptools_file.close()
     else:
         logger.error('Missing deeptools')
         raise Exception('Missing deeptools')
@@ -188,7 +197,6 @@ def main():
     mbs_filename = generate_read_summary(design_df, extension)
     check_spearman_correlation(mbs_filename)
     check_pearson_correlation(mbs_filename)
-
 
     # Run coverage
     check_coverage(design_df, extension)

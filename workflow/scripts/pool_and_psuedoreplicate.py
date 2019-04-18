@@ -153,7 +153,6 @@ def self_psuedoreplication(tag_file, prefix, paired):
     logger.info("Running psuedo with %s", psuedo_command)
     subprocess.check_call(shlex.split(psuedo_command))
 
-
     # Convert read pairs to reads into standard tagAlign file
 
     for i, index in enumerate([0, 1]):
@@ -343,7 +342,6 @@ def main():
         path_to_file = cwd + '/' + pool_experiment_se
         tmp_metadata['tag_align'] = path_to_file
         design_new_df = design_new_df.append(tmp_metadata)
-
 
     # Write out new dataframe
     design_new_df.to_csv(experiment_id + '_ppr.tsv',

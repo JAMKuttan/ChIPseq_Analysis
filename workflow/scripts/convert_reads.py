@@ -54,6 +54,15 @@ def check_tools():
     bedtools_path = shutil.which("bedtools")
     if bedtools_path:
         logger.info('Found bedtools: %s', bedtools_path)
+
+        # Get Version
+        bedtools_version_command = "bedtools --version"
+        bedtools_version = subprocess.check_output(bedtools_version_command, shell=True)
+
+        # Write to file
+        bedtools_file = open("version_bedtools.txt", "wb")
+        bedtools_file.write(bedtools_version)
+        bedtools_file.close()
     else:
         logger.error('Missing bedtools')
         raise Exception('Missing bedtools')
@@ -61,6 +70,15 @@ def check_tools():
     samtools_path = shutil.which("samtools")
     if samtools_path:
         logger.info('Found samtools: %s', samtools_path)
+
+        # Get Version
+        samtools_version_command = "samtools --version"
+        samtools_version = subprocess.check_output(samtools_version_command, shell=True)
+
+        # Write to file
+        samtools_file = open("version_samtools.txt", "wb")
+        samtools_file.write(samtools_version)
+        samtools_file.close()
     else:
         logger.error('Missing samtools')
         raise Exception('Missing samtools')

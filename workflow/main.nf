@@ -19,6 +19,7 @@ params.extendReadsLen = 100
 params.topPeakCount = 600
 params.skipDiff = false
 params.skipMotif = false
+params.references = "$baseDir/../docs/references.md"
 
 // Check inputs
 if( params.bwaIndex ){
@@ -49,6 +50,7 @@ extendReadsLen = params.extendReadsLen
 topPeakCount = params.topPeakCount
 skipDiff = params.skipDiff
 skipMotif = params.skipMotif
+references = params.references
 
 // Check design file for errors
 process checkDesignFile {
@@ -103,7 +105,8 @@ process trimReads {
   output:
 
   set sampleId, file('*.fq.gz'), experimentId, biosample, factor, treatment, replicate, controlId into trimmedReads
-  file('*trimming_report.txt') into trimgalore_results
+  file('*trimming_report.txt') into trimgaloreResults
+  file('version_*.txt') into trimReadsVersions
 
   script:
 
@@ -135,6 +138,7 @@ process alignReads {
 
   set sampleId, file('*.bam'), experimentId, biosample, factor, treatment, replicate, controlId into mappedReads
   file '*.flagstat.qc' into mappedReadsStats
+  file('version_*.txt') into alignReadsVersions
 
   script:
 
@@ -168,6 +172,7 @@ process filterReads {
   file '*.flagstat.qc' into dedupReadsStats
   file '*.pbc.qc' into dedupReadsComplexity
   file '*.dedup.qc' into dupReads
+  file('version_*.txt') into filterReadsVersions
 
   script:
 
@@ -202,7 +207,8 @@ process experimentQC {
 
   output:
 
-  file '*.{pdf,npz}' into deepToolsStats
+  file '*.{pdf,npz}' into experimentQCStats
+  file('version_*.txt') into experimentQCVersions
 
   script:
 
@@ -225,6 +231,7 @@ process convertReads {
   output:
 
   set sampleId, file('*.tagAlign.gz'), file('*.bed{pe,se}.gz'), experimentId, biosample, factor, treatment, replicate, controlId into tagReads
+  file('version_*.txt') into convertReadsVersions
 
   script:
 
@@ -254,7 +261,8 @@ process crossReads {
   output:
 
   set sampleId, seTagAlign, tagAlign, file('*.cc.qc'), experimentId, biosample, factor, treatment, replicate, controlId into xcorReads
-  set file('*.cc.qc'), file('*.cc.plot.pdf') into xcorReadsStats
+  set file('*.cc.qc'), file('*.cc.plot.pdf') into crossReadsStats
+  file('version_*.txt') into crossReadsVersions
 
   script:
 
@@ -346,7 +354,8 @@ process callPeaksMACS {
   output:
 
   set sampleId, file('*.narrowPeak'), file('*.fc_signal.bw'), file('*.pvalue_signal.bw'), experimentId, biosample, factor, treatment, replicate, controlId into experimentPeaks
-  file '*.xls' into summit
+  file '*.xls' into callPeaksMACSsummit
+  file('version_*.txt') into callPeaksMACSVersions
 
   script:
 
@@ -387,6 +396,7 @@ process consensusPeaks {
   file 'design_diffPeaks.csv'  into designDiffPeaks
   file 'design_annotatePeaks.tsv'  into designAnnotatePeaks, designMotifSearch
   file 'unique_experiments.csv' into uniqueExperiments
+  file('version_*.txt') into consensusPeaksVersions
 
   script:
 
@@ -408,6 +418,7 @@ process peakAnnotation {
   output:
 
   file "*chipseeker*" into peakAnnotation
+  file('version_*.txt') into peakAnnotationVersions
 
   script:
 
@@ -417,7 +428,7 @@ process peakAnnotation {
 
 }
 
-// Motif Search  Peaks
+// Motif Search Peaks
 process motifSearch {
 
   publishDir "$outDir/${task.process}", mode: 'copy'
@@ -430,6 +441,7 @@ process motifSearch {
 
   file "*memechip" into motifSearch
   file "*narrowPeak" into filteredPeaks
+  file('version_*.txt') into motifSearchVersions
 
   when:
   !skipMotif
@@ -461,6 +473,7 @@ process diffPeaks {
   file '*_diffbind.csv' into diffPeaksCounts
   file '*.pdf' into diffPeaksStats
   file 'normcount_peaksets.txt' into normCountPeaks
+  file('version_*.txt') into diffPeaksVersions
 
   when:
   noUniqueExperiments > 1 && !skipDiff
@@ -468,5 +481,39 @@ process diffPeaks {
   script:
   """
   Rscript $baseDir/scripts/diff_peaks.R $designDiffPeaks
+  """
+}
+
+// Collect Software Versions and references
+process softwareReport {
+
+  publishDir "$outDir/${task.process}", mode: 'copy'
+
+  input:
+
+    file ('trimReads_vf/*') from trimReadsVersions.first()
+    file ('alignReads_vf/*') from alignReadsVersions.first()
+    file ('filterReads_vf/*') from filterReadsVersions.first()
+    file ('convertReads_vf/*') from convertReadsVersions.first()
+    file ('crossReads_vf/*') from crossReadsVersions.first()
+    file ('callPeaksMACS_vf/*') from callPeaksMACSVersions.first()
+    file ('consensusPeaks_vf/*') from consensusPeaksVersions.first()
+    file ('peakAnnotation_vf/*') from peakAnnotationVersions.first()
+    file ('motifSearch_vf/*') from motifSearchVersions.first().ifEmpty()
+    file ('diffPeaks_vf/*') from diffPeaksVersions.first().ifEmpty()
+    file ('experimentQC_vf/*') from experimentQCVersions.first()
+
+  output:
+
+  file('software_versions_mqc.yaml') into softwareVersions
+  file('software_references_mqc.yaml') into softwareReferences
+
+  script:
+
+  """
+  echo $workflow.nextflow.version > version_nextflow.txt
+  python3 $baseDir/scripts/generate_references.py -r $references -o software_references
+  python3 $baseDir/scripts/generate_versions.py -o software_versions
+
   """
 }
