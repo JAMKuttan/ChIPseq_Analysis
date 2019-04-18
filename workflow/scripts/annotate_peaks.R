@@ -35,6 +35,11 @@ if(genome_assembly=='GRCh37') {
     annodb <- 'org.Hs.eg.db'
 }
 
+# Output version of ChIPseeker
+chipseeker_version = packageVersion('ChIPseeker')
+write.table(paste("Version", chipseeker_version), file = "version_ChIPseeker.txt", sep = "\t",
+            row.names = FALSE, col.names = FALSE)
+
 # Load design file
 design <- read.csv(design_file, sep ='\t')
 files <- as.list(as.character(design$Peaks))

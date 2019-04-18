@@ -1,14 +1,15 @@
 before_script:
   - module add  python/3.6.1-2-anaconda
-  - pip install --user pytest-pythonpath pytest-cov
-  - module load nextflow/0.31.0
-  - ln -s /work/BICF/s163035/chipseq/*fastq.gz test_data/
+  - pip install --user pytest-pythonpath==0.7.1 pytest-cov==2.5.1
+  - module load  nextflow/0.31.0
+  - ln -s /project/shared/bicf_workflow_ref/workflow_testdata/chipseq/*fastq.gz test_data/
 
 stages:
   - unit
   - astrocyte
   - single
   - multiple
+  - skip
 
 user_configuration:
   stage: unit
@@ -28,6 +29,8 @@ astrocyte:
 
 single_end_mouse:
   stage: single
+  only:
+    - master
   script:
   - nextflow run workflow/main.nf -resume
   - pytest -m singleend
@@ -36,6 +39,10 @@ single_end_mouse:
 
 paired_end_human:
   stage: single
+  only:
+    - branches
+  except:
+    - master
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38' --pairedEnd true -resume
   - pytest -m pairedend
@@ -44,6 +51,10 @@ paired_end_human:
 
 single_end_diff:
   stage: multiple
+  only:
+    - branches
+  except:
+    - master
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' -resume
   - pytest -m singlediff
@@ -51,9 +62,21 @@ single_end_diff:
     expire_in: 2 days
 
 paired_end_diff:
+  only:
+    - master
   stage: multiple
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_PE.txt" --genome 'GRCh38' --pairedEnd true -resume
   - pytest -m paireddiff
+  artifacts:
+    expire_in: 2 days
+
+single_end_skip:
+  stage: skip
+  only:
+    - master
+  script:
+  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' --skipDiff true --skipMotif true -resume
+  - pytest -m singleskip_true
   artifacts:
     expire_in: 2 days

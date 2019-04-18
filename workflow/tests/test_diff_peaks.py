@@ -10,13 +10,15 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/diffPeaks/'
 
 
-@pytest.mark.singleend
+@pytest.mark.singleskip_true
 def test_diff_peaks_singleend_single_rep():
     assert os.path.isdir(test_output_path) == False
+
 
 @pytest.mark.pairedend
 def test_diff_peaks_pairedend_single_rep():
     assert os.path.isdir(test_output_path) == False
+
 
 @pytest.mark.singlediff
 def test_heatmap_singleend_multiple_rep():
@@ -42,7 +44,7 @@ def test_diffbind_singleend_multiple_rep():
         assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC_vs_ENCSR272GNQ_diffbind.bed'))
         diffbind_file = test_output_path + 'ENCSR238SGC_vs_ENCSR272GNQ_diffbind.csv'
     assert os.path.exists(diffbind_file)
-    assert utils.count_lines(diffbind_file) == 201039
+    assert utils.count_lines(diffbind_file) == 197471
 
 
 @pytest.mark.paireddiff

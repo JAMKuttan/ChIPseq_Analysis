@@ -33,32 +33,42 @@ def test_check_update_controls(design_bam):
 @pytest.mark.singleend
 def test_coverage_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'sample_mbs.npz'))
-    assert os.path.exists(os.path.join(test_output_path, 'coverage.png'))
+    assert os.path.exists(os.path.join(test_output_path, 'coverage.pdf'))
 
 
 @pytest.mark.singleend
 def test_spearman_singleend():
-    assert os.path.exists(os.path.join(test_output_path, 'heatmap_SpearmanCorr.png'))
+    assert os.path.exists(os.path.join(test_output_path, 'heatmap_SpearmanCorr.pdf'))
+
+
+@pytest.mark.singleend
+def test_pearson_singleend():
+    assert os.path.exists(os.path.join(test_output_path, 'heatmap_PearsonCorr.pdf'))
 
 
 @pytest.mark.singleend
 def test_fingerprint_singleend():
-    assert os.path.exists(os.path.join(test_output_path, 'ENCLB144FDT_fingerprint.png'))
-    assert os.path.exists(os.path.join(test_output_path, 'ENCLB831RUI_fingerprint.png'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB144FDT_fingerprint.pdf'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB831RUI_fingerprint.pdf'))
 
 
 @pytest.mark.pairdend
 def test_coverage_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'sample_mbs.npz'))
-    assert os.path.exists(os.path.join(test_output_path, 'coverage.png'))
+    assert os.path.exists(os.path.join(test_output_path, 'coverage.pdf'))
 
 
 @pytest.mark.pairdend
 def test_spearman_pairedend():
-    assert os.path.exists(os.path.join(test_output_path, 'heatmap_SpearmanCorr.png'))
+    assert os.path.exists(os.path.join(test_output_path, 'heatmap_SpearmanCorr.pdf'))
+
+
+@pytest.mark.pairdend
+def test_pearson_pairedend():
+    assert os.path.exists(os.path.join(test_output_path, 'heatmap_PearsonCorr.pdf'))
 
 
 @pytest.mark.pairdend
 def test_fingerprint_pairedend():
-    assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX_fingerprint.png'))
-    assert os.path.exists(os.path.join(test_output_path, 'ENCLB637LZP_fingerprint.png'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX_fingerprint.pdf'))
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB637LZP_fingerprint.pdf'))

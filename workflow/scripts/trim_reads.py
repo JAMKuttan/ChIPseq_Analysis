@@ -54,6 +54,15 @@ def check_tools():
     trimgalore_path = shutil.which("trim_galore")
     if trimgalore_path:
         logger.info('Found trimgalore: %s', trimgalore_path)
+
+        # Get Version
+        trim_version_command = "trim_galore --version"
+        trimgalore_version = subprocess.check_output(trim_version_command, shell=True)
+
+        # Write to file
+        trimgalore_file = open("version_trimgalore.txt", "wb")
+        trimgalore_file.write(trimgalore_version)
+        trimgalore_file.close()
     else:
         logger.error('Missing trimgalore')
         raise Exception('Missing trimgalore')
@@ -61,6 +70,15 @@ def check_tools():
     cutadapt_path = shutil.which("cutadapt")
     if cutadapt_path:
         logger.info('Found cutadapt: %s', cutadapt_path)
+
+        # Get Version
+        cutadapt_version_command = "cutadapt --version"
+        cutadapt_version = subprocess.check_output(cutadapt_version_command, shell=True)
+
+        # Write to file
+        cutadapt_file = open("version_cutadapt.txt", "wb")
+        cutadapt_file.write(b"Version %s" % (cutadapt_version))
+        cutadapt_file.close()
     else:
         logger.error('Missing cutadapt')
         raise Exception('Missing cutadapt')
