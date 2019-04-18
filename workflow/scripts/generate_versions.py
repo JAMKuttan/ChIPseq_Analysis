@@ -6,7 +6,9 @@
 from __future__ import print_function
 from collections import OrderedDict
 import re
+import os
 import logging
+import glob
 import argparse
 import numpy as np
 
@@ -27,7 +29,7 @@ SOFTWARE_REGEX = {
     'Trim Galore!': ['trimReads_vf/version_trimgalore.txt', r"version (\S+)"],
     'Cutadapt': ['trimReads_vf/version_cutadapt.txt', r"Version (\S+)"],
     'BWA': ['alignReads_vf/version_bwa.txt', r"Version: (\S+)"],
-    'Samtools': ['filterReads_vf/alignReads_vf/version_samtools.txt', r"samtools (\S+)"],
+    'Samtools': ['alignReads_vf/version_samtools.txt', r"samtools (\S+)"],
     'Sambamba': ['filterReads_vf/version_sambamba.txt', r"sambamba (\S+)"],
     'BEDTools': ['convertReads_vf/version_bedtools.txt', r"bedtools v(\S+)"],
     'R': ['crossReads_vf/version_r.txt', r"R version (\S+)"],
@@ -48,20 +50,20 @@ def get_args():
         description=__doc__, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
-    parser.add_argument('-f', '--files',
-                        help="The version files.",
-                        required=True,
-                        nargs='*')
-
     parser.add_argument('-o', '--output',
                         help="The out file name.",
                         required=True)
+
+    parser.add_argument('-t', '--test',
+                        help='Used for testing purposes',
+                        default=False,
+                        action='store_true')
 
     args = parser.parse_args()
     return args
 
 
-def check_files(files):
+def check_files(files, test):
     '''Check if version files are found.'''
 
     logger.info("Running file check.")
@@ -70,48 +72,49 @@ def check_files(files):
 
     extra_files =  set(files) - set(software_files)
 
-    if len(extra_files) > 0:
+    if len(extra_files) > 0 and test:
             logger.error('Missing regex: %s', list(extra_files))
             raise Exception("Missing regex: %s" % list(extra_files))
 
 
 def main():
     args = get_args()
-    files = args.files
     output = args.output
+    test = args.test
 
     out_filename = output + '_mqc.yaml'
 
     results = OrderedDict()
-    results['Nextflow'] = '<span style="color:#999999;\">N/A</span>'
-    results['Trim Galore!'] = '<span style="color:#999999;\">N/A</span>'
-    results['Cutadapt'] = '<span style="color:#999999;\">N/A</span>'
-    results['BWA'] = '<span style="color:#999999;\">N/A</span>'
-    results['Trim Galore!'] = '<span style="color:#999999;\">N/A</span>'
-    results['Cutadapt'] = '<span style="color:#999999;\">N/A</span>'
-    results['BWA'] = '<span style="color:#999999;\">N/A</span>'
-    results['Samtools'] = '<span style="color:#999999;\">N/A</span>'
-    results['Sambamba'] = '<span style="color:#999999;\">N/A</span>'
-    results['BEDTools'] = '<span style="color:#999999;\">N/A</span>'
-    results['R'] = '<span style="color:#999999;\">N/A</span>'
-    results['SPP'] = '<span style="color:#999999;\">N/A</span>'
-    results['MACS2'] = '<span style="color:#999999;\">N/A</span>'
-    results['bedGraphToBigWig'] = '<span style="color:#999999;\">N/A</span>'
-    results['ChIPseeker'] = '<span style="color:#999999;\">N/A</span>'
-    results['MEME-ChIP'] = '<span style="color:#999999;\">N/A</span>'
-    results['DiffBind'] = '<span style="color:#999999;\">N/A</span>'
-    results['deepTools'] = '<span style="color:#999999;\">N/A</span>'
+    results['Nextflow'] = '<span style="color:#999999;\">Not Run</span>'
+    results['Trim Galore!'] = '<span style="color:#999999;\">Not Run</span>'
+    results['Cutadapt'] = '<span style="color:#999999;\">Not Run</span>'
+    results['BWA'] = '<span style="color:#999999;\">Not Run</span>'
+    results['Samtools'] = '<span style="color:#999999;\">Not Run</span>'
+    results['Sambamba'] = '<span style="color:#999999;\">Not Run</span>'
+    results['BEDTools'] = '<span style="color:#999999;\">Not Run</span>'
+    results['R'] = '<span style="color:#999999;\">Not Run</span>'
+    results['SPP'] = '<span style="color:#999999;\">Not Run</span>'
+    results['MACS2'] = '<span style="color:#999999;\">Not Run</span>'
+    results['bedGraphToBigWig'] = '<span style="color:#999999;\">Not Run</span>'
+    results['ChIPseeker'] = '<span style="color:#999999;\">Not Run</span>'
+    results['MEME-ChIP'] = '<span style="color:#999999;\">Not Run</span>'
+    results['DiffBind'] = '<span style="color:#999999;\">Not Run</span>'
+    results['deepTools'] = '<span style="color:#999999;\">Not Run</span>'
+
+    # list all files
+    files = glob.glob('**/*.txt', recursive=True)
 
     # Check for version files:
-    check_files(files)
+    check_files(files, test)
 
     # Search each file using its regex
     for k, v in SOFTWARE_REGEX.items():
-        with open(v[0]) as x:
-            versions = x.read()
-            match = re.search(v[1], versions)
-            if match:
-                results[k] = "v{}".format(match.group(1))
+        if os.path.isfile(v[0]):
+            with open(v[0]) as x:
+                versions = x.read()
+                match = re.search(v[1], versions)
+                if match:
+                    results[k] = "v{}".format(match.group(1))
 
     # Dump to YAML
     print(

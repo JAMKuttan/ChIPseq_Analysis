@@ -509,12 +509,11 @@ process softwareReport {
   file('software_references_mqc.yaml') into softwareReferences
 
   script:
+
   """
   echo $workflow.nextflow.version > version_nextflow.txt
   python3 $baseDir/scripts/generate_references.py -r $references -o software_references
-  python3 $baseDir/scripts/generate_versions.py -f version*txt \
-                                                  version_nextflow.txt \
-                                                  -o software_versions
+  python3 $baseDir/scripts/generate_versions.py -o software_versions
 
   """
 }
