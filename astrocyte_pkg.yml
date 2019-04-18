@@ -51,6 +51,7 @@ workflow_modules:
   - 'UCSC_userApps/v317'
   - 'R/3.3.2-gccmkl'
   - 'meme/4.11.1-gcc-openmpi'
+  - 'pandoc/2.7'
 
 
 # A list of parameters used by the workflow, defining how to present them,
@@ -93,7 +94,7 @@ workflow_parameters:
     description: |
       One or more input FASTQ files from a ChIP-seq expereiment and a design
       file with the link bewetwen the same file name and sample id
-    regex: ".*(fastq|fq)*"
+    regex: ".*(fastq|fq)*gz"
     min: 2
 
   - id: pairedEnd
@@ -115,7 +116,7 @@ workflow_parameters:
     description: |
       A design file listing sample id, fastq files, corresponding control id
       and additional information about the sample.
-    regex: ".*tsv"
+    regex: ".*txt"
 
   - id: genome
     type: select
@@ -128,12 +129,14 @@ workflow_parameters:
       Reference species and genome used for alignment and subsequent analysis.
 
   - id: astrocyte
-    type: string
-    required: true
-    default: 'true'
-    regex: "true"
-    description: |
-      Ensure configuraton for astrocyte
+      type: select
+      choices:
+        - [ 'true', 'true' ]
+      required: true
+      default: 'true'
+      description: |
+        Ensure configuraton for astrocyte.
+
 
 
 # -----------------------------------------------------------------------------
@@ -154,8 +157,4 @@ vizapp_cran_packages:
 
 # List of any Bioconductor packages, not provided by the modules,
 # that must be made available to the vizapp
-vizapp_bioc_packages:
-  - none
-  
-vizapp_github_packages:
-  - js229/Vennerable
+vizapp_bioc_packages: []

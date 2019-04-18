@@ -7,6 +7,7 @@
 params.reads = "$baseDir/../test_data/*.fastq.gz"
 params.pairedEnd = 'false'
 params.designFile = "$baseDir/../test_data/design_ENCSR238SGC_SE.txt"
+params.genome = 'GRCm38'
 params.cutoffRatio = 1.2
 params.outDir= "$baseDir/output"
 params.extendReadsLen = 100
@@ -17,23 +18,24 @@ params.skipMotif = false
 params.references = "$baseDir/../docs/references.md"
 
 // Assign variables if astrocyte
-params.genome = 'GRCm38'
-if (params.astrocyte == 'false') {
-  params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
-  params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
-  params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
-  params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
-} else if (params.astrocyte == 'true') {
+if (params.astrocyte) {
+  print("Running under astrocyte")
   referenceLocation = "/project/shared/bicf_workflow_ref"
   params.bwaIndex = "$referenceLocation/$genome"
   params.chromSizes = "$referenceLocation/$genome/genomefile.txt"
   params.fasta = "$referenceLocation/$genome/genome.fa.txt"
   if (params.genome == 'GRCh37' || params.genome == 'GRCh38') {
-    params.chromSizes = 'hs'
+    params.genomeSize = 'hs'
   } else if (params.chromSizes == 'GRCm38') {
-    params.chromSizes = 'mm'
+    params.genomeSize = 'mm'
   }
+} else {
+    params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
+    params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
+    params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
+    params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 }
+
 
 
 // Check inputs
