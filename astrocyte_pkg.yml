@@ -129,13 +129,13 @@ workflow_parameters:
       Reference species and genome used for alignment and subsequent analysis.
 
   - id: astrocyte
-      type: select
-      choices:
-        - [ 'true', 'true' ]
-      required: true
-      default: 'true'
-      description: |
-        Ensure configuraton for astrocyte.
+    type: select
+    choices:
+      - [ 'true', 'true' ]
+    required: true
+    default: 'true'
+    description: |
+      Ensure configuraton for astrocyte.
 
 
 # -----------------------------------------------------------------------------
