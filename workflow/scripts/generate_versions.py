@@ -40,6 +40,7 @@ SOFTWARE_REGEX = {
     'MEME-ChIP': ['motifSearch_vf/version_memechip.txt', r"Version (\S+)"],
     'DiffBind': ['diffPeaks_vf/version_DiffBind.txt', r"Version (\S+)\""],
     'deepTools': ['experimentQC_vf/version_deeptools.txt', r"deeptools (\S+)"],
+    'MultiQC': ['version_multiqc.txt', r"multiqc, version (\S+)"],
 }
 
 
@@ -100,6 +101,7 @@ def main():
     results['MEME-ChIP'] = '<span style="color:#999999;\">Not Run</span>'
     results['DiffBind'] = '<span style="color:#999999;\">Not Run</span>'
     results['deepTools'] = '<span style="color:#999999;\">Not Run</span>'
+    results['MultiQC'] = '<span style="color:#999999;\">Not Run</span>'
 
     # list all files
     files = glob.glob('**/*.txt', recursive=True)
@@ -130,8 +132,8 @@ def main():
     , file = open(out_filename, "w"))
 
     for k, v in results.items():
-        print("        <dt>{}</dt><dd>{}</dd>".format(k, v), file = open(out_filename, "a"))
-    print("        </dl>", file = open(out_filename, "a"))
+        print("            <dt>{}</dt><dd>{}</dd>".format(k, v), file = open(out_filename, "a"))
+    print("            </dl>", file = open(out_filename, "a"))
 
 
 if __name__ == '__main__':

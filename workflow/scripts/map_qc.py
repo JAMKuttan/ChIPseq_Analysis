@@ -244,6 +244,7 @@ def compute_complexity(bam, paired, bam_basename):
     # Obtain unique count statistics
 
     # PBC File output
+    # Sample Name[tab]
     # TotalReadPairs [tab]
     # DistinctReadPairs [tab]
     # OneReadPair [tab]
@@ -278,9 +279,13 @@ def compute_complexity(bam, paired, bam_basename):
     if err:
         logger.error("PBC file error: %s", err)
 
-    # Add headers
+    # Add Sample Name and headers
     pbc_file = pd.read_csv(tmp_pbc_file_qc_filename, sep='\t', header=None,
                            names=pbc_headers)
+    pbc_file['Sample'] = bam_basename
+    pbc_headers_new = list(pbc_file)
+    pbc_headers_new.insert(0, pbc_headers_new.pop(pbc_headers_new.index('Sample')))
+    pbc_file = pbc_file[pbc_headers_new]
     pbc_file.to_csv(pbc_file_qc_filename, header=True, sep='\t', index=False)
     os.remove(bam)
     os.remove(bam + '.bai')

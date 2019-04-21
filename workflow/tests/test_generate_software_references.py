@@ -6,7 +6,7 @@ import utils
 import yaml
 
 test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
-                '/../output/softwareReport/'
+                '/../output/multiqcReport/'
 
 
 @pytest.mark.singleend
