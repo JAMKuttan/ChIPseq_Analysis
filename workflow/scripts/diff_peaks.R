@@ -11,6 +11,11 @@ if (length(args) != 1) {
   stop("Usage: diff_peaks.R annotate_design.tsv ", call.=FALSE)
 }
 
+# Output version of DiffBind
+diffibind_version = packageVersion('DiffBind')
+write.table(paste("Version", diffibind_version), file = "version_DiffBind.txt", sep = "\t",
+            row.names = FALSE, col.names = FALSE)
+
 # Build DBA object from design file
 data <- dba(sampleSheet=args[1])
 data <- dba.count(data)

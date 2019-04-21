@@ -6,8 +6,10 @@ before_script:
 
 stages:
   - unit
+  - astrocyte
   - single
   - multiple
+  - skip
 
 user_configuration:
   stage: unit
@@ -15,14 +17,22 @@ user_configuration:
   - pytest -m unit
   - pytest -m unit --cov=./workflow/scripts
 
+astrocyte:
+  stage: astrocyte
+  script:
+  - module load astrocyte/0.1.0
+  - module unload nextflow
+  - cd ..
+  - astrocyte_cli validate chipseq_analysis
+  artifacts:
+    expire_in: 2 days
+
 single_end_mouse:
   stage: single
   only:
     - master
-  except:
-    - branches
   script:
-  - nextflow run workflow/main.nf -resume
+  - nextflow run workflow/main.nf --astrocyte 'false' -resume
   - pytest -m singleend
   artifacts:
     expire_in: 2 days
@@ -34,7 +44,7 @@ paired_end_human:
   except:
     - master
   script:
-  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38' --pairedEnd true -resume
+  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38' --pairedEnd true --astrocyte 'false' -resume
   - pytest -m pairedend
   artifacts:
     expire_in: 2 days
@@ -46,7 +56,7 @@ single_end_diff:
   except:
     - master
   script:
-  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' -resume
+  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' --astrocyte 'false' -resume
   - pytest -m singlediff
   artifacts:
     expire_in: 2 days
@@ -54,11 +64,19 @@ single_end_diff:
 paired_end_diff:
   only:
     - master
-  except:
-    - branches
   stage: multiple
   script:
-  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_PE.txt" --genome 'GRCh38' --pairedEnd true -resume
+  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_PE.txt" --genome 'GRCh38' --pairedEnd true --astrocyte 'false' -resume
   - pytest -m paireddiff
+  artifacts:
+    expire_in: 2 days
+
+single_end_skip:
+  stage: skip
+  only:
+    - master
+  script:
+  - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' --skipDiff true --skipMotif true --astrocyte 'false' -resume
+  - pytest -m singleskip_true
   artifacts:
     expire_in: 2 days

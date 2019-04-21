@@ -70,6 +70,18 @@ def check_tools():
     bwa_path = shutil.which("bwa")
     if bwa_path:
         logger.info('Found bwa: %s', bwa_path)
+
+        # Get Version
+        bwa_version_command = "bwa"
+        try:
+            subprocess.check_output(bwa_version_command, shell=True, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            bwa_version = e.output
+
+        # Write to file
+        bwa_file = open("version_bwa.txt", "wb")
+        bwa_file.write(bwa_version)
+        bwa_file.close()
     else:
         logger.error('Missing bwa')
         raise Exception('Missing bwa')
@@ -77,6 +89,15 @@ def check_tools():
     samtools_path = shutil.which("samtools")
     if samtools_path:
         logger.info('Found samtools: %s', samtools_path)
+
+        # Get Version
+        samtools_version_command = "samtools --version"
+        samtools_version = subprocess.check_output(samtools_version_command, shell=True)
+
+        # Write to file
+        samtools_file = open("version_samtools.txt", "wb")
+        samtools_file.write(samtools_version)
+        samtools_file.close()
     else:
         logger.error('Missing samtools')
         raise Exception('Missing samtools')

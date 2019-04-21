@@ -19,11 +19,12 @@ def test_pie_singleend():
 def test_upsetplot_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC.chipseeker_upsetplot.pdf'))
 
+
 @pytest.mark.singleend
 def test_annotation_singleend():
     annotation_file = test_output_path + 'ENCSR238SGC.chipseeker_annotation.tsv'
     assert os.path.exists(annotation_file)
-    assert utils.count_lines(annotation_file) == 152255
+    assert utils.count_lines(annotation_file) == 149284
 
 
 @pytest.mark.pairedend

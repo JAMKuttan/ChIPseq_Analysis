@@ -9,6 +9,11 @@ report_section_order:
     software_versions:
         order: -1000
 
+report_section_order:
+    software_references:
+        order: -1000
+
+
 extra_fn_clean_exts:
     - '_R1'
     - '_R2'

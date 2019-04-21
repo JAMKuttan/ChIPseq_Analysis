@@ -6,6 +6,7 @@ import os
 import argparse
 import logging
 import shutil
+import subprocess
 from multiprocessing import Pool
 import pandas as pd
 import utils
@@ -55,6 +56,7 @@ def get_args():
 
 # Functions
 
+
 def check_tools():
     '''Checks for required componenets on user system'''
 
@@ -63,6 +65,15 @@ def check_tools():
     meme_path = shutil.which("meme")
     if meme_path:
         logger.info('Found meme: %s', meme_path)
+
+        # Get Version
+        memechip_version_command = "meme-chip --version"
+        memechip_version = subprocess.check_output(memechip_version_command, shell=True)
+
+        # Write to file
+        meme_file = open("version_memechip.txt", "wb")
+        meme_file.write(b"Version %s" % (memechip_version))
+        meme_file.close()
     else:
         logger.error('Missing meme')
         raise Exception('Missing meme')
@@ -70,6 +81,15 @@ def check_tools():
     bedtools_path = shutil.which("bedtools")
     if bedtools_path:
         logger.info('Found bedtools: %s', bedtools_path)
+
+        # Get Version
+        bedtools_version_command = "bedtools --version"
+        bedtools_version = subprocess.check_output(bedtools_version_command, shell=True)
+
+        # Write to file
+        bedtools_file = open("version_bedtools.txt", "wb")
+        bedtools_file.write(bedtools_version)
+        bedtools_file.close()
     else:
         logger.error('Missing bedtools')
         raise Exception('Missing bedtools')
@@ -95,7 +115,7 @@ def motif_search(filename, genome, experiment, peak):
     else:
         peak_no = peak
 
-    sorted_fn = '%s.%s.narrowPeak' % (file_basename, peak)
+    sorted_fn = '%s.%s.narrowPeak' % (file_basename, peak_no)
 
     out, err = utils.run_pipe([
         'sort -k %dgr,%dgr %s' % (5, 5, filename),
@@ -108,8 +128,7 @@ def motif_search(filename, genome, experiment, peak):
     if err:
         logger.error("bedtools error: %s", err)
 
-
-    #Call memechip
+    # Call memechip
     out, err = utils.run_pipe([
         'meme-chip -oc %s -meme-minw 5 -meme-maxw 15 -meme-nmotifs 10 %s -norand' % (out_motif, out_fa)])
     if err:
