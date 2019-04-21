@@ -130,8 +130,8 @@ def main():
     , file = open(out_filename, "w"))
 
     for k, v in results.items():
-        print("        <dt>{}</dt><dd>{}</dd>".format(k, v), file = open(out_filename, "a"))
-    print("        </dl>", file = open(out_filename, "a"))
+        print("            <dt>{}</dt><dd>{}</dd>".format(k, v), file = open(out_filename, "a"))
+    print("            </dl>", file = open(out_filename, "a"))
 
 
 if __name__ == '__main__':
