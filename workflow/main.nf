@@ -5,21 +5,38 @@
 
 // Define Input variables
 params.reads = "$baseDir/../test_data/*.fastq.gz"
-params.pairedEnd = false
+params.pairedEnd = 'false'
 params.designFile = "$baseDir/../test_data/design_ENCSR238SGC_SE.txt"
 params.genome = 'GRCm38'
-params.genomes = []
-params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
-params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
-params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
-params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 params.cutoffRatio = 1.2
 params.outDir= "$baseDir/output"
 params.extendReadsLen = 100
 params.topPeakCount = 600
+params.astrocyte = 'false'
 params.skipDiff = false
 params.skipMotif = false
 params.references = "$baseDir/../docs/references.md"
+
+// Assign variables if astrocyte
+if (params.astrocyte) {
+  print("Running under astrocyte")
+  referenceLocation = "/project/shared/bicf_workflow_ref"
+  params.bwaIndex = "$referenceLocation/$genome"
+  params.chromSizes = "$referenceLocation/$genome/genomefile.txt"
+  params.fasta = "$referenceLocation/$genome/genome.fa.txt"
+  if (params.genome == 'GRCh37' || params.genome == 'GRCh38') {
+    params.genomeSize = 'hs'
+  } else if (params.chromSizes == 'GRCm38') {
+    params.genomeSize = 'mm'
+  }
+} else {
+    params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
+    params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
+    params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
+    params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
+}
+
+
 
 // Check inputs
 if( params.bwaIndex ){
@@ -38,7 +55,6 @@ readsList = Channel
   .collectFile( name: 'fileList.tsv', newLine: true )
 
 // Define regular variables
-pairedEnd = params.pairedEnd
 designFile = params.designFile
 genomeSize = params.genomeSize
 genome = params.genome
@@ -51,6 +67,12 @@ topPeakCount = params.topPeakCount
 skipDiff = params.skipDiff
 skipMotif = params.skipMotif
 references = params.references
+
+if (params.pairedEnd == 'false'){
+  pairedEnd = false
+} else {
+  pairedEnd = true
+}
 
 // Check design file for errors
 process checkDesignFile {
@@ -70,11 +92,13 @@ process checkDesignFile {
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
     python3 $baseDir/scripts/check_design.py -d $designFile -f $readsList -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
     python $baseDir/scripts/check_design.py -d $designFile -f $readsList
     """
   }
@@ -112,11 +136,15 @@ process trimReads {
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
+    module load trimgalore/0.4.1
     python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} ${reads[1]} -s $sampleId -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
+    module load trimgalore/0.4.1
     python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} -s $sampleId
     """
   }
@@ -126,6 +154,7 @@ process trimReads {
 // Align trimmed reads using bwa
 process alignReads {
 
+  queue '128GB,256GB,256GBv1'
   tag "$sampleId-$replicate"
   publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
@@ -144,11 +173,17 @@ process alignReads {
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
+    module load bwa/intel/0.7.12
+    module load samtools/1.6
     python3 $baseDir/scripts/map_reads.py -f ${reads[0]} ${reads[1]} -r ${index}/genome.fa -s $sampleId -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
+    module load bwa/intel/0.7.12
+    module load samtools/1.6
     python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa -s $sampleId
     """
   }
@@ -158,6 +193,7 @@ process alignReads {
 // Dedup reads using sambamba
 process filterReads {
 
+  queue '128GB,256GB,256GBv1'
   tag "$sampleId-$replicate"
   publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
@@ -178,11 +214,19 @@ process filterReads {
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
+    module load samtools/1.6
+    module load sambamba/0.6.6
+    module load bedtools/2.26.0
     python3 $baseDir/scripts/map_qc.py -b $mapped -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
+    module load samtools/1.6
+    module load sambamba/0.6.6
+    module load bedtools/2.26.0
     python3 $baseDir/scripts/map_qc.py -b $mapped
     """
   }
@@ -199,6 +243,7 @@ dedupReads
 // Quality Metrics using deeptools
 process experimentQC {
 
+  queue '128GB,256GB,256GBv1'
   publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
@@ -213,6 +258,8 @@ process experimentQC {
   script:
 
   """
+  module load python/3.6.1-2-anaconda
+  module load deeptools/2.5.0.1
   python3 $baseDir/scripts/experiment_qc.py -d $dedupDesign -e $extendReadsLen
   """
 
@@ -221,6 +268,7 @@ process experimentQC {
 // Convert reads to bam
 process convertReads {
 
+  queue '128GB,256GB,256GBv1'
   tag "$sampleId-$replicate"
   publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
@@ -237,11 +285,17 @@ process convertReads {
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
+    module load samtools/1.6
+    module load bedtools/2.26.0
     python3 $baseDir/scripts/convert_reads.py -b $deduped -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
+    module load samtools/1.6
+    module load bedtools/2.26.0
     python3 $baseDir/scripts/convert_reads.py -b $deduped
     """
   }
@@ -268,6 +322,8 @@ process crossReads {
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
+    module load phantompeakqualtools/1.2
     python3 $baseDir/scripts/xcor.py -t $seTagAlign -p
     """
   }
@@ -301,6 +357,7 @@ process defineExpDesignFiles {
   script:
 
   """
+  module load python/3.6.1-2-anaconda
   python3 $baseDir/scripts/experiment_design.py -d $xcorDesign
   """
 
@@ -326,11 +383,13 @@ process poolAndPsuedoReads {
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
     python3 $baseDir/scripts/pool_and_psuedoreplicate.py -d $experimentObjs -c $cutoffRatio -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
     python3 $baseDir/scripts/pool_and_psuedoreplicate.py -d $experimentObjs -c $cutoffRatio
     """
   }
@@ -361,11 +420,21 @@ process callPeaksMACS {
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
+    module load macs/2.1.0-20151222
+    module load UCSC_userApps/v317
+    module load bedtools/2.26.0
+    module load phantompeakqualtools/1.2
     python3 $baseDir/scripts/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
+    module load macs/2.1.0-20151222
+    module load UCSC_userApps/v317
+    module load bedtools/2.26.0
+    module load phantompeakqualtools/1.2
     python3 $baseDir/scripts/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes
     """
   }
@@ -401,6 +470,8 @@ process consensusPeaks {
   script:
 
   """
+  module load python/3.6.1-2-anaconda
+  module load bedtools/2.26.0
   python3 $baseDir/scripts/overlap_peaks.py -d $peaksDesign -f $preDiffDesign
   """
 
@@ -423,6 +494,7 @@ process peakAnnotation {
   script:
 
   """
+  module load R/3.3.2-gccmkl
   Rscript $baseDir/scripts/annotate_peaks.R $designAnnotatePeaks $genome
   """
 
@@ -444,11 +516,13 @@ process motifSearch {
   file('version_*.txt') into motifSearchVersions
 
   when:
+
   !skipMotif
 
   script:
 
   """
+  module load R/3.3.2-gccmkl
   python3 $baseDir/scripts/motif_search.py -d $designMotifSearch -g $fasta -p $topPeakCount
   """
 }
@@ -476,10 +550,15 @@ process diffPeaks {
   file('version_*.txt') into diffPeaksVersions
 
   when:
+
   noUniqueExperiments > 1 && !skipDiff
 
   script:
+
   """
+  module load python/3.6.1-2-anaconda
+  module load meme/4.11.1-gcc-openmpi
+  module load bedtools/2.26.0
   Rscript $baseDir/scripts/diff_peaks.R $designDiffPeaks
   """
 }
@@ -514,6 +593,5 @@ process softwareReport {
   echo $workflow.nextflow.version > version_nextflow.txt
   python3 $baseDir/scripts/generate_references.py -r $references -o software_references
   python3 $baseDir/scripts/generate_versions.py -o software_versions
-
   """
 }
