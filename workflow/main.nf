@@ -593,7 +593,7 @@ process multiqcReport {
   file('software_versions_mqc.yaml') into softwareVersions
   file('software_references_mqc.yaml') into softwareReferences
   file "multiqc_report.html" into multiqcReport
-  file "*_data" in multiqcData
+  file "*_data" into multiqcData
 
   script:
 
