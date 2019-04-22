@@ -108,7 +108,7 @@ workflow_parameters:
       end to the other, generating the sequence of base pairs. In paired-end
       reading it starts at one read, finishes this direction at the specified
       read length, and then starts another round of reading from the opposite
-      end of the fragment.
+      end of the fragment. (Paired-end: True, Single-end: False)
 
   - id: design
     type: file
