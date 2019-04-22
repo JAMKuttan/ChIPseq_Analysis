@@ -27,7 +27,7 @@ if (params.astrocyte) {
   params.fasta = "$referenceLocation/$params.genome/genome.fa.txt"
   if (params.genome == 'GRCh37' || params.genome == 'GRCh38') {
     params.genomeSize = 'hs'
-  } else if (params.chromSizes == 'GRCm38') {
+  } else if (params.genome == 'GRCm38') {
     params.genomeSize = 'mm'
   }
 } else {
