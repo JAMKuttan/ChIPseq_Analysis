@@ -32,7 +32,7 @@ single_end_mouse:
   only:
     - master
   script:
-  - nextflow run workflow/main.nf --astrocyte 'false' -resume
+  - nextflow run workflow/main.nf --astrocyte 'true' -resume
   - pytest -m singleend
   artifacts:
     expire_in: 2 days

@@ -22,9 +22,9 @@ params.multiqc =  "$baseDir/conf/multiqc_config.yaml"
 if (params.astrocyte) {
   print("Running under astrocyte")
   referenceLocation = "/project/shared/bicf_workflow_ref"
-  params.bwaIndex = "$referenceLocation/$genome"
-  params.chromSizes = "$referenceLocation/$genome/genomefile.txt"
-  params.fasta = "$referenceLocation/$genome/genome.fa.txt"
+  params.bwaIndex = "$referenceLocation/$params.genome"
+  params.chromSizes = "$referenceLocation/$params.genome/genomefile.txt"
+  params.fasta = "$referenceLocation/$params.genome/genome.fa.txt"
   if (params.genome == 'GRCh37' || params.genome == 'GRCh38') {
     params.genomeSize = 'hs'
   } else if (params.chromSizes == 'GRCm38') {
