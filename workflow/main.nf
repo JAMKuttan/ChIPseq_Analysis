@@ -326,6 +326,8 @@ process crossReads {
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
+    module load phantompeakqualtools/1.2
     python3 $baseDir/scripts/xcor.py -t $seTagAlign
     """
   }

@@ -37,7 +37,7 @@ def test_check_update_design(design_diff):
 def test_overlap_peaks_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC.rejected.narrowPeak'))
     peak_file = test_output_path + 'ENCSR238SGC.replicated.narrowPeak'
-    assert utils.count_lines(peak_file) == 149291
+    assert utils.count_lines(peak_file) == 152262
 
 
 @pytest.mark.pairedend
