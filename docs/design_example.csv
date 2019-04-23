@@ -1,7 +1,0 @@
-SampleID,Tissue,Factor,Condition,Replicate,Peaks,bamReads,bamControl,ControlID,PeakCaller
-A_1,A,H3K27AC,A,1,A_1.broadPeak,A_1.bam,A_1_input.bam,A_1_input,bed
-A_2,A,H3K27AC,A,2,A_2.broadPeak,A_2.bam,A_2_input.bam,A_2_input,bed
-B_1,B,H3K27AC,B,1,B_1.broadPeak,B_1.bam,B_1_input.bam,B_1_input,bed
-B_2,B,H3K27AC,B,2,B_2.broadPeak,B_2.bam,B_2_input.bam,B_2_input,bed
-C_1,C,H3K27AC,C,1,C_1.broadPeak,C_1.bam,C_1_input.bam,C_1_input,bed
-C_2,C,H3K27AC,C,2,C_2.broadPeak,C_2.bam,C_2_input.bam,C_2_input,bed
