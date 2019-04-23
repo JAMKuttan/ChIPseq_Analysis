@@ -20,13 +20,4 @@ def test_software_versions_output():
     with open(software_versions, 'r') as stream:
         data_loaded = yaml.load(stream)
 
-    assert len(data_loaded['data'].split('<dt>')) == 15
-
-
-@pytest.mark.singleskip_true
-def test_software_versions_output_rep():
-    software_versions = os.path.join(test_output_path, 'software_versions_mqc.yaml')
-    with open(software_versions, 'r') as stream:
-        data_loaded = yaml.load(stream)
-
-    assert len(data_loaded['data'].split('<dt>')) == 13
+    assert len(data_loaded['data'].split('<dt>')) == 17
