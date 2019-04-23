@@ -56,6 +56,7 @@ readsList = Channel
   .collectFile( name: 'fileList.tsv', newLine: true )
 
 // Define regular variables
+pairedEnd = params.pairedEnd
 designFile = params.designFile
 genomeSize = params.genomeSize
 genome = params.genome
