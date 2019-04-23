@@ -101,8 +101,8 @@ workflow_parameters:
     type: select
     required: true
     choices:
-      - [ 'true', 'True']
-      - [ 'false', 'False']
+      - [ 'true', 'true']
+      - [ 'false', 'false']
     description: |
       In single-end sequencing, the sequencer reads a fragment from only one
       end to the other, generating the sequence of base pairs. In paired-end
@@ -127,6 +127,24 @@ workflow_parameters:
       - [ 'GRCm38', 'Mouse GRCm38']
     description: |
       Reference species and genome used for alignment and subsequent analysis.
+
+  - id: skipDiff
+    type: select
+    required: true
+    choices:
+      - [ 'true', 'true']
+      - [ 'false', 'false']
+    description: |
+      Run differential peak analysis
+
+  - id: skipMotif
+    type: select
+    required: true
+    choices:
+      - [ 'true', 'true']
+      - [ 'false', 'false']
+    description: |
+      Run motif calling
 
   - id: astrocyte
     type: select

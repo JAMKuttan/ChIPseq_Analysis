@@ -5,14 +5,14 @@
 
 // Define Input variables
 params.reads = "$baseDir/../test_data/*.fastq.gz"
-params.pairedEnd = 'false'
+params.pairedEnd = false
 params.designFile = "$baseDir/../test_data/design_ENCSR238SGC_SE.txt"
 params.genome = 'GRCm38'
 params.cutoffRatio = 1.2
 params.outDir= "$baseDir/output"
 params.extendReadsLen = 100
 params.topPeakCount = 600
-params.astrocyte = 'false'
+params.astrocyte = false
 params.skipDiff = false
 params.skipMotif = false
 params.references = "$baseDir/../docs/references.md"
@@ -56,6 +56,7 @@ readsList = Channel
   .collectFile( name: 'fileList.tsv', newLine: true )
 
 // Define regular variables
+pairedEnd = params.pairedEnd
 designFile = params.designFile
 genomeSize = params.genomeSize
 genome = params.genome
@@ -69,12 +70,6 @@ skipDiff = params.skipDiff
 skipMotif = params.skipMotif
 references = params.references
 multiqc = params.multiqc
-
-if (params.pairedEnd == 'false'){
-  pairedEnd = false
-} else {
-  pairedEnd = true
-}
 
 // Check design file for errors
 process checkDesignFile {

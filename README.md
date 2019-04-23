@@ -5,6 +5,7 @@
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A50.24.0-brightgreen.svg
 )](https://www.nextflow.io/)
 [![Astrocyte](https://img.shields.io/badge/astrocyte-%E2%89%A50.1.0-blue.svg)](https://astrocyte-test.biohpc.swmed.edu/static/docs/index.html)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2648845.svg)](https://doi.org/10.5281/zenodo.2648845)
 
 
 ## Introduction
