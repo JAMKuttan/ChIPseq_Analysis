@@ -120,13 +120,16 @@ diffPeaks | *_diffbind.csv | Use only for replicated samples; CSV file of peaks 
   + These are the list of files that should be reviewed before continuing on with the CHIPseq experiment. If your experiment fails any of these metrics, you should pause and re-evaluate whether the data should remain in the study.
     1. multiqcReport/multiqc_report.html: follow the ChiP-seq standards [HERE](https://www.encodeproject.org/chip-seq/);
     2. experimentQC/*_fingerprint.pdf: make sure the plots information is correct for your antibody/input. See [HERE](https://deeptools.readthedocs.io/en/develop/content/tools/plotFingerprint.html) for more details.
-    3. crossReads/*cc.plot.pdf: make sure your sample data has the correct signal intensity and location.  See [HERE](https://hbctraining.github.io/Intro-to-ChIPseq/lessons/06_QC_cross_correlation.html) for more details.
+    3. crossReads/*cc.plot.pdf: make sure your sample data has the correct signal intensity and location.  See [HERE](hhttps://ccg.epfl.ch//var/sib_april15/cases/landt12/strand_correlation.html) for more details.
     4. crossReads/*.cc.qc: Column 9 (NSC) should be > 1.1 for experiment and < 1.1 for input. Column 10 (RSC) should be > 0.8 for experiment and < 0.8 for input. See [HERE](https://genome.ucsc.edu/encode/qualityMetrics.html) for more details.
     5. experimentQC/coverage.pdf, experimentQC/heatmeap_SpearmanCorr.pdf, experimentQC/heatmeap_PearsonCorr.pdf: See [HERE](https://deeptools.readthedocs.io/en/develop/content/list_of_tools.html) for more details.
 
 
 ## Common Errors
 If you find an error, please let the [BICF](mailto:BICF@UTSouthwestern.edu) know and we will add it here.
+
+## Citation
+Please cite individual programs and versions used [HERE](docs/references.txt). Please cite in publications: Pipeline was developed by BICF from funding provided by Cancer Prevention and Research Institute of Texas (RP150596). Also, please look out for our pipeline to be published in the future [HERE](https://zenodo.org/).
 
 ## Programs and Versions
   + python/3.6.1-2-anaconda [website](https://www.anaconda.com/download/#linux) [citation](docs/references.txt)
@@ -151,8 +154,5 @@ If you find an error, please let the [BICF](mailto:BICF@UTSouthwestern.edu) know
 ## Credits
 This example worklow is derived from original scripts kindly contributed by the Bioinformatic Core Facility ([BICF](https://www.utsouthwestern.edu/labs/bioinformatics/)), in the [Department of Bioinformatics](https://www.utsouthwestern.edu/departments/bioinformatics/).
 
-Please cite in publications: Pipeline was developed by BICF from funding provided by Cancer Prevention and Research Institute of Texas (RP150596).
 
-## Citation
-Please cite individual programs and versions used [HERE](docs/references.txt). Also, please look out for our pipeline to be published in the future [HERE](https://zenodo.org/).
 

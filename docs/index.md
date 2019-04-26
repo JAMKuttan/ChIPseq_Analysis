@@ -23,7 +23,6 @@ Report issues to the Bioinformatic Core Facility [BICF](mailto:BICF@UTSouthweste
 
 
 ## Workflow Parameters
-
     1. One or more input FASTQ files from a ChIP-seq expereiment and a design file with the link bewetwen the same file name and sample id (required) - Choose all ChIP-seq fastq files for analysis.
     2. In single-end sequencing, the sequencer reads a fragment from only one end to the other, generating the sequence of base pairs. In paired-end reading it starts at one read, finishes this direction at the specified read length, and then starts another round of reading from the opposite end of the fragment. (Paired-end: True, Single-end: False) (required)
     3. A design file listing sample id, fastq files, corresponding control id and additional information about the sample. 
