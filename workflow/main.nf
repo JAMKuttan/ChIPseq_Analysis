@@ -8,15 +8,36 @@ params.reads = "$baseDir/../test_data/*.fastq.gz"
 params.pairedEnd = false
 params.designFile = "$baseDir/../test_data/design_ENCSR238SGC_SE.txt"
 params.genome = 'GRCm38'
-params.genomes = []
-params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
-params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
-params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
-params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 params.cutoffRatio = 1.2
 params.outDir= "$baseDir/output"
 params.extendReadsLen = 100
 params.topPeakCount = 600
+params.astrocyte = false
+params.skipDiff = false
+params.skipMotif = false
+params.references = "$baseDir/../docs/references.md"
+params.multiqc =  "$baseDir/conf/multiqc_config.yaml"
+
+// Assign variables if astrocyte
+if (params.astrocyte) {
+  print("Running under astrocyte")
+  referenceLocation = "/project/shared/bicf_workflow_ref"
+  params.bwaIndex = "$referenceLocation/$params.genome"
+  params.chromSizes = "$referenceLocation/$params.genome/genomefile.txt"
+  params.fasta = "$referenceLocation/$params.genome/genome.fa.txt"
+  if (params.genome == 'GRCh37' || params.genome == 'GRCh38') {
+    params.genomeSize = 'hs'
+  } else if (params.genome == 'GRCm38') {
+    params.genomeSize = 'mm'
+  }
+} else {
+    params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
+    params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
+    params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
+    params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
+}
+
+
 
 // Check inputs
 if( params.bwaIndex ){
@@ -45,6 +66,10 @@ cutoffRatio = params.cutoffRatio
 outDir = params.outDir
 extendReadsLen = params.extendReadsLen
 topPeakCount = params.topPeakCount
+skipDiff = params.skipDiff
+skipMotif = params.skipMotif
+references = params.references
+multiqc = params.multiqc
 
 // Check design file for errors
 process checkDesignFile {
@@ -64,11 +89,13 @@ process checkDesignFile {
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
     python3 $baseDir/scripts/check_design.py -d $designFile -f $readsList -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
     python $baseDir/scripts/check_design.py -d $designFile -f $readsList
     """
   }
@@ -90,7 +117,7 @@ rawReads = designFilePaths
 process trimReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
   input:
 
@@ -99,18 +126,23 @@ process trimReads {
   output:
 
   set sampleId, file('*.fq.gz'), experimentId, biosample, factor, treatment, replicate, controlId into trimmedReads
-  file('*trimming_report.txt') into trimgalore_results
+  file('*trimming_report.txt') into trimgaloreResults
+  file('version_*.txt') into trimReadsVersions
 
   script:
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} ${reads[1]} -p
+    module load python/3.6.1-2-anaconda
+    module load trimgalore/0.4.1
+    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} ${reads[1]} -s $sampleId -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]}
+    module load python/3.6.1-2-anaconda
+    module load trimgalore/0.4.1
+    python3 $baseDir/scripts/trim_reads.py -f ${reads[0]} -s $sampleId
     """
   }
 
@@ -119,8 +151,9 @@ process trimReads {
 // Align trimmed reads using bwa
 process alignReads {
 
+  queue '128GB,256GB,256GBv1'
   tag "$sampleId-$replicate"
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
   input:
 
@@ -130,18 +163,25 @@ process alignReads {
   output:
 
   set sampleId, file('*.bam'), experimentId, biosample, factor, treatment, replicate, controlId into mappedReads
-  file '*.srt.bam.flagstat.qc' into mappedReadsStats
+  file '*.flagstat.qc' into mappedReadsStats
+  file('version_*.txt') into alignReadsVersions
 
   script:
 
   if (pairedEnd) {
     """
-    python3 $baseDir/scripts/map_reads.py -f ${reads[0]} ${reads[1]} -r ${index}/genome.fa -p
+    module load python/3.6.1-2-anaconda
+    module load bwa/intel/0.7.12
+    module load samtools/1.6
+    python3 $baseDir/scripts/map_reads.py -f ${reads[0]} ${reads[1]} -r ${index}/genome.fa -s $sampleId -p
     """
   }
   else {
     """
-    python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa
+    module load python/3.6.1-2-anaconda
+    module load bwa/intel/0.7.12
+    module load samtools/1.6
+    python3 $baseDir/scripts/map_reads.py -f $reads -r ${index}/genome.fa -s $sampleId
     """
   }
 
@@ -150,8 +190,9 @@ process alignReads {
 // Dedup reads using sambamba
 process filterReads {
 
+  queue '128GB,256GB,256GBv1'
   tag "$sampleId-$replicate"
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
   input:
 
@@ -161,19 +202,28 @@ process filterReads {
 
   set sampleId, file('*.bam'), file('*.bai'), experimentId, biosample, factor, treatment, replicate, controlId into dedupReads
   set sampleId, file('*.bam'), experimentId, biosample, factor, treatment, replicate, controlId into convertReads
-  file '*flagstat.qc' into dedupReadsStats
-  file '*pbc.qc' into dedupReadsComplexity
-  file '*dup.qc' into dupReads
+  file '*.flagstat.qc' into dedupReadsStats
+  file '*.pbc.qc' into dedupReadsComplexity
+  file '*.dedup.qc' into dupReads
+  file('version_*.txt') into filterReadsVersions
 
   script:
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
+    module load samtools/1.6
+    module load sambamba/0.6.6
+    module load bedtools/2.26.0
     python3 $baseDir/scripts/map_qc.py -b $mapped -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
+    module load samtools/1.6
+    module load sambamba/0.6.6
+    module load bedtools/2.26.0
     python3 $baseDir/scripts/map_qc.py -b $mapped
     """
   }
@@ -190,6 +240,7 @@ dedupReads
 // Quality Metrics using deeptools
 process experimentQC {
 
+  queue '128GB,256GB,256GBv1'
   publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
@@ -198,11 +249,14 @@ process experimentQC {
 
   output:
 
-  file '*.{png,npz}' into deepToolsStats
+  file '*.{pdf,npz}' into experimentQCStats
+  file('version_*.txt') into experimentQCVersions
 
   script:
 
   """
+  module load python/3.6.1-2-anaconda
+  module load deeptools/2.5.0.1
   python3 $baseDir/scripts/experiment_qc.py -d $dedupDesign -e $extendReadsLen
   """
 
@@ -211,8 +265,9 @@ process experimentQC {
 // Convert reads to bam
 process convertReads {
 
+  queue '128GB,256GB,256GBv1'
   tag "$sampleId-$replicate"
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
   input:
 
@@ -221,16 +276,23 @@ process convertReads {
   output:
 
   set sampleId, file('*.tagAlign.gz'), file('*.bed{pe,se}.gz'), experimentId, biosample, factor, treatment, replicate, controlId into tagReads
+  file('version_*.txt') into convertReadsVersions
 
   script:
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
+    module load samtools/1.6
+    module load bedtools/2.26.0
     python3 $baseDir/scripts/convert_reads.py -b $deduped -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
+    module load samtools/1.6
+    module load bedtools/2.26.0
     python3 $baseDir/scripts/convert_reads.py -b $deduped
     """
   }
@@ -241,7 +303,7 @@ process convertReads {
 process crossReads {
 
   tag "$sampleId-$replicate"
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}/${sampleId}", mode: 'copy'
 
   input:
 
@@ -250,17 +312,22 @@ process crossReads {
   output:
 
   set sampleId, seTagAlign, tagAlign, file('*.cc.qc'), experimentId, biosample, factor, treatment, replicate, controlId into xcorReads
-  set file('*.cc.qc'), file('*.cc.plot.pdf') into xcorReadsStats
+  set file('*.cc.qc'), file('*.cc.plot.pdf') into crossReadsStats
+  file('version_*.txt') into crossReadsVersions
 
   script:
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
+    module load phantompeakqualtools/1.2
     python3 $baseDir/scripts/xcor.py -t $seTagAlign -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
+    module load phantompeakqualtools/1.2
     python3 $baseDir/scripts/xcor.py -t $seTagAlign
     """
   }
@@ -289,6 +356,7 @@ process defineExpDesignFiles {
   script:
 
   """
+  module load python/3.6.1-2-anaconda
   python3 $baseDir/scripts/experiment_design.py -d $xcorDesign
   """
 
@@ -314,11 +382,13 @@ process poolAndPsuedoReads {
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
     python3 $baseDir/scripts/pool_and_psuedoreplicate.py -d $experimentObjs -c $cutoffRatio -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
     python3 $baseDir/scripts/pool_and_psuedoreplicate.py -d $experimentObjs -c $cutoffRatio
     """
   }
@@ -334,7 +404,7 @@ experimentRows = experimentPoolObjs
 process callPeaksMACS {
 
   tag "$sampleId-$replicate"
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}/${experimentId}/${replicate}", mode: 'copy'
 
   input:
   set sampleId, tagAlign, xcor, experimentId, biosample, factor, treatment, replicate, controlId, controlTagAlign from experimentRows
@@ -342,16 +412,28 @@ process callPeaksMACS {
   output:
 
   set sampleId, file('*.narrowPeak'), file('*.fc_signal.bw'), file('*.pvalue_signal.bw'), experimentId, biosample, factor, treatment, replicate, controlId into experimentPeaks
+  file '*.xls' into callPeaksMACSsummit
+  file('version_*.txt') into callPeaksMACSVersions
 
   script:
 
   if (pairedEnd) {
     """
+    module load python/3.6.1-2-anaconda
+    module load macs/2.1.0-20151222
+    module load UCSC_userApps/v317
+    module load bedtools/2.26.0
+    module load phantompeakqualtools/1.2
     python3 $baseDir/scripts/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes -p
     """
   }
   else {
     """
+    module load python/3.6.1-2-anaconda
+    module load macs/2.1.0-20151222
+    module load UCSC_userApps/v317
+    module load bedtools/2.26.0
+    module load phantompeakqualtools/1.2
     python3 $baseDir/scripts/call_peaks_macs.py -t $tagAlign -x $xcor -c $controlTagAlign -s $sampleId -g $genomeSize -z $chromSizes
     """
   }
@@ -368,6 +450,7 @@ peaksDesign = experimentPeaks
 process consensusPeaks {
 
   publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/design", mode: 'copy',  pattern: '*.{csv|tsv}'
 
   input:
 
@@ -381,10 +464,13 @@ process consensusPeaks {
   file 'design_diffPeaks.csv'  into designDiffPeaks
   file 'design_annotatePeaks.tsv'  into designAnnotatePeaks, designMotifSearch
   file 'unique_experiments.csv' into uniqueExperiments
+  file('version_*.txt') into consensusPeaksVersions
 
   script:
 
   """
+  module load python/3.6.1-2-anaconda
+  module load bedtools/2.26.0
   python3 $baseDir/scripts/overlap_peaks.py -d $peaksDesign -f $preDiffDesign
   """
 
@@ -393,7 +479,7 @@ process consensusPeaks {
 // Annotate Peaks
 process peakAnnotation {
 
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -402,19 +488,21 @@ process peakAnnotation {
   output:
 
   file "*chipseeker*" into peakAnnotation
+  file('version_*.txt') into peakAnnotationVersions
 
   script:
 
   """
+  module load R/3.3.2-gccmkl
   Rscript $baseDir/scripts/annotate_peaks.R $designAnnotatePeaks $genome
   """
 
 }
 
-// Motif Search  Peaks
+// Motif Search Peaks
 process motifSearch {
 
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -423,11 +511,17 @@ process motifSearch {
   output:
 
   file "*memechip" into motifSearch
-  file "sorted-*" into filteredPeaks
+  file "*narrowPeak" into filteredPeaks
+  file('version_*.txt') into motifSearchVersions
+
+  when:
+
+  !skipMotif
 
   script:
 
   """
+  module load R/3.3.2-gccmkl
   python3 $baseDir/scripts/motif_search.py -d $designMotifSearch -g $fasta -p $topPeakCount
   """
 }
@@ -439,7 +533,7 @@ uniqueExperimentsList = uniqueExperiments
 // Calculate Differential Binding Activity
 process diffPeaks {
 
-  publishDir "$baseDir/output/${task.process}", mode: 'copy'
+  publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
 
@@ -452,13 +546,62 @@ process diffPeaks {
   file '*_diffbind.csv' into diffPeaksCounts
   file '*.pdf' into diffPeaksStats
   file 'normcount_peaksets.txt' into normCountPeaks
+  file('version_*.txt') into diffPeaksVersions
 
   when:
-  noUniqueExperiments > 1
 
+  noUniqueExperiments > 1 && !skipDiff
 
   script:
+
   """
+  module load python/3.6.1-2-anaconda
+  module load meme/4.11.1-gcc-openmpi
+  module load bedtools/2.26.0
   Rscript $baseDir/scripts/diff_peaks.R $designDiffPeaks
+  """
+}
+
+// Generate Multiqc Report, gerernate Software Versions and references
+process multiqcReport {
+
+  publishDir "$outDir/${task.process}", mode: 'copy'
+
+  input:
+
+  file ('trimReads_vf/*') from trimReadsVersions.first()
+  file ('alignReads_vf/*') from alignReadsVersions.first()
+  file ('filterReads_vf/*') from filterReadsVersions.first()
+  file ('convertReads_vf/*') from convertReadsVersions.first()
+  file ('crossReads_vf/*') from crossReadsVersions.first()
+  file ('callPeaksMACS_vf/*') from callPeaksMACSVersions.first()
+  file ('consensusPeaks_vf/*') from consensusPeaksVersions.first()
+  file ('peakAnnotation_vf/*') from peakAnnotationVersions.first()
+  file ('motifSearch_vf/*') from motifSearchVersions.first().ifEmpty()
+  file ('diffPeaks_vf/*') from diffPeaksVersions.first().ifEmpty()
+  file ('experimentQC_vf/*') from experimentQCVersions.first()
+  file ('trimReads/*') from trimgaloreResults.collect()
+  file ('alignReads/*') from mappedReadsStats.collect()
+  file ('filterReads/*') from dedupReadsComplexity.collect()
+  file ('crossReads/*') from crossReadsStats.collect()
+
+  output:
+
+  file('software_versions_mqc.yaml') into softwareVersions
+  file('software_references_mqc.yaml') into softwareReferences
+  file "multiqc_report.html" into multiqcReport
+  file "*_data" into multiqcData
+
+  script:
+
+  """
+  module load python/3.6.1-2-anaconda
+  module load pandoc/2.7
+  module load multiqc/1.7
+  echo $workflow.nextflow.version > version_nextflow.txt
+  multiqc --version > version_multiqc.txt
+  python3 $baseDir/scripts/generate_references.py -r $references -o software_references
+  python3 $baseDir/scripts/generate_versions.py -o software_versions
+  multiqc -c $multiqc .
   """
 }

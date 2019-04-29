@@ -72,6 +72,46 @@ def check_design_headers(design, paired):
         raise Exception("Missing column headers: %s" % list(missing_headers))
 
 
+def check_samples(design):
+    '''Check if design file has the correct sample name mapping.'''
+
+    logger.info("Running sample check.")
+
+    samples = design.groupby('sample_id') \
+                            .apply(list)
+
+    malformated_samples = []
+    chars = set('-.')
+    for sample in samples.index.values:
+        if(any(char.isspace() for char in sample) | any((char in chars) for char in sample)):
+            malformated_samples.append(sample)
+
+    if len(malformated_samples) > 0:
+        logger.error('Malformed samples from design file: %s', list(malformated_samples))
+        raise Exception("Malformed samples from design file: %s" %
+                        list(malformated_samples))
+
+
+def check_experiments(design):
+    '''Check if design file has the correct experiment name mapping.'''
+
+    logger.info("Running experiment check.")
+
+    experiments = design.groupby('experiment_id') \
+                            .apply(list)
+
+    malformated_experiments = []
+    chars = set('-.')
+    for experiment in experiments.index.values:
+        if(any(char.isspace() for char in experiment) | any((char in chars) for char in experiment)):
+            malformated_experiments.append(experiment)
+
+    if len(malformated_experiments) > 0:
+        logger.error('Malformed experiment from design file: %s', list(malformated_experiments))
+        raise Exception("Malformed experiment from design file: %s" %
+                        list(malformated_experiments))
+
+
 def check_controls(design):
     '''Check if design file has the correct control mapping.'''
 
@@ -146,8 +186,8 @@ def main():
     logger.addHandler(handler)
 
     # Read files as dataframes
-    design_df = pd.read_csv(args.design, sep='\t')
-    fastq_df = pd.read_csv(args.fastq, sep='\t', names=['name', 'path'])
+    design_df = pd.read_csv(design, sep='\t')
+    fastq_df = pd.read_csv(fastq, sep='\t', names=['name', 'path'])
 
     # Check design file
     check_design_headers(design_df, paired)

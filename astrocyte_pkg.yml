@@ -11,7 +11,7 @@ name: 'chipseq_analysis_bicf'
 # Who wrote this?
 author: 'Beibei Chen and Venkat Malladi'
 # A contact email address for questions
-email: 'biohpc-help@utsouthwestern.edu'
+email: 'bicf@utsouthwestern.edu'
 # A more informative title for the workflow package
 title: 'BICF ChIP-seq Analysis Workflow'
 # A summary of the workflow package in plain text
@@ -27,7 +27,7 @@ description: |
 # web interface. These files are in the 'docs' subdirectory. The first file
 # listed will be used as a documentation index and is index.md by convention
 documentation_files:
-  - ['index.md', 'chipseq-analysis']
+  - 'index.md'
 
 # -----------------------------------------------------------------------------
 # NEXTFLOW WORKFLOW CONFIGURATION
@@ -42,15 +42,17 @@ workflow_modules:
   - 'python/3.6.1-2-anaconda'
   - 'trimgalore/0.4.1'
   - 'bwa/intel/0.7.12'
+  - 'samtools/1.6'
   - 'sambamba/0.6.6'
   - 'bedtools/2.26.0'
   - 'deeptools/2.5.0.1'
   - 'phantompeakqualtools/1.2'
   - 'macs/2.1.0-20151222'
   - 'UCSC_userApps/v317'
-  - 'R/3.4.1-gccmkl'
+  - 'R/3.3.2-gccmkl'
   - 'meme/4.11.1-gcc-openmpi'
-  - 'python/2.7.x-anaconda'
+  - 'pandoc/2.7'
+
 
 # A list of parameters used by the workflow, defining how to present them,
 # options etc in the web interface. For each parameter:
@@ -92,20 +94,21 @@ workflow_parameters:
     description: |
       One or more input FASTQ files from a ChIP-seq expereiment and a design
       file with the link bewetwen the same file name and sample id
-    regex: ".*(fastq|fq)*"
+    regex: ".*(fastq|fq)*gz"
+    min: 2
 
   - id: pairedEnd
     type: select
     required: true
     choices:
-      - [ 'true', 'True']
-      - [ 'false', 'False']
+      - [ 'true', 'true']
+      - [ 'false', 'false']
     description: |
       In single-end sequencing, the sequencer reads a fragment from only one
       end to the other, generating the sequence of base pairs. In paired-end
       reading it starts at one read, finishes this direction at the specified
       read length, and then starts another round of reading from the opposite
-      end of the fragment.
+      end of the fragment. (Paired-end: True, Single-end: False)
 
   - id: design
     type: file
@@ -113,17 +116,44 @@ workflow_parameters:
     description: |
       A design file listing sample id, fastq files, corresponding control id
       and additional information about the sample.
-    regex: ".*tsv"
+    regex: ".*txt"
 
   - id: genome
     type: select
+    required: true
     choices:
       - [ 'GRCh38', 'Human GRCh38']
       - [ 'GRCh37', 'Human GRCh37']
       - [ 'GRCm38', 'Mouse GRCm38']
-    required: true
     description: |
       Reference species and genome used for alignment and subsequent analysis.
+
+  - id: skipDiff
+    type: select
+    required: true
+    choices:
+      - [ 'true', 'true']
+      - [ 'false', 'false']
+    description: |
+      Run differential peak analysis
+
+  - id: skipMotif
+    type: select
+    required: true
+    choices:
+      - [ 'true', 'true']
+      - [ 'false', 'false']
+    description: |
+      Run motif calling
+
+  - id: astrocyte
+    type: select
+    choices:
+      - [ 'true', 'true' ]
+    required: true
+    default: 'true'
+    description: |
+      Ensure configuraton for astrocyte.
 
 
 # -----------------------------------------------------------------------------
@@ -144,8 +174,4 @@ vizapp_cran_packages:
 
 # List of any Bioconductor packages, not provided by the modules,
 # that must be made available to the vizapp
-vizapp_bioc_packages:
-  - qusage
-#  - ballgown
-vizapp_github_packages:
-  - js229/Vennerable
+vizapp_bioc_packages: []

@@ -64,6 +64,24 @@ def design_4(design):
 
 
 @pytest.fixture
+def design_5(design):
+    # Update sample_id to have -, spaces or periods
+    design.loc[design['sample_id'] == 'A_1', 'sample_id'] = 'A 1'
+    design.loc[design['sample_id'] == 'A_2', 'sample_id'] = 'A.2'
+    design.loc[design['sample_id'] == 'B_1', 'sample_id'] = 'B-1'
+    return design
+
+
+@pytest.fixture
+def design_6(design):
+    # Update experiment_id to have -, spaces or periods
+    design.loc[design['sample_id'] == 'A_1', 'experiment_id'] = 'A ChIP'
+    design.loc[design['sample_id'] == 'A_2', 'experiment_id'] = 'A.ChIP'
+    design.loc[design['sample_id'] == 'B_1', 'experiment_id'] = 'B-ChIP'
+    return design
+
+
+@pytest.fixture
 def fastq_files_1(fastq_files):
     # Drop B_2.fastq.gz
     fastq_df = fastq_files.drop(fastq_files.index[3])
@@ -115,10 +133,25 @@ def test_check_files_output_pairedend(design_3, fastq_files):
     assert new_design.loc[0, 'fastq_read2'] == "/path/to/file/A_2.fastq.gz"
 
 
-
 @pytest.mark.unit
 def test_check_replicates(design_4):
     paired = False
     with pytest.raises(Exception) as excinfo:
         new_design = check_design.check_replicates(design_4)
     assert str(excinfo.value) == "Duplicate replicates in experiments: ['B']"
+
+
+@pytest.mark.unit
+def test_check_samples(design_5):
+    paired = False
+    with pytest.raises(Exception) as excinfo:
+        new_design = check_design.check_samples(design_5)
+    assert str(excinfo.value) == "Malformed samples from design file: ['A 1', 'A.2', 'B-1']"
+
+
+@pytest.mark.unit
+def test_check_experiments(design_6):
+    paired = False
+    with pytest.raises(Exception) as excinfo:
+        new_design = check_design.check_experiments(design_6)
+    assert str(excinfo.value) == "Malformed experiment from design file: ['A ChIP', 'A.ChIP', 'B-ChIP']"

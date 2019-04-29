@@ -9,9 +9,13 @@ test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
 
 
 @pytest.mark.singleend
-def test_cross_singleend():
-    assert os.path.exists(os.path.join(test_output_path, 'ENCFF833BLU.filt.nodup.tagAlign.15.tagAlign.gz.cc.plot.pdf'))
-    qc_file = os.path.join(test_output_path,"ENCFF833BLU.filt.nodup.tagAlign.15.tagAlign.gz.cc.qc")
+def test_cross_plot_singleend():
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB144FDT/ENCLB144FDT.cc.plot.pdf'))
+
+
+@pytest.mark.singleend
+def test_cross_qc_singleend():
+    qc_file = os.path.join(test_output_path,"ENCLB144FDT/ENCLB144FDT.cc.qc")
     df_xcor = pd.read_csv(qc_file, sep="\t", header=None)
     assert df_xcor[2].iloc[0] == '190,200,210'
     assert df_xcor[8].iloc[0] == 1.025906
@@ -19,10 +23,14 @@ def test_cross_singleend():
 
 
 @pytest.mark.pairedend
-def test_cross_pairedend():
-    assert os.path.exists(os.path.join(test_output_path, 'ENCFF582IOZ_val_2ENCFF957SQS_val_1.filt.nodup.tagAlign.15.tagAlign.gz.cc.plot.pdf'))
-    qc_file = os.path.join(test_output_path,"ENCFF582IOZ_val_2ENCFF957SQS_val_1.filt.nodup.tagAlign.15.tagAlign.gz.cc.qc")
+def test_cross_qc_pairedend():
+    assert os.path.exists(os.path.join(test_output_path, 'ENCLB568IYX/ENCLB568IYX.cc.plot.pdf'))
+
+
+@pytest.mark.pairedend
+def test_cross_plot_pairedend():
+    qc_file = os.path.join(test_output_path,"ENCLB568IYX/ENCLB568IYX.cc.qc")
     df_xcor = pd.read_csv(qc_file, sep="\t", header=None)
-    assert df_xcor[2].iloc[0] == '210,220,475'
-    assert round(df_xcor[8].iloc[0],6) == 1.062032
-    assert df_xcor[9].iloc[0] == 3.737722
+    assert df_xcor[2].iloc[0] == '220,430,475'
+    assert round(df_xcor[8].iloc[0],6) == 1.060018
+    assert df_xcor[9].iloc[0] == 4.099357

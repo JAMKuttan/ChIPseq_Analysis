@@ -5,6 +5,7 @@
 import subprocess
 import argparse
 import shutil
+import os
 import logging
 
 EPILOG = '''
@@ -32,6 +33,10 @@ def get_args():
                         nargs='+',
                         required=True)
 
+    parser.add_argument('-s', '--sample',
+                        help="The name of the sample.",
+                        required=True)
+
     parser.add_argument('-p', '--paired',
                         help="True/False if paired-end or single end.",
                         default=False,
@@ -49,6 +54,15 @@ def check_tools():
     trimgalore_path = shutil.which("trim_galore")
     if trimgalore_path:
         logger.info('Found trimgalore: %s', trimgalore_path)
+
+        # Get Version
+        trim_version_command = "trim_galore --version"
+        trimgalore_version = subprocess.check_output(trim_version_command, shell=True)
+
+        # Write to file
+        trimgalore_file = open("version_trimgalore.txt", "wb")
+        trimgalore_file.write(trimgalore_version)
+        trimgalore_file.close()
     else:
         logger.error('Missing trimgalore')
         raise Exception('Missing trimgalore')
@@ -56,9 +70,44 @@ def check_tools():
     cutadapt_path = shutil.which("cutadapt")
     if cutadapt_path:
         logger.info('Found cutadapt: %s', cutadapt_path)
+
+        # Get Version
+        cutadapt_version_command = "cutadapt --version"
+        cutadapt_version = subprocess.check_output(cutadapt_version_command, shell=True)
+
+        # Write to file
+        cutadapt_file = open("version_cutadapt.txt", "wb")
+        cutadapt_file.write(b"Version %s" % (cutadapt_version))
+        cutadapt_file.close()
     else:
         logger.error('Missing cutadapt')
         raise Exception('Missing cutadapt')
+
+
+def rename_reads(fastq, sample, paired):
+    '''Rename fastq files by sample name.'''
+
+    # Get current directory to build paths
+    cwd = os.getcwd()
+
+    renamed_fastq = []
+
+    if paired:  # paired-end data
+        # Set file names
+        renamed_fastq.append(cwd + '/' + sample + '_R1.fastq.gz')
+        renamed_fastq.append(cwd + '/' + sample + '_R2.fastq.gz')
+
+        # Great symbolic links
+        os.symlink(fastq[0], renamed_fastq[0])
+        os.symlink(fastq[1], renamed_fastq[1])
+    else:
+        # Set file names
+        renamed_fastq.append(cwd + '/' + sample + '_R1.fastq.gz')
+
+        # Great symbolic links
+        os.symlink(fastq[0], renamed_fastq[0])
+
+    return renamed_fastq
 
 
 def trim_reads(fastq, paired):
@@ -82,6 +131,7 @@ def trim_reads(fastq, paired):
 def main():
     args = get_args()
     fastq = args.fastq
+    sample = args.sample
     paired = args.paired
 
     # Create a file handler
@@ -91,8 +141,11 @@ def main():
     # Check if tools are present
     check_tools()
 
+    # Rename fastq files by sample
+    fastq_rename = rename_reads(fastq, sample, paired)
+
     # Run trim_reads
-    trim_reads(fastq, paired)
+    trim_reads(fastq_rename, paired)
 
 
 if __name__ == '__main__':

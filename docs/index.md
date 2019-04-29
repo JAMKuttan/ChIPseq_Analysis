@@ -1,4 +1,4 @@
-# Astrocyte ChIPseq analysis Workflow Package
+# BICF ChIP-seq Analysis Workflow
 
 ## Introduction
 **ChIP-seq Analysis** is a bioinformatics best-practice analysis pipeline used for chromatin immunoprecipitation (ChIP-seq) data analysis.

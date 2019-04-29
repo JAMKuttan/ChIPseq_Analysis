@@ -6,6 +6,7 @@ import os
 import argparse
 import logging
 import shutil
+import subprocess
 import pandas as pd
 import utils
 
@@ -49,6 +50,15 @@ def check_tools():
     bedtools_path = shutil.which("bedtools")
     if bedtools_path:
         logger.info('Found bedtools: %s', bedtools_path)
+
+        # Get Version
+        bedtools_version_command = "bedtools --version"
+        bedtools_version = subprocess.check_output(bedtools_version_command, shell=True)
+
+        # Write to file
+        bedtools_file = open("version_bedtools.txt", "wb")
+        bedtools_file.write(bedtools_version)
+        bedtools_file.close()
     else:
         logger.error('Missing bedtools')
         raise Exception('Missing bedtools')
@@ -113,9 +123,9 @@ def overlap(experiment, design):
     # with any one of the overlapping peak pairs  >= 0.5
 
     steps_true = ['intersectBed -wo -a %s -b %s' % (pool_peaks, true_rep_peaks[0]),
-                    awk_command,
-                    cut_command,
-                    'sort -u']
+                  awk_command,
+                  cut_command,
+                  'sort -u']
 
     iter_true_peaks = iter(true_rep_peaks)
     next(iter_true_peaks)
@@ -123,13 +133,13 @@ def overlap(experiment, design):
     if len(true_rep_peaks) > 1:
         for true_peak in true_rep_peaks[1:]:
             steps_true.extend(['intersectBed -wo -a stdin -b %s' % (true_peak),
-                                awk_command,
-                                cut_command,
-                                'sort -u'])
+                               awk_command,
+                               cut_command,
+                               'sort -u'])
 
     out, err = utils.run_pipe(steps_true, outfile=overlap_tr_fn)
     print("%d peaks overlap with both true replicates" %
-        (utils.count_lines(overlap_tr_fn)))
+          (utils.count_lines(overlap_tr_fn)))
 
     # Find pooled peaks that overlap PseudoRep1 and PseudoRep2
     # where overlap is defined as the fractional overlap
@@ -146,7 +156,7 @@ def overlap(experiment, design):
 
     out, err = utils.run_pipe(steps_pseudo, outfile=overlap_pr_fn)
     print("%d peaks overlap with both pooled pseudoreplicates"
-            % (utils.count_lines(overlap_pr_fn)))
+          % (utils.count_lines(overlap_pr_fn)))
 
     # Make union of peak lists
     out, err = utils.run_pipe([
@@ -154,7 +164,7 @@ def overlap(experiment, design):
                 'sort -u'
                 ], overlapping_peaks_fn)
     print("%d peaks overlap with true replicates or with pooled pseudorepliates"
-            % (utils.count_lines(overlapping_peaks_fn)))
+          % (utils.count_lines(overlapping_peaks_fn)))
 
     # Make rejected peak list
     out, err = utils.run_pipe([
@@ -178,6 +188,9 @@ def main():
     handler = logging.FileHandler('consensus_peaks.log')
     logger.addHandler(handler)
 
+    # Check if tools are present
+    check_tools()
+
     # Read files as dataframes
     design_peaks_df = pd.read_csv(design, sep='\t')
     design_files_df = pd.read_csv(files, sep='\t')
@@ -187,7 +200,7 @@ def main():
 
     # Make a design file for annotating Peaks
     anno_cols = ['Condition', 'Peaks']
-    design_anno = pd.DataFrame(columns = anno_cols)
+    design_anno = pd.DataFrame(columns=anno_cols)
 
     # Find consenus overlap peaks for each experiment
     for experiment, df_experiment in design_peaks_df.groupby('experiment_id'):
@@ -197,16 +210,16 @@ def main():
 
     # Write out design files
     design_diff.columns = ['SampleID',
-                            'bamReads',
-                            'Condition',
-                            'Tissue',
-                            'Factor',
-                            'Treatment',
-                            'Replicate',
-                            'ControlID',
-                            'bamControl',
-                            'Peaks',
-                            'PeakCaller']
+                           'bamReads',
+                           'Condition',
+                           'Tissue',
+                           'Factor',
+                           'Treatment',
+                           'Replicate',
+                           'ControlID',
+                           'bamControl',
+                           'Peaks',
+                           'PeakCaller']
 
     design_diff.to_csv("design_diffPeaks.csv", header=True, sep=',', index=False)
     design_anno.to_csv("design_annotatePeaks.tsv", header=True, sep='\t', index=False)

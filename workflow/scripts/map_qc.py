@@ -62,6 +62,15 @@ def check_tools():
     samtools_path = shutil.which("samtools")
     if samtools_path:
         logger.info('Found samtools: %s', samtools_path)
+
+        # Get Version
+        samtools_version_command = "samtools --version"
+        samtools_version = subprocess.check_output(samtools_version_command, shell=True)
+
+        # Write to file
+        samtools_file = open("version_samtools.txt", "wb")
+        samtools_file.write(samtools_version)
+        samtools_file.close()
     else:
         logger.error('Missing samtools')
         raise Exception('Missing samtools')
@@ -69,6 +78,18 @@ def check_tools():
     sambamba_path = shutil.which("sambamba")
     if sambamba_path:
         logger.info('Found sambamba: %s', sambamba_path)
+
+        # Get Version
+        sambamba_version_command = "sambamba"
+        try:
+            subprocess.check_output(sambamba_version_command, shell=True, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            sambamba_version = e.output
+
+        # Write to file
+        sambamba_file = open("version_sambamba.txt", "wb")
+        sambamba_file.write(sambamba_version)
+        sambamba_file.close()
     else:
         logger.error('Missing sambamba')
         raise Exception('Missing sambamba')
@@ -76,6 +97,15 @@ def check_tools():
     bedtools_path = shutil.which("bedtools")
     if bedtools_path:
         logger.info('Found bedtools: %s', bedtools_path)
+
+        # Get Version
+        bedtools_version_command = "bedtools --version"
+        bedtools_version = subprocess.check_output(bedtools_version_command, shell=True)
+
+        # Write to file
+        bedtools_file = open("version_bedtools.txt", "wb")
+        bedtools_file.write(bedtools_version)
+        bedtools_file.close()
     else:
         logger.error('Missing bedtools')
         raise Exception('Missing bedtools')
@@ -106,7 +136,7 @@ def filter_mapped_pe(bam, bam_basename):
         # Will produce name sorted BAM
         "samtools sort -n -@ %d -o %s" % (cpu_count(), tmp_filt_bam_filename)])
     if err:
-        logger.error("samtools filter error: %s" % (err))
+        logger.error("samtools filter error: %s", err)
 
     # Remove orphan reads (pair was removed)
     # and read pairs mapping to different chromosomes
@@ -136,7 +166,7 @@ def filter_mapped_se(bam, bam_basename):
     # not primary alignment, reads failing platform
     # Remove low MAPQ reads
     # Obtain name sorted BAM file
-    with open(filt_bam_filename, 'w') as fh:
+    with open(filt_bam_filename, 'w') as temp_file:
         samtools_filter_command = (
             "samtools view -F 1804 -q 30 -b %s"
             % (bam)
@@ -144,7 +174,7 @@ def filter_mapped_se(bam, bam_basename):
         logger.info(samtools_filter_command)
         subprocess.check_call(
             shlex.split(samtools_filter_command),
-            stdout=fh)
+            stdout=temp_file)
 
     return filt_bam_filename
 
@@ -153,11 +183,11 @@ def dedup_mapped(bam, bam_basename, paired):
     '''Use sambamba and samtools to remove duplicates.'''
 
     # Markduplicates
-    dup_file_qc_filename = bam_basename + ".dup.qc"
+    dup_file_qc_filename = bam_basename + ".dedup.qc"
     tmp_dup_mark_filename = bam_basename + ".dupmark.bam"
     sambamba_params = "--hash-table-size=17592186044416" + \
                     " --overflow-list-size=20000000 --io-buffer-size=256"
-    with open(dup_file_qc_filename, 'w') as fh:
+    with open(dup_file_qc_filename, 'w') as temp_file:
         sambamba_markdup_command = (
             "sambamba markdup -t %d %s --tmpdir=%s %s %s"
             % (cpu_count(), sambamba_params, os.getcwd(), bam, tmp_dup_mark_filename)
@@ -165,11 +195,10 @@ def dedup_mapped(bam, bam_basename, paired):
         logger.info(sambamba_markdup_command)
         subprocess.check_call(
             shlex.split(sambamba_markdup_command),
-            stderr=fh)
-
+            stderr=temp_file)
 
     # Remove duplicates
-    final_bam_prefix = bam_basename + ".filt.nodup"
+    final_bam_prefix = bam_basename + ".dedup"
     final_bam_filename = final_bam_prefix + ".bam"
 
     if paired:  # paired-end data
@@ -179,11 +208,11 @@ def dedup_mapped(bam, bam_basename, paired):
         samtools_dedupe_command = \
             "samtools view -F 1804 -b %s" % (tmp_dup_mark_filename)
 
-    with open(final_bam_filename, 'w') as fh:
+    with open(final_bam_filename, 'w') as temp_file:
         logger.info(samtools_dedupe_command)
         subprocess.check_call(
             shlex.split(samtools_dedupe_command),
-            stdout=fh)
+            stdout=temp_file)
 
     # Index final bam file
     sambamba_index_command = \
@@ -192,12 +221,12 @@ def dedup_mapped(bam, bam_basename, paired):
     subprocess.check_output(shlex.split(sambamba_index_command))
 
     # Generate mapping statistics
-    final_bam_file_mapstats_filename = final_bam_prefix + ".flagstat.qc"
-    with open(final_bam_file_mapstats_filename, 'w') as fh:
+    mapstats_filename = final_bam_prefix + ".flagstat.qc"
+    with open(mapstats_filename, 'w') as temp_file:
         flagstat_command = "sambamba flagstat -t %d %s" \
                             % (cpu_count(), final_bam_filename)
         logger.info(flagstat_command)
-        subprocess.check_call(shlex.split(flagstat_command), stdout=fh)
+        subprocess.check_call(shlex.split(flagstat_command), stdout=temp_file)
 
     os.remove(bam)
     return tmp_dup_mark_filename
@@ -206,7 +235,7 @@ def dedup_mapped(bam, bam_basename, paired):
 def compute_complexity(bam, paired, bam_basename):
     '''Calculate library complexity .'''
 
-    pbc_file_qc_filename = bam_basename + ".filt.nodup.pbc.qc"
+    pbc_file_qc_filename = bam_basename + ".pbc.qc"
     tmp_pbc_file_qc_filename = "tmp.%s" % (pbc_file_qc_filename)
 
     # Sort by name
@@ -215,6 +244,7 @@ def compute_complexity(bam, paired, bam_basename):
     # Obtain unique count statistics
 
     # PBC File output
+    # Sample Name[tab]
     # TotalReadPairs [tab]
     # DistinctReadPairs [tab]
     # OneReadPair [tab]
@@ -223,12 +253,12 @@ def compute_complexity(bam, paired, bam_basename):
     # PBC1=OnePair/Distinct [tab]
     # PBC2=OnePair/TwoPair
     pbc_headers = ['TotalReadPairs',
-                    'DistinctReadPairs',
-                    'OneReadPair',
-                    'TwoReadPairs',
-                    'NRF',
-                    'PBC1',
-                    'PBC2']
+                   'DistinctReadPairs',
+                   'OneReadPair',
+                   'TwoReadPairs',
+                   'NRF',
+                   'PBC1',
+                   'PBC2']
 
     if paired:
         steps = [
@@ -247,11 +277,15 @@ def compute_complexity(bam, paired, bam_basename):
         ])
     out, err = utils.run_pipe(steps, tmp_pbc_file_qc_filename)
     if err:
-        logger.error("PBC file error: %s" % (err))
+        logger.error("PBC file error: %s", err)
 
-    # Add headers
+    # Add Sample Name and headers
     pbc_file = pd.read_csv(tmp_pbc_file_qc_filename, sep='\t', header=None,
-                          names=pbc_headers)
+                           names=pbc_headers)
+    pbc_file['Sample'] = bam_basename
+    pbc_headers_new = list(pbc_file)
+    pbc_headers_new.insert(0, pbc_headers_new.pop(pbc_headers_new.index('Sample')))
+    pbc_file = pbc_file[pbc_headers_new]
     pbc_file.to_csv(pbc_file_qc_filename, header=True, sep='\t', index=False)
     os.remove(bam)
     os.remove(bam + '.bai')

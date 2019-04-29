@@ -17,7 +17,7 @@ args <- commandArgs(trailingOnly=TRUE)
 
 # Check input args
 if (length(args) != 2) {
-  stop("Usage: annotate_peaks.R [ annotate_design.tsv ] [ genome_assembly ]", call.=FALSE)
+  stop("Usage: annotate_peaks.R annotate_design.tsv genome_assembly", call.=FALSE)
 }
 
 design_file <- args[1]
@@ -34,6 +34,11 @@ if(genome_assembly=='GRCh37') {
     txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
     annodb <- 'org.Hs.eg.db'
 }
+
+# Output version of ChIPseeker
+chipseeker_version = packageVersion('ChIPseeker')
+write.table(paste("Version", chipseeker_version), file = "version_ChIPseeker.txt", sep = "\t",
+            row.names = FALSE, col.names = FALSE)
 
 # Load design file
 design <- read.csv(design_file, sep ='\t')

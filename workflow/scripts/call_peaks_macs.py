@@ -5,8 +5,8 @@
 import os
 import argparse
 import shutil
+import subprocess
 import logging
-from multiprocessing import cpu_count
 import utils
 from xcor import xcor as calculate_xcor
 
@@ -70,16 +70,19 @@ def check_tools():
 
     logger.info('Checking for required libraries and components on this system')
 
-    r_path = shutil.which("R")
-    if r_path:
-        logger.info('Found R: %s', r_path)
-    else:
-        logger.error('Missing R')
-        raise Exception('Missing R')
-
     macs_path = shutil.which("macs2")
-    if r_path:
+    if macs_path:
         logger.info('Found MACS2: %s', macs_path)
+
+        # Get Version
+        macs_version_command = "macs2  --version"
+        macs_version = subprocess.check_output(macs_version_command, shell=True, stderr=subprocess.STDOUT)
+
+        # Write to file
+        macs_file = open("version_macs.txt", "wb")
+        macs_file.write(macs_version)
+        macs_file.close()
+
     else:
         logger.error('Missing MACS2')
         raise Exception('Missing MACS2')
@@ -87,6 +90,18 @@ def check_tools():
     bg_bw_path = shutil.which("bedGraphToBigWig")
     if bg_bw_path:
         logger.info('Found bedGraphToBigWig: %s', bg_bw_path)
+
+        # Get Version
+        bg_bw_version_command = "bedGraphToBigWig"
+        try:
+            subprocess.check_output(bg_bw_version_command, shell=True, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            bg_bw_version = e.output
+
+        # Write to file
+        bg_bw_file = open("version_bedGraphToBigWig.txt", "wb")
+        bg_bw_file.write(bg_bw_version)
+        bg_bw_file.close()
     else:
         logger.error('Missing bedGraphToBigWig')
         raise Exception('Missing bedGraphToBigWig')
@@ -94,12 +109,23 @@ def check_tools():
     bedtools_path = shutil.which("bedtools")
     if bedtools_path:
         logger.info('Found bedtools: %s', bedtools_path)
+
+        # Get Version
+        bedtools_version_command = "bedtools --version"
+        bedtools_version = subprocess.check_output(bedtools_version_command, shell=True)
+
+        # Write to file
+        bedtools_file = open("version_bedtools.txt", "wb")
+        bedtools_file.write(bedtools_version)
+        bedtools_file.close()
+
     else:
         logger.error('Missing bedtools')
         raise Exception('Missing bedtools')
 
 
 def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes):
+    '''Call peaks and signal tracks'''
 
     # Extract the fragment length estimate from column 3 of the
     # cross-correlation scores file
@@ -107,8 +133,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
         firstline = xcor_fh.readline()
         frag_lengths = firstline.split()[2]  # third column
         fragment_length = frag_lengths.split(',')[0]  # grab first value
-        logger.info("Fraglen %s" % (fragment_length))
-
+        logger.info("Fraglen %s", fragment_length)
 
     # Generate narrow peaks and preliminary signal tracks
 
@@ -119,18 +144,18 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
 
     logger.info(command)
     returncode = utils.block_on(command)
-    logger.info("MACS2 exited with returncode %d" % (returncode))
+    logger.info("MACS2 exited with returncode %d", returncode)
     assert returncode == 0, "MACS2 non-zero return"
 
     # MACS2 sometimes calls features off the end of chromosomes.
     # Remove coordinates outside chromosome sizes
 
-    narrowpeak_fn = '%s_peaks.narrowPeak' % (prefix)
+    int_narrowpeak_fn = '%s_peaks.narrowPeak' % (prefix)
+    narrowpeak_fn = '%s.narrowPeak' % (prefix)
     clipped_narrowpeak_fn = 'clipped-%s' % (narrowpeak_fn)
 
-
-    steps = ['slopBed -i %s -g %s -b 0' % (narrowpeak_fn, chrom_sizes),
-            'bedClip stdin %s %s' % (chrom_sizes, clipped_narrowpeak_fn)]
+    steps = ['slopBed -i %s -g %s -b 0' % (int_narrowpeak_fn, chrom_sizes),
+             'bedClip stdin %s %s' % (chrom_sizes, clipped_narrowpeak_fn)]
 
     out, err = utils.run_pipe(steps)
 
@@ -161,7 +186,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
 
     logger.info(command)
     returncode = utils.block_on(command)
-    logger.info("MACS2 exited with returncode %d" % (returncode))
+    logger.info("MACS2 exited with returncode %d", returncode)
     assert returncode == 0, "MACS2 non-zero return"
 
     # Remove coordinates outside chromosome sizes (MACS2 bug)
@@ -169,7 +194,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
     fc_bedgraph_sorted_fn = 'sorted-%s' % (fc_bedgraph_fn)
     fc_signal_fn = "%s.fc_signal.bw" % (prefix)
     steps = ['slopBed -i %s_FE.bdg -g %s -b 0' % (prefix, chrom_sizes),
-            'bedClip stdin %s %s' % (chrom_sizes, fc_bedgraph_fn)]
+             'bedClip stdin %s %s' % (chrom_sizes, fc_bedgraph_fn)]
 
     out, err = utils.run_pipe(steps)
 
@@ -185,7 +210,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
 
     logger.info(command)
     returncode = utils.block_on(command)
-    logger.info("bedGraphToBigWig exited with returncode %d" % (returncode))
+    logger.info("bedGraphToBigWig exited with returncode %d", returncode)
     assert returncode == 0, "bedGraphToBigWig non-zero return"
 
     # For -log10(p-value) signal tracks
@@ -199,7 +224,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
     sval = str(min(float(chip_reads), float(control_reads)) / 1000000)
 
     logger.info("chip_reads = %s, control_reads = %s, sval = %s" %
-            (chip_reads, control_reads, sval))
+                (chip_reads, control_reads, sval))
 
     command = 'macs2 bdgcmp ' + \
           '-t %s_treat_pileup.bdg ' % (prefix) + \
@@ -216,7 +241,7 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
     pvalue_bedgraph_sorted_fn = 'sort-%s' % (pvalue_bedgraph_fn)
     pvalue_signal_fn = "%s.pvalue_signal.bw" % (prefix)
     steps = ['slopBed -i %s_ppois.bdg -g %s -b 0' % (prefix, chrom_sizes),
-            'bedClip stdin %s %s' % (chrom_sizes, pvalue_bedgraph_fn)]
+             'bedClip stdin %s %s' % (chrom_sizes, pvalue_bedgraph_fn)]
 
     out, err = utils.run_pipe(steps)
 
@@ -232,12 +257,13 @@ def call_peaks_macs(experiment, xcor, control, prefix, genome_size, chrom_sizes)
 
     logger.info(command)
     returncode = utils.block_on(command)
-    logger.info("bedGraphToBigWig exited with returncode %d" % (returncode))
+    logger.info("bedGraphToBigWig exited with returncode %d", returncode)
     assert returncode == 0, "bedGraphToBigWig non-zero return"
 
     # Remove temporary files
     os.remove(clipped_narrowpeak_fn)
     os.remove(rescaled_narrowpeak_fn)
+    os.remove(int_narrowpeak_fn)
 
 
 def main():
