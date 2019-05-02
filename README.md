@@ -1,6 +1,6 @@
 # **CHIPseq Manual**
 ## Version 1.0.0
-## January 2, 2019
+## May 2, 2019
 
 # BICF ChIP-seq Pipeline
 
@@ -17,7 +17,7 @@ BICF ChIPseq is a bioinformatics best-practice analysis pipeline used for ChIP-s
 
 The pipeline uses [Nextflow](https://www.nextflow.io), a bioinformatics workflow tool. It pre-processes raw data from FastQ inputs, aligns the reads and performs extensive quality-control on the results.
 
-This pipeline is primarily used with a SLURM cluster on the [BioHPC Cluster](https://portal.biohpc.swmed.edu/content/). However, the pipeline should be able to run on any system that Nextflow supports.
+This pipeline is primarily used with a SLURM cluster on the [BioHPC Cluster](https://portal.biohpc.swmed.edu/content/). However, the pipeline should be able to run on any system that supports Nextflow.
 
 Additionally, the pipeline is designed to work with [Astrocyte Workflow System](https://astrocyte-test.biohpc.swmed.edu/static/docs/index.html) using a simple web interface.
 
@@ -54,11 +54,11 @@ $ git clone git@git.biohpc.swmed.edu:BICF/Astrocyte/chipseq_analysis.git
   + This pipeline has been optimized for the correct partition
   + See [HERE](docs/CHIPseq.sh) for an example bash script
   + The parameters that must be specified are:
-      - --reads '/path/to/files/name.fastq.gz' 
-      - --designFile '/path/to/file/design.txt', 
+      - --reads '/path/to/files/name.fastq.gz'
+      - --designFile '/path/to/file/design.txt',
       - --genome 'GRCm38', 'GRCh38', or 'GRCh37' (if you need to use another genome contact the [BICF](mailto:BICF@UTSouthwestern.edu))
       - --pairedEnd 'true' or 'false' (where 'true' is PE and 'false' is SE; default 'false')
-      - --outDir (optional) path and folder name of the output data, example: /home2/s000000/Desktop/Chipseq_output
+      - --outDir (optional) path and folder name of the output data, example: /home2/s000000/Desktop/Chipseq_output (if not specficied will be under workflow/output/)
 
 ## Pipeline
   + There are 11 steps to the pipeline
@@ -145,7 +145,7 @@ Please cite individual programs and versions used [HERE](docs/references.txt). P
   + macs/2.1.0-20151222 [website](http://liulab.dfci.harvard.edu/MACS/) [citation](docs/references.txt)
   + UCSC_userApps/v317 [website](https://genome.ucsc.edu/util.html) [citation](docs/references.txt)
   + R/3.4.1 [website](https://www.r-project.org/) [citation](docs/references.txt)
-  + SPP/1.14 
+  + SPP/1.14
   + meme/4.11.1-gcc-openmpi [website](http://meme-suite.org/doc/install.html?man_type=web) [citation](docs/references.txt)
   + ChIPseeker [website](https://bioconductor.org/packages/release/bioc/html/ChIPseeker.html) [citation](docs/references.txt)
   + DiffBind [website](https://bioconductor.org/packages/release/bioc/html/DiffBind.html) [citation](docs/references.txt)
@@ -154,6 +154,3 @@ Please cite individual programs and versions used [HERE](docs/references.txt). P
 
 ## Credits
 This example worklow is derived from original scripts kindly contributed by the Bioinformatic Core Facility ([BICF](https://www.utsouthwestern.edu/labs/bioinformatics/)), in the [Department of Bioinformatics](https://www.utsouthwestern.edu/departments/bioinformatics/).
-
-
-

@@ -2,4 +2,4 @@ sample_id	experiment_id	biosample	factor	treatment	replicate	control_id	fastq_re
 A1	A	tissueA	H3K27AC	None	1	B1	A1.fastq.gz
 A2	A	tissueA	H3K27AC	None	2	B2	A2.fastq.gz
 B1	B	tissueB	Input	None	1	B1	B1.fastq.gz
-B2	A	tissueB	Input	None	2	B2	B2.fastq.gz
+B2	B	tissueB	Input	None	2	B2	B2.fastq.gz
