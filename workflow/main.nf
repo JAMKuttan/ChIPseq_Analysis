@@ -57,7 +57,7 @@ readsList = Channel
 
 // Define regular variables
 pairedEnd = params.pairedEnd
-designFile = params.designFile
+designFile = Channel.fromPath(params.designFile)
 genomeSize = params.genomeSize
 genome = params.genome
 chromSizes = params.chromSizes
@@ -78,8 +78,8 @@ process checkDesignFile {
 
   input:
 
-  file designFile
-  file readsList
+  designFile
+  readsList
 
   output:
 
