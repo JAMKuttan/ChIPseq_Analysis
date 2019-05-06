@@ -44,7 +44,7 @@ def test_diffbind_singleend_multiple_rep():
         assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC_vs_ENCSR272GNQ_diffbind.bed'))
         diffbind_file = test_output_path + 'ENCSR238SGC_vs_ENCSR272GNQ_diffbind.csv'
     assert os.path.exists(diffbind_file)
-    assert utils.count_lines(diffbind_file) == 197471
+    assert utils.count_lines(diffbind_file) == 201217
 
 
 @pytest.mark.paireddiff
