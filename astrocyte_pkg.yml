@@ -9,7 +9,7 @@
 # A unique identifier for the workflow package, text/underscores only
 name: 'chipseq_analysis_bicf'
 # Who wrote this?
-author: 'Beibei Chen and Venkat Malladi'
+author: 'Holly Ruess, Spencer D. Barnes, Beibei Chen and Venkat Malladi'
 # A contact email address for questions
 email: 'bicf@utsouthwestern.edu'
 # A more informative title for the workflow package
