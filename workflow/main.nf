@@ -78,8 +78,8 @@ process checkDesignFile {
 
   input:
 
-  designFile
-  readsList
+  file designFile
+  file readsList
 
   output:
 
