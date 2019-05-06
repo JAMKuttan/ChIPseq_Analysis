@@ -78,7 +78,7 @@ process checkDesignFile {
 
   input:
 
-  designFile
+  file designFile
   file readsList
 
   output:
