@@ -110,7 +110,7 @@ workflow_parameters:
       read length, and then starts another round of reading from the opposite
       end of the fragment. (Paired-end: True, Single-end: False)
 
-  - id: design
+  - id: designFile
     type: file
     required: true
     description: |
