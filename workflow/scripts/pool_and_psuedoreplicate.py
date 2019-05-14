@@ -322,7 +322,8 @@ def main():
                                                                 path_to_control
 
         else:
-            path_to_pool_control = pool_control
+            path_to_pool_control = cwd + '/' +  pool_control
+            design_new_df['control_tag_align'] = path_to_pool_control
 
         # Add in pseudo replicates
         tmp_metadata = design_new_df.loc[0].copy()
