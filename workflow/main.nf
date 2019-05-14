@@ -521,6 +521,7 @@ process motifSearch {
   script:
 
   """
+  module load python/3.6.1-2-anaconda
   module load meme/4.11.1-gcc-openmpi
   module load bedtools/2.26.0
   python3 $baseDir/scripts/motif_search.py -d $designMotifSearch -g $fasta -p $topPeakCount
