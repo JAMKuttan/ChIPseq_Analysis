@@ -104,11 +104,7 @@ workflow_parameters:
       - [ 'true', 'true']
       - [ 'false', 'false']
     description: |
-      In single-end sequencing, the sequencer reads a fragment from only one
-      end to the other, generating the sequence of base pairs. In paired-end
-      reading it starts at one read, finishes this direction at the specified
-      read length, and then starts another round of reading from the opposite
-      end of the fragment. (Paired-end: True, Single-end: False)
+      If Paired-end: True, if Single-end: False.
 
   - id: designFile
     type: file
@@ -135,7 +131,7 @@ workflow_parameters:
       - [ 'true', 'true']
       - [ 'false', 'false']
     description: |
-      Run differential peak analysis
+      Skip differential peak analysis
 
   - id: skipMotif
     type: select
@@ -144,7 +140,7 @@ workflow_parameters:
       - [ 'true', 'true']
       - [ 'false', 'false']
     description: |
-      Run motif calling
+      Skip motif calling
 
   - id: astrocyte
     type: select
