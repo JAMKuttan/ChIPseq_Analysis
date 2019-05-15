@@ -25,12 +25,12 @@ Report issues to the Bioinformatic Core Facility [BICF](mailto:BICF@UTSouthweste
 ## Workflow Parameters
     1. One or more input FASTQ files from a ChIP-seq expereiment and a design file with the link bewetwen the same file name and sample id (required) - Choose all ChIP-seq fastq files for analysis.
     2. In single-end sequencing, the sequencer reads a fragment from only one end to the other, generating the sequence of base pairs. In paired-end reading it starts at one read, finishes this direction at the specified read length, and then starts another round of reading from the opposite end of the fragment. (Paired-end: True, Single-end: False) (required)
-    3. A design file listing sample id, fastq files, corresponding control id and additional information about the sample. 
+    3. A design file listing sample id, fastq files, corresponding control id and additional information about the sample.
     genome - Choose a genomic reference (genome).
     4. Reference species and genome used for alignment and subsequent analysis. (required)
     5. Run differential peak analysis (required). Must have at least 2 replicates per experiment and at least 2 experiments.
     6. Run motif calling (required). Top 600 peaks sorted by p-value.
-    7. Ensure configuraton for astrocyte. (required; always true)
+    7. Ensure configuration for astrocyte. (required; always true)
 
 ## Design file
 
@@ -46,8 +46,8 @@ Report issues to the Bioinformatic Core Facility [BICF](mailto:BICF@UTSouthweste
       9. fastq_read2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name of fastq file 2 for PE data
 
 
-  + See [HERE](test_data/design_ENCSR729LGA_PE.txt) for an example design file, paired-end
-  + See [HERE](test_data/design_ENCSR238SGC_SE.txt) for an example design file, single-end
+  + See [HERE](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/test_data/design_ENCSR729LGA_PE.txt) for an example design file, paired-end
+  + See [HERE](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/test_data/design_ENCSR238SGC_SE.txt) for an example design file, single-end
 
 ## Output Files
 
@@ -95,7 +95,7 @@ diffPeaks | *_diffbind.csv | Use only for replicated samples; CSV file of peaks 
   + These are the list of files that should be reviewed before continuing on with the CHIPseq experiment. If your experiment fails any of these metrics, you should pause and re-evaluate whether the data should remain in the study.
     1. multiqcReport/multiqc_report.html: follow the ChiP-seq standards [HERE](https://www.encodeproject.org/chip-seq/);
     2. experimentQC/*_fingerprint.pdf: make sure the plots information is correct for your antibody/input. See [HERE](https://deeptools.readthedocs.io/en/develop/content/tools/plotFingerprint.html) for more details.
-    3. crossReads/*cc.plot.pdf: make sure your sample data has the correct signal intensity and location.  See [HERE](https://hbctraining.github.io/Intro-to-ChIPseq/lessons/06_QC_cross_correlation.html) for more details.
+    3. crossReads/*cc.plot.pdf: make sure your sample data has the correct signal intensity and location.  See [HERE](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/phantompeaks.md) for more details.
     4. crossReads/*.cc.qc: Column 9 (NSC) should be > 1.1 for experiment and < 1.1 for input. Column 10 (RSC) should be > 0.8 for experiment and < 0.8 for input. See [HERE](https://genome.ucsc.edu/encode/qualityMetrics.html) for more details.
     5. experimentQC/coverage.pdf, experimentQC/heatmeap_SpearmanCorr.pdf, experimentQC/heatmeap_PearsonCorr.pdf: See [HERE](https://deeptools.readthedocs.io/en/develop/content/list_of_tools.html) for more details.
 
@@ -108,18 +108,18 @@ Please cite in publications: Pipeline was developed by BICF from funding provide
 
 ### References
 
-  + python/3.6.1-2-anaconda [website](https://www.anaconda.com/download/#linux) [citation](docs/references.txt)
-  + trimgalore/0.4.1 [website](https://github.com/FelixKrueger/TrimGalore) [citation](docs/references.txt)
-  + cutadapt/1.9.1 [website](https://cutadapt.readthedocs.io/en/stable/index.html) [citation](docs/references.txt)
-  + bwa/intel/0.7.12 [website](http://bio-bwa.sourceforge.net/) [citation](docs/references.txt)
-  + samtools/1.6 [website](http://samtools.sourceforge.net/) [citation](docs/references.txt)
-  + sambamba/0.6.6 [website](http://lomereiter.github.io/sambamba/) [citation](docs/references.txt)
-  + bedtools/2.26.0 [website](https://bedtools.readthedocs.io/en/latest/) [citation](docs/references.txt)
-  + deeptools/2.5.0.1 [website](https://deeptools.readthedocs.io/en/develop/) [citation](docs/references.txt)
-  + phantompeakqualtools/1.2 [website](https://github.com/kundajelab/phantompeakqualtools) [citation](docs/references.txt)
-  + macs/2.1.0-20151222 [website](http://liulab.dfci.harvard.edu/MACS/) [citation](docs/references.txt)
-  + UCSC_userApps/v317 [website](https://genome.ucsc.edu/util.html) [citation](docs/references.txt)
-  + R/3.3.2-gccmkl [website](https://www.r-project.org/) [citation](docs/references.txt)
-  + meme/4.11.1-gcc-openmpi [website](http://meme-suite.org/doc/install.html?man_type=web) [citation](docs/references.txt)
-  + ChIPseeker [website](https://bioconductor.org/packages/release/bioc/html/ChIPseeker.html) [citation](docs/references.txt)
-  + DiffBind [website](https://bioconductor.org/packages/release/bioc/html/DiffBind.html) [citation](docs/references.txt)
+  + python/3.6.1-2-anaconda [website](https://www.anaconda.com/download/#linux) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + trimgalore/0.4.1 [website](https://github.com/FelixKrueger/TrimGalore) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + cutadapt/1.9.1 [website](https://cutadapt.readthedocs.io/en/stable/index.html) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + bwa/intel/0.7.12 [website](http://bio-bwa.sourceforge.net/) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + samtools/1.6 [website](http://samtools.sourceforge.net/) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + sambamba/0.6.6 [website](http://lomereiter.github.io/sambamba/) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + bedtools/2.26.0 [website](https://bedtools.readthedocs.io/en/latest/) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + deeptools/2.5.0.1 [website](https://deeptools.readthedocs.io/en/develop/) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + phantompeakqualtools/1.2 [website](https://github.com/kundajelab/phantompeakqualtools) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + macs/2.1.0-20151222 [website](http://liulab.dfci.harvard.edu/MACS/) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + UCSC_userApps/v317 [website](https://genome.ucsc.edu/util.html) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + R/3.3.2-gccmkl [website](https://www.r-project.org/) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + meme/4.11.1-gcc-openmpi [website](http://meme-suite.org/doc/install.html?man_type=web) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + ChIPseeker [website](https://bioconductor.org/packages/release/bioc/html/ChIPseeker.html) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + DiffBind [website](https://bioconductor.org/packages/release/bioc/html/DiffBind.html) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
