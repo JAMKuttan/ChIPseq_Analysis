@@ -52,6 +52,6 @@
   * Ewels P., Magnusson M., Lundin S. and Käller M. 2016. MultiQC: Summarize analysis results for multiple tools and samples in a single report. Bioinformatics 32(19): 3047–3048. doi:[10.1093/bioinformatics/btw354 ](https://dx.doi.org/10.1093/bioinformatics/btw354)
 
 17. **BICF ChIP-seq Analysis Workflow**:
-  * Venkat S. Malladi and Beibei Chen. (2019). BICF ChIP-seq Analysis Workflow (publish_1.0.0). Zenodo. doi:[10.5281/zenodo.2648845](https://doi.org/10.5281/zenodo.2648845)
+  * Spencer D. Barnes, Holly Ruess, Beibei Chen, & Venkat S. Malladi. (2019). BICF ChIP-seq Analysis Workflow (publish_1.0.4). Zenodo. doi:[10.5281/zenodo.2648844](https://doi.org/10.5281/zenodo.2648844)
 
 Please cite in publications: Pipeline was developed by BICF from funding provided by **Cancer Prevention and Research Institute of Texas (RP150596)**.
