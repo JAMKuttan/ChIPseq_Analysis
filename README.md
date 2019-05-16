@@ -1,6 +1,6 @@
 # **CHIPseq Manual**
-## Version 1.0.0
-## May 2, 2019
+## Version 1.0.5
+## May 16, 2019
 
 # BICF ChIP-seq Pipeline
 
@@ -19,7 +19,7 @@ The pipeline uses [Nextflow](https://www.nextflow.io), a bioinformatics workflow
 
 This pipeline is primarily used with a SLURM cluster on the [BioHPC Cluster](https://portal.biohpc.swmed.edu/content/). However, the pipeline should be able to run on any system that supports Nextflow.
 
-Additionally, the pipeline is designed to work with [Astrocyte Workflow System](https://astrocyte-test.biohpc.swmed.edu/static/docs/index.html) using a simple web interface.
+Additionally, the pipeline is designed to work with [Astrocyte Workflow System](https://astrocyte.biohpc.swmed.edu/static/docs/index.html) using a simple web interface.
 
 Current version of the software and issue reports are at
 https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis
@@ -130,7 +130,7 @@ diffPeaks | *_diffbind.csv | Use only for replicated samples; CSV file of peaks 
 If you find an error, please let the [BICF](mailto:BICF@UTSouthwestern.edu) know and we will add it here.
 
 ## Citation
-Please cite individual programs and versions used [HERE](docs/references.txt). Please cite in publications: Pipeline was developed by BICF from funding provided by Cancer Prevention and Research Institute of Texas (RP150596). Also, please look out for our pipeline to be published in the future [HERE](https://zenodo.org/).
+Please cite individual programs and versions used [HERE](docs/references.txt), and the pipeline doi:[10.5281/zenodo.2648844](https://doi.org/10.5281/zenodo.2648844). Please cite in publications: Pipeline was developed by BICF from funding provided by Cancer Prevention and Research Institute of Texas (RP150596).
 
 ## Programs and Versions
   + python/3.6.1-2-anaconda [website](https://www.anaconda.com/download/#linux) [citation](docs/references.txt)

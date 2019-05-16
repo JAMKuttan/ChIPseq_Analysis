@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [publish_1.0.4 ] - 2019-05-15
+## [publish_1.0.5 ] - 2019-05-16
 ### Fixed
 - Retitled documentation for skipDiff and skipMotif to be more clear
 - Add missing python module for motif search
