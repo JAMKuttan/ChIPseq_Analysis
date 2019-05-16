@@ -72,7 +72,7 @@ experimentQC | heatmeap_SpearmanCorr.pdf | plot of Spearman correlation between 
 experimentQC | heatmeap_PearsonCorr.pdf | plot of Pearson correlation between samples
 experimentQC | sample_mbs.npz | array of multiple BAM summaries
 crossReads | *.cc.plot.pdf | Plot of cross-correlation to assess signal-to-noise ratios
-crossReads | *.cc.qc | cross-correlation metrics. File [HEADER](docs/xcor_header.txt)
+crossReads | *.cc.qc | cross-correlation metrics. File [HEADER](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/xcor_header.txt)
 callPeaksMACS | pooled/*pooled.fc_signal.bw | bigwig data file; raw fold enrichment of sample/control
 callPeaksMACS | pooled/*pooled_peaks.xls | Excel file of peaks
 callPeaksMACS | pooled/*.pvalue_signal.bw | bigwig data file; sample/control signal adjusted for pvalue significance
