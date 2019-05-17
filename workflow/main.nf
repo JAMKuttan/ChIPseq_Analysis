@@ -1,5 +1,15 @@
 #!/usr/bin/env nextflow
 
+/*
+
+BICF ChIP-seq Analysis Workflow
+#### Homepage / Documentation
+https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/
+Licensed under MIT (https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/LICENSE.md)
+
+
+*/
+
 // Path to an input file, or a pattern for multiple inputs
 // Note - $baseDir is the location of this workflow file main.nf
 
