@@ -1,5 +1,5 @@
 
-Please fill in the appropriate checklist below (delete whatever is not relevant). 
+Please fill in the appropriate checklist below (delete whatever is not relevant).
 These are the most common things requested on pull requests (PRs).
 
 ## PR checklist
@@ -8,4 +8,4 @@ These are the most common things requested on pull requests (PRs).
  - [ ] Documentation in `docs` is updated
  - [ ] `CHANGELOG.md` is updated
  - [ ] `README.md` is updated
-
+ - [ ] `LICENSE.md` is updated with new contributors
