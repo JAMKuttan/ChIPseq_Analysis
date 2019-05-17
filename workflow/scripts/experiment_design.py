@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+#
+# * --------------------------------------------------------------------------
+# * Licensed under MIT (https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/LICENSE.md)
+# * --------------------------------------------------------------------------
+#
+
 '''Generate experiment design files for downstream processing.'''
 
 import argparse

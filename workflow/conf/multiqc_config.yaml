@@ -1,3 +1,15 @@
+# Custom Logo
+custom_logo: 'bicf_logo.png'
+custom_logo_url: 'https://www.utsouthwestern.edu/labs/bioinformatics/'
+custom_logo_title: 'Bioinformatics Core Facility'
+
+report_header_info:
+    - Contact E-mail: 'bicf@utsouthwestern.edu'
+    - Application Type: 'ChIP-seq'
+    - Department: 'Bioinformatic Core Facility, Department of Bioinformatics'
+    - Contributors and Licensing: 'See https://doi.org/10.5281/zenodo.2648844'
+
+
 # Title to use for the report.
 title: BICF ChIP-seq Analysis Report
 

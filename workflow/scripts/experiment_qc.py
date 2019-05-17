@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+#
+# * --------------------------------------------------------------------------
+# * Licensed under MIT (https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/LICENSE.md)
+# * --------------------------------------------------------------------------
+#
+
 '''Experiment correlation and enrichment of reads over genome-wide bins.'''
 
 

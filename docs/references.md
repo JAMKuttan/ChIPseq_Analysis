@@ -49,7 +49,7 @@
   * Ross-Innes C. S., R. Stark, A. E. Teschendorff, K. A. Holmes, H. R. Ali, M. J. Dunning,  G. D. Brown, O. Gojis, I. O. Ellis, A. R. Green, S. Ali, S. Chin, C. Palmieri, C. Caldas, and J. S. Carroll. 2012. Differential oestrogen receptor binding is associated with clinical outcome in breast cancer. Nature 481: 389-393. doi:[10.1038/nature10730](https://dx.doi.org/10.1038/nature10730)
 
 16. **MultiQc**:
-  * Ewels P., Magnusson M., Lundin S. and Käller M. 2016. MultiQC: Summarize analysis results for multiple tools and samples in a single report. Bioinformatics 32(19): 3047–3048. doi:[10.1093/bioinformatics/btw354 ](https://dx.doi.org/10.1093/bioinformatics/btw354)
+  * Ewels P., Magnusson M., Lundin S. and Käller M. 2016. MultiQC: Summarize analysis results for multiple tools and samples in a single report. Bioinformatics 32(19): 3047–3048. doi:[10.1093/bioinformatics/btw354](https://dx.doi.org/10.1093/bioinformatics/btw354)
 
 17. **BICF ChIP-seq Analysis Workflow**:
   * Spencer D. Barnes, Holly Ruess, Beibei Chen, & Venkat S. Malladi. (2019). BICF ChIP-seq Analysis Workflow (publish_1.0.5). Zenodo. doi:[10.5281/zenodo.2648844](https://doi.org/10.5281/zenodo.2648844)

@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#
+# * --------------------------------------------------------------------------
+# * Licensed under MIT (https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/LICENSE.md)
+# * --------------------------------------------------------------------------
+#
+
 '''Make YAML of software versions.'''
 
 from __future__ import print_function
