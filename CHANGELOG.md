@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- MIT LICENSE
 
 ## [publish_1.0.5 ] - 2019-05-16
 ### Fixed
