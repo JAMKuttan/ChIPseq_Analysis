@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+#
+# * --------------------------------------------------------------------------
+# * Licensed under MIT (https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/LICENSE.md)
+# * --------------------------------------------------------------------------
+#
+
 '''Make header for HTML of references.'''
 
 import argparse
