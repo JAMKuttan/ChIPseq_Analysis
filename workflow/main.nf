@@ -34,7 +34,7 @@ if (params.astrocyte) {
   referenceLocation = "/project/shared/bicf_workflow_ref"
   params.bwaIndex = "$referenceLocation/$params.genome"
   params.chromSizes = "$referenceLocation/$params.genome/genomefile.txt"
-  params.fasta = "$referenceLocation/$params.genome/genome.fa.txt"
+  params.fasta = "$referenceLocation/$params.genome/genome.fa"
   if (params.genome == 'GRCh37' || params.genome == 'GRCh38') {
     params.genomeSize = 'hs'
   } else if (params.genome == 'GRCm38') {
