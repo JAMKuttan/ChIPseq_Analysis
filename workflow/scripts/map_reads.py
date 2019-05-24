@@ -218,6 +218,13 @@ def main():
             shlex.split("samtools flagstat %s" % (bam_filename)),
             stdout=temp_file)
 
+    #Genome/Bad fastq File Check
+    file_check = open(bam_mapstats_filename).readlines()
+    percent = file_check[4].split('(')[1]
+    percent = percent.split('%')[0]
+    if float(percent) < 10:
+        raise Exception ('Mapped Genes too low: Check for correct Genotype')
+
     # Remove sai files
     for sai_file in sai:
         os.remove(sai_file)
