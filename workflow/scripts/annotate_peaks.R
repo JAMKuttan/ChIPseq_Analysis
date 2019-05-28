@@ -1,10 +1,10 @@
 #!/bin/Rscript
 
-/*
- * --------------------------------------------------------------------------
- * Licensed under MIT (https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/LICENSE.md)
- * --------------------------------------------------------------------------
- */
+#*
+#* --------------------------------------------------------------------------
+#* Licensed under MIT (https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/LICENSE.md)
+#* --------------------------------------------------------------------------
+#*
 
 # Load libraries
 library("ChIPseeker")
