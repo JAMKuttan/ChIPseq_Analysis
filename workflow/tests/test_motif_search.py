@@ -21,7 +21,7 @@ def test_limited_peaks_singleend():
 def test_motif_search_singleend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC_memechip', 'ENCSR238SGC.fa'))
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR238SGC_memechip', 'index.html'))
-
+    assert os.path.getsize(os.path.join(test_output_path, 'ENCSR238SGC_memechip', 'ENCSR238SGC.fa')) > 0
 
 @pytest.mark.singleskip_true
 def test_motif_search_singleend():
@@ -39,3 +39,4 @@ def test_limited_peaks_pairedend():
 def test_motif_search_pairedend():
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA_memechip',  'ENCSR729LGA.fa'))
     assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA_memechip', 'index.html'))
+    assert os.path.getsize(os.path.join(test_output_path, 'ENCSR729LGA_memechip', 'ENCSR729LGA.fa')) > 0

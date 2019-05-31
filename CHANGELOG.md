@@ -3,8 +3,15 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [publish_1.0.6 ] - 2019-05-31
 ### Added
 - MIT LICENSE
+- Check for correct genome input
+- Check for correct output for motif serach
+
+### Fixed
+- Path to reference fasta file
 
 ## [publish_1.0.5 ] - 2019-05-16
 ### Fixed

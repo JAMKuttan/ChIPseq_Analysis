@@ -1,6 +1,6 @@
 # **CHIPseq Manual**
-## Version 1.0.5
-## May 16, 2019
+## Version 1.0.6
+## May 31, 2019
 
 # BICF ChIP-seq Pipeline
 
