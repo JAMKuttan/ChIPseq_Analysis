@@ -301,31 +301,32 @@ def main():
         # if so replace with pool_control
         # unless single control was used
 
-        if not single_control:
-            path_to_pool_control = cwd + '/' + pool_control
-            if control_df.values.max() > cutoff_ratio:
-                logger.info("Number of reads in controls differ by " +
-                            " > factor of %f. Using pooled controls." % (cutoff_ratio))
-                design_new_df['control_tag_align'] = path_to_pool_control
-            else:
-                for index, row in design_new_df.iterrows():
-                    exp_no_reads = utils.count_lines(row['tag_align'])
-                    con_no_reads = utils.count_lines(row['control_tag_align'])
-                    if con_no_reads < exp_no_reads:
-                        logger.info("Fewer reads in control than experiment." +
-                                    "Using pooled controls for replicate %s."
-                                    % row['replicate'])
+
+    if not single_control:
+        path_to_pool_control = cwd + '/' + pool_control
+        if control_df.values.max() > cutoff_ratio:
+            logger.info("Number of reads in controls differ by " +
+                        " > factor of %f. Using pooled controls." % (cutoff_ratio))
+            design_new_df['control_tag_align'] = path_to_pool_control
+        else:
+            for index, row in design_new_df.iterrows():
+                exp_no_reads = utils.count_lines(row['tag_align'])
+                con_no_reads = utils.count_lines(row['control_tag_align'])
+                if con_no_reads < exp_no_reads:
+                    logger.info("Fewer reads in control than experiment." +
+                                "Using pooled controls for replicate %s."
+                                % row['replicate'])
+                    design_new_df.loc[index, 'control_tag_align'] = \
+                                                        path_to_pool_control
+                else:
+                    if paired:
+                        control = row['control_tag_align']
+                        control_basename = os.path.basename(
+                            utils.strip_extensions(control, STRIP_EXTENSIONS))
+                        control_tmp = bedpe_to_tagalign(control, control_basename)
+                        path_to_control = cwd + '/' + control_tmp
                         design_new_df.loc[index, 'control_tag_align'] = \
-                                                            path_to_pool_control
-                    else:
-                        if paired:
-                            control = row['control_tag_align']
-                            control_basename = os.path.basename(
-                                utils.strip_extensions(control, STRIP_EXTENSIONS))
-                            control_tmp = bedpe_to_tagalign(control, control_basename)
-                            path_to_control = cwd + '/' + control_tmp
-                            design_new_df.loc[index, 'control_tag_align'] = \
-                                                                path_to_control
+                                                            path_to_control
 
         else:
             path_to_pool_control = cwd + '/' +  pool_control
