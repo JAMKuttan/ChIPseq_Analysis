@@ -130,7 +130,7 @@ diffPeaks | *_diffbind.csv | Use only for replicated samples; CSV file of peaks 
 If you find an error, please let the [BICF](mailto:BICF@UTSouthwestern.edu) know and we will add it here.
 
 ## Citation
-Please cite individual programs and versions used [HERE](docs/references.txt), and the pipeline doi:[10.5281/zenodo.2648844](https://doi.org/10.5281/zenodo.2648844). Please cite in publications: Pipeline was developed by BICF from funding provided by Cancer Prevention and Research Institute of Texas (RP150596).
+Please cite individual programs and versions used [HERE](docs/references.md), and the pipeline doi:[10.5281/zenodo.2648844](https://doi.org/10.5281/zenodo.2648844). Please cite in publications: Pipeline was developed by BICF from funding provided by Cancer Prevention and Research Institute of Texas (RP150596).
 
 ## Programs and Versions
   + python/3.6.1-2-anaconda [website](https://www.anaconda.com/download/#linux) [citation](docs/references.txt)
