@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - MIT LICENSE
+- Fix references.md link in citation of README.md
+- Add Nextflow to references.md
 
 ## [publish_1.0.5 ] - 2019-05-16
 ### Fixed
