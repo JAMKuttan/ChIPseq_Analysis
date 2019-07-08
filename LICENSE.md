@@ -4,7 +4,7 @@ Copyright (c) 2019, University of Texas Southwestern Medical Center.
 
 All rights reserved.
 
-Contributors: Spencer D. Barnes, Holly Ruess, Beibei Chen, Venkat S. Malladi
+Contributors: Spencer D. Barnes, Holly Ruess, Jeremy A. Mathews, Beibei Chen, Venkat S. Malladi
 
 Department: Bioinformatic Core Facility, Department of Bioinformatics
 
