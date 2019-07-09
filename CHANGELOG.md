@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Fix references.md link in citation of README.md
+- Add Nextflow to references.md
 
 ## [publish_1.0.6 ] - 2019-05-31
 ### Added

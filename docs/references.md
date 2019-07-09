@@ -54,4 +54,7 @@
 17. **BICF ChIP-seq Analysis Workflow**:
   * Spencer D. Barnes, Holly Ruess, Jeremy A. Mathews, Beibei Chen, & Venkat S. Malladi. (2019). BICF ChIP-seq Analysis Workflow (publish_1.0.5). Zenodo. doi:[10.5281/zenodo.2648844](https://doi.org/10.5281/zenodo.2648844)
 
+18. **Nextflow**:
+  * Di Tommaso, P., Chatzou, M., Floden, E. W., Barja, P. P., Palumbo, E., & Notredame, C. (2017). Nextflow enables reproducible computational workflows. Nature biotechnology, 35(4), 316.
+
 Please cite in publications: Pipeline was developed by BICF from funding provided by **Cancer Prevention and Research Institute of Texas (RP150596)**.
