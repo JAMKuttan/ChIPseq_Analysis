@@ -100,3 +100,13 @@ ENV/
 
 # Mac OS
 .DS_Store
+
+# nextflow analysis folders/files
+pipeline_trace*.txt*
+.nextflow*.log*
+report*.html*
+timeline*.html*
+/workflow/output/*
+/work/*
+/test_data/*
+/.nextflow/*

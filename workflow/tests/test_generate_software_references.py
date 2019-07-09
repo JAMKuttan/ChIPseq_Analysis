@@ -20,4 +20,4 @@ def test_software_references_output():
     with open(software_references, 'r') as stream:
         data_loaded = yaml.load(stream)
 
-    assert len(data_loaded['data'].split('<ul>')) == 18
+    assert len(data_loaded['data'].split('<ul>')) == 19
