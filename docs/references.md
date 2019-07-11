@@ -52,9 +52,9 @@
   * Ewels P., Magnusson M., Lundin S. and Käller M. 2016. MultiQC: Summarize analysis results for multiple tools and samples in a single report. Bioinformatics 32(19): 3047–3048. doi:[10.1093/bioinformatics/btw354](https://dx.doi.org/10.1093/bioinformatics/btw354)
 
 17. **BICF ChIP-seq Analysis Workflow**:
-  * Spencer D. Barnes, Holly Ruess, Jeremy A. Mathews, Beibei Chen, & Venkat S. Malladi. (2019). BICF ChIP-seq Analysis Workflow (publish_1.0.5). Zenodo. doi:[10.5281/zenodo.2648844](https://doi.org/10.5281/zenodo.2648844)
+  * Spencer D. Barnes, Holly Ruess, Jeremy A. Mathews, Beibei Chen, and Venkat S. Malladi. 2019. BICF ChIP-seq Analysis Workflow (publish_1.0.5). Zenodo. doi:[10.5281/zenodo.2648844](https://doi.org/10.5281/zenodo.2648844)
 
 18. **Nextflow**:
-  * Di Tommaso, P., Chatzou, M., Floden, E. W., Barja, P. P., Palumbo, E., & Notredame, C. (2017). Nextflow enables reproducible computational workflows. Nature biotechnology, 35(4), 316.
+  * Di Tommaso, P., Chatzou, M., Floden, E. W., Barja, P. P., Palumbo, E., and Notredame, C. 2017. Nextflow enables reproducible computational workflows. Nature biotechnology, 35(4), 316.
 
 Please cite in publications: Pipeline was developed by BICF from funding provided by **Cancer Prevention and Research Institute of Texas (RP150596)**.
