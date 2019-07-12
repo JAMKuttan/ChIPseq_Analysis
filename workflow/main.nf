@@ -25,8 +25,10 @@ params.topPeakCount = 600
 params.astrocyte = false
 params.skipDiff = false
 params.skipMotif = false
+params.skipPlotProfile = false
 params.references = "$baseDir/../docs/references.md"
 params.multiqc =  "$baseDir/conf/multiqc_config.yaml"
+params.gtf = "/project/shared/bicf_workflow_ref/$params.genome/gencode.gtf"
 
 // Assign variables if astrocyte
 if (params.astrocyte) {
@@ -78,8 +80,10 @@ extendReadsLen = params.extendReadsLen
 topPeakCount = params.topPeakCount
 skipDiff = params.skipDiff
 skipMotif = params.skipMotif
+skipPlotProfile = params.skipPlotProfile
 references = params.references
 multiqc = params.multiqc
+gtfFile = Channel.fromPath(params.gtf)
 
 // Check design file for errors
 process checkDesignFile {
@@ -424,6 +428,7 @@ process callPeaksMACS {
   set sampleId, file('*.narrowPeak'), file('*.fc_signal.bw'), file('*.pvalue_signal.bw'), experimentId, biosample, factor, treatment, replicate, controlId into experimentPeaks
   file '*.xls' into callPeaksMACSsummit
   file('version_*.txt') into callPeaksMACSVersions
+  file("*.fc_signal.bw") into bigwigs
 
   script:
 
@@ -455,6 +460,26 @@ peaksDesign = experimentPeaks
               .map{ sampleId, peak, fcSignal, pvalueSignal, experimentId, biosample, factor, treatment, replicate, controlId ->
               "$sampleId\t$peak\t$fcSignal\t$pvalueSignal\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
               .collectFile(name:'design_peak.tsv', seed:"sample_id\tpeaks\tfc_signal\tpvalue_signal\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$outDir/design")
+
+//plotProfile
+process plotProfile {
+  publishDir "$outDir/${task.process}", mode: 'copy'
+
+  input:
+
+  file ("*.pooled.fc_signal.bw") from bigwigs.collect()
+  file gtf from gtfFile
+
+  when:
+
+  !skipPlotProfile
+
+  script:
+  """
+  module load deeptools/2.5.0.1
+  bash $baseDir/scripts/plotProfile.sh
+  """
+}
 
 // Calculate Consensus Peaks
 process consensusPeaks {
@@ -575,7 +600,6 @@ process diffPeaks {
 
 // Generate Multiqc Report, gerernate Software Versions and references
 process multiqcReport {
-
   publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
@@ -611,6 +635,7 @@ process multiqcReport {
   module load multiqc/1.7
   echo $workflow.nextflow.version > version_nextflow.txt
   multiqc --version > version_multiqc.txt
+  python --version &> version_python.txt
   python3 $baseDir/scripts/generate_references.py -r $references -o software_references
   python3 $baseDir/scripts/generate_versions.py -o software_versions
   multiqc -c $multiqc .
