@@ -142,6 +142,15 @@ workflow_parameters:
     description: |
       Skip motif calling
 
+  - id: skipPlotProfile
+    type: select
+    required: true
+    choices:
+      - [ 'true', 'true']
+      - [ 'false', 'false']
+    description: |
+      Skip Plot Profile Analysis
+
   - id: astrocyte
     type: select
     choices:
