@@ -470,6 +470,10 @@ process plotProfile {
   file ("*.pooled.fc_signal.bw") from bigwigs.collect()
   file gtf from gtfFile
 
+  output:
+
+  file("*.png") into plotProfile
+
   when:
 
   !skipPlotProfile
