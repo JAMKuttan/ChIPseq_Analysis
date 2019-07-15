@@ -346,10 +346,6 @@ def main():
     if not single_control:
         control_df = get_read_count_ratio(design_df)
         control_files = design_df.control_tag_align.unique()
-l_df = get_read_count_ratio(design_df)
-        control_files = design_df.control_tag_align.unique()
-        pool_control = pool(control_files, "pool_control", paired)
-
         pool_control = pool(control_files, "pool_control", paired)
     else:
         pool_control = design_df.control_tag_align.unique()[0]
