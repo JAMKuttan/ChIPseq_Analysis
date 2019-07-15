@@ -55,15 +55,14 @@ def test_check_controls(design_experiment):
 
 
 @pytest.mark.unit
-def test_check_controls_no(design_experiment_2):
-    no_controls = pool_and_psuedoreplicate.check_controls(design_experiment_2)
+def test_check_controls_single(design_experiment_3):
+    no_controls = pool_and_psuedoreplicate.check_controls(design_experiment_3)
     assert no_controls == 1
 
 
 @pytest.mark.unit
-def test_check_controls_single(design_experiment_3):
-    no_controls = pool_and_psuedoreplicate.check_controls(design_experiment_3)
-    assert no_controls == 1
+def test_single_rep(design_experiment_2):
+    single_rep = pool_and_psuedoreplicate.main(design_experiment_2, "true", 1.2)
 
 
 @pytest.mark.singleend
