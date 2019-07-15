@@ -172,9 +172,56 @@ def self_psuedoreplication(tag_file, prefix, paired):
     return pseudoreplicate_dict
 
 
-def generate_design(design_df, replicated, single_control, pool_control, paired, cutoff_ratio):
+def main():
+    args = get_args()
+    paired = args.paired
+    design = args.design
+    cutoff_ratio = args.cutoff
+
+    # Create a file handler
+    handler = logging.FileHandler('experiment_generation.log')
+    logger.addHandler(handler)
+
+    # Read files as dataframes
+    design_df = pd.read_csv(design, sep='\t')
+
     # Get current directory to build paths
-    cwd = os.getcwd()
+    cwd = os.getcwd() 
+
+    # Check Number of replicates and replicates
+    no_reps = check_replicates(design_df)
+    no_unique_controls = check_controls(design_df)
+
+    if no_reps == 1:
+        logger.info("No other replicate specified "
+                    "so processing as an unreplicated experiment.")
+        replicated = False
+
+    else:
+        logger.info("Multiple replicates specified "
+                    "so processing as a replicated experiment.")
+        replicated = True
+
+    if no_unique_controls == 1 and replicated:
+        logger.info("Only a single control was specified "
+                    "so using same control for replicates, pool and psuedoreplicates.")
+        single_control = True
+    else:
+        logger.info("Will merge only unique controls for pooled.")
+        single_control = False
+
+    # Pool the controls for checking
+    if not single_control:
+        control_df = get_read_count_ratio(design_df)
+        control_files = design_df.control_tag_align.unique()
+        pool_control = pool(control_files, "pool_control", paired)
+    else:
+        pool_control = design_df.control_tag_align.unique()[0]
+
+    # if paired_end make tagAlign
+    if paired:
+        pool_control_tmp = bedpe_to_tagalign(pool_control, "pool_control")
+        pool_control = pool_control_tmp
 
     if not replicated:
 
@@ -305,58 +352,6 @@ def generate_design(design_df, replicated, single_control, pool_control, paired,
     # Write out new dataframe
     design_new_df.to_csv(experiment_id + '_ppr.tsv',
                          header=True, sep='\t', index=False)
-
-
-def main():
-    args = get_args()
-    paired = args.paired
-    design = args.design
-    cutoff_ratio = args.cutoff
-
-    # Create a file handler
-    handler = logging.FileHandler('experiment_generation.log')
-    logger.addHandler(handler)
-
-    # Read files as dataframes
-    design_df = pd.read_csv(design, sep='\t')
-
-    # Check Number of replicates and replicates
-    no_reps = check_replicates(design_df)
-    no_unique_controls = check_controls(design_df)
-
-    if no_reps == 1:
-        logger.info("No other replicate specified "
-                    "so processing as an unreplicated experiment.")
-        replicated = False
-
-    else:
-        logger.info("Multiple replicates specified "
-                    "so processing as a replicated experiment.")
-        replicated = True
-
-    if no_unique_controls == 1 and replicated:
-        logger.info("Only a single control was specified "
-                    "so using same control for replicates, pool and psuedoreplicates.")
-        single_control = True
-    else:
-        logger.info("Will merge only unique controls for pooled.")
-        single_control = False
-
-    # Pool the controls for checking
-    if not single_control:
-        control_df = get_read_count_ratio(design_df)
-        control_files = design_df.control_tag_align.unique()
-        pool_control = pool(control_files, "pool_control", paired)
-    else:
-        pool_control = design_df.control_tag_align.unique()[0]
-
-    # if paired_end make tagAlign
-    if paired:
-        pool_control_tmp = bedpe_to_tagalign(pool_control, "pool_control")
-        pool_control = pool_control_tmp
-
-    # Psuedoreplicate and update design accordingly
-    generate_design(design_df, replicated, single_control, pool_control, paired, cutoff_ratio)
 
 
 if __name__ == '__main__':
