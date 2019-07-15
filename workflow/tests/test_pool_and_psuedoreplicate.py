@@ -64,8 +64,8 @@ def test_check_controls_single(design_experiment_3):
 def test_generate_design(design_experiment_2):
     control_df = pool_and_psuedoreplicate.get_read_count_ratio(design_experiment_2)
     control_files = design_experiment_2.control_tag_align.unique()
-    pool_control = pool_and_psuedoreplicate.pool(control_files, "pool_control", true)
-    new_design = pool_and_psuedoreplicate.generate_design(design_experiment_2, false, false, pool_control, true, 1.2)
+    pool_control = pool_and_psuedoreplicate.pool(control_files, "pool_control", "true")
+    new_design = pool_and_psuedoreplicate.generate_design(design_experiment_2, "false", "false", pool_control, "true", 1.2)
 
 
 @pytest.mark.singleend
