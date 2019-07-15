@@ -463,7 +463,7 @@ peaksDesign = experimentPeaks
 
 //plotProfile
 process plotProfile {
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/experimentQC", mode: 'copy'
 
   input:
 
@@ -472,7 +472,7 @@ process plotProfile {
 
   output:
 
-  file("*.png") into plotProfile
+  file(".{png,gz}") into plotProfile
 
   when:
 
