@@ -64,7 +64,6 @@ def test_check_controls_single(design_experiment_3):
 @pytest.mark.unit
 def test_single_rep(design_experiment_2):
     sys.argv.extend(['--design', 'design_experiment_2'])
-    sys.argv.extend(['--paired', 'true'])
     single_rep = pool_and_psuedoreplicate.main()
 
 
