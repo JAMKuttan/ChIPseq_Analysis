@@ -472,7 +472,7 @@ process plotProfile {
 
   output:
 
-  file(".{png,gz}") into plotProfile
+  file '*.{png,gz}' into plotProfile
 
   when:
 
