@@ -63,8 +63,8 @@ def test_check_controls_single(design_experiment_3):
 
 @pytest.mark.unit
 def test_single_rep(design_experiment_2):
-    sys.argv[1](['--design', 'design_experiment_2'])
-    single_rep = pool_and_psuedoreplicate.main()
+    cwd = os.getcwd()
+    single_rep = pool_and_psuedoreplicate.generate_design('false', 1.2, design_experiment_2, cwd, 1, 1)
 
 
 @pytest.mark.singleend

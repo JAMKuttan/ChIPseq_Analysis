@@ -172,26 +172,7 @@ def self_psuedoreplication(tag_file, prefix, paired):
     return pseudoreplicate_dict
 
 
-def main():
-    args = get_args()
-    paired = args.paired
-    design = args.design
-    cutoff_ratio = args.cutoff
-
-    # Create a file handler
-    handler = logging.FileHandler('experiment_generation.log')
-    logger.addHandler(handler)
-
-    # Read files as dataframes
-    design_df = pd.read_csv(design, sep='\t')
-
-    # Get current directory to build paths
-    cwd = os.getcwd() 
-
-    # Check Number of replicates and replicates
-    no_reps = check_replicates(design_df)
-    no_unique_controls = check_controls(design_df)
-
+def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_controls):
     if no_reps == 1:
         logger.info("No other replicate specified "
                     "so processing as an unreplicated experiment.")
@@ -342,12 +323,64 @@ def main():
         design_new_df = design_new_df.append(tmp_metadata)
 
     # Add in pool experiment
+    tmp_metadata['sample_id'] = experiment_id + '_pooled'    else:
+        path_to_pool_control = cwd + '/' +  pool_control
+        design_new_df['control_tag_align'] = path_to_pool_control
+
+    # Add in pseudo replicates
+    tmp_metadata = design_new_df.loc[0].copy()
+    tmp_metadata['control_tag_align'] = path_to_pool_control
+    for rep, pseudorep_file in pool_pseudoreplicates_dict.items():
+        tmp_metadata['sample_id'] = experiment_id + '_pr' + str(rep)
+        tmp_metadata['replicate'] = str(rep) + '_pr'
+        tmp_metadata['xcor'] = 'Calculate'
+        path_to_file = cwd + '/' + pseudorep_file
+        tmp_metadata['tag_align'] = path_to_file
+        design_new_df = design_new_df.append(tmp_metadata)
+
+    # Add in pool experiment
     tmp_metadata['sample_id'] = experiment_id + '_pooled'
     tmp_metadata['replicate'] = 'pooled'
     tmp_metadata['xcor'] = 'Calculate'
     path_to_file = cwd + '/' + pool_experiment_se
     tmp_metadata['tag_align'] = path_to_file
     design_new_df = design_new_df.append(tmp_metadata)
+
+    # Write out new dataframe
+    design_new_df.to_csv(experiment_id + '_ppr.tsv',
+                         header=True, sep='\t', index=False)
+
+    tmp_metadata['replicate'] = 'pooled'
+    tmp_metadata['xcor'] = 'Calculate'
+    path_to_file = cwd + '/' + pool_experiment_se
+    tmp_metadata['tag_align'] = path_to_file
+    design_new_df = design_new_df.append(tmp_metadata)
+
+    return design_new_df
+
+
+def main():
+    args = get_args()
+    paired = args.paired
+    design = args.design
+    cutoff_ratio = args.cutoff
+
+    # Create a file handler
+    handler = logging.FileHandler('experiment_generation.log')
+    logger.addHandler(handler)
+
+    # Read files as dataframes
+    design_df = pd.read_csv(design, sep='\t')
+
+    # Get current directory to build paths
+    cwd = os.getcwd() 
+
+    # Check Number of replicates and replicates
+    no_reps = check_replicates(design_df)
+    no_unique_controls = check_controls(design_df)
+
+    # Generate new design file
+    design_new_df = generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_controls)
 
     # Write out new dataframe
     design_new_df.to_csv(experiment_id + '_ppr.tsv',
