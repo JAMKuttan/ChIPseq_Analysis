@@ -64,7 +64,7 @@ def test_check_controls_single(design_experiment_3):
 @pytest.mark.unit
 def test_single_rep(design_experiment_2):
     cwd = os.getcwd()
-    shutil.copy('/work/BICF/s189701/chipseq_analysis/test_data/B_1.bedse.gz', cwd)
+    shutil.copy('/project/shared/bicf_workflow_ref/workflow_testdata/chipseq/B_1.bedse.gz', cwd)
     single_rep = pool_and_psuedoreplicate.generate_design('false', 1.2, design_experiment_2, cwd, 1, 1)
 
 
