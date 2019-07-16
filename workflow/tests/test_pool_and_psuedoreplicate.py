@@ -62,7 +62,6 @@ def test_check_controls_single(design_experiment_3):
 
 @pytest.mark.unit
 def test_single_rep(design_experiment_2):
-    args = self.parser.parse_args(['true', design_experiment_2, 1.2])
     single_rep = pool_and_psuedoreplicate.main(['true', design_experiment_2, 1.2])
 
 
