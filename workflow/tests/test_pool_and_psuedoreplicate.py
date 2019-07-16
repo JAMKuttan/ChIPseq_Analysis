@@ -5,6 +5,7 @@ import pandas as pd
 from io import StringIO
 import os
 import pool_and_psuedoreplicate
+import shutil
 
 test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/design/'
@@ -63,8 +64,7 @@ def test_check_controls_single(design_experiment_3):
 @pytest.mark.unit
 def test_single_rep(design_experiment_2):
     cwd = os.getcwd()
-    B_1 = open(cwd + '/B_1.bedse.gz', "w+")
-    B_1.close()
+    shutil.copy('/work/BICF/s189701/chipseq_analysis/test_data/B_1.bedse.gz', cwd)
     single_rep = pool_and_psuedoreplicate.generate_design('false', 1.2, design_experiment_2, cwd, 1, 1)
 
 
