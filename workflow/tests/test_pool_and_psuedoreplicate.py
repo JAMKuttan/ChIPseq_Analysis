@@ -10,11 +10,10 @@ import shutil
 test_output_path = os.path.dirname(os.path.abspath(__file__)) + \
                 '/../output/design/'
 
-DESIGN_STRING = """sample_id\ttag_align\txcor\tbiosample\tfactor\ttreatment\treplicate\tcontrol_tag_align
-A_1\tA_1.bedse.gz\tA_1.cc.qc\tLiver\tH3K27ac\tNone\t1\tB_1.bedse.gz
-A_2\tA_2.bedse.gz\tA_2.cc.qc\tLiver\tH3K27ac\tNone\t2\tB_2.bedse.gz
+DESIGN_STRING = """sample_id\tse_tag_align\ttag_align\txcor\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\tcontrol_tag_align
+A_1\tA_1.tagAlign.gz\tA_1.bedse.gz\tA_1.cc.qc\tA\tLiver\tH3K27ac\tNone\t1\tB_1\tB_1.bedse.gz
+A_2\tA_2.tagAlign.gz\tA_2.bedse.gz\tA_2.cc.qc\tA\tLiver\tH3K27ac\tNone\t2\tB_2\tB_2.bedse.gz
 """
-
 
 @pytest.fixture
 def design_experiment():
@@ -64,7 +63,7 @@ def test_check_controls_single(design_experiment_3):
 @pytest.mark.unit
 def test_single_rep(design_experiment_2):
     cwd = os.getcwd()
-    shutil.copy('/project/shared/bicf_workflow_ref/workflow_testdata/chipseq/B_1.bedse.gz', cwd)
+    shutil.copy('/../../test_data/B_1.bedse.gz', cwd)
     single_rep = pool_and_psuedoreplicate.generate_design('false', 1.2, design_experiment_2, cwd, 1, 1)
 
 
