@@ -63,7 +63,7 @@ def test_check_controls_single(design_experiment_3):
 @pytest.mark.unit
 def test_single_rep(design_experiment_2):
     cwd = os.getcwd()
-    shutil.copy(test_output_path + '/../../test_data/B_1.bedse.gz', cwd)
+    shutil.copy(test_output_path + '../../../test_data/B_1.bedse.gz', cwd)
     single_rep = pool_and_psuedoreplicate.generate_design('false', 1.2, design_experiment_2, cwd, 1, 1)
 
 
