@@ -67,6 +67,8 @@ def test_single_rep(design_experiment_2):
     cwd = os.getcwd()
     shutil.copy(test_design_path + 'A_1.bedse.gz', cwd)
     shutil.copy(test_design_path + 'B_1.bedse.gz', cwd)
+    shutil.copy(test_design_path + 'A_1.tagAlign.gz', cwd)
+    shutil.copy(test_design_path + 'B_1.tagAlign.gz', cwd)
     single_rep = pool_and_psuedoreplicate.generate_design('false', 1.2, design_experiment_2, cwd, 1, 1)
 
 

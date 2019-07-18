@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 - Fix references.md link in citation of README.md
 - Add Nextflow to references.md
 - Fix pool_and_psuedoreplicate.py to run single experiment
+- Add test data
 
 ## [publish_1.0.6 ] - 2019-05-31
 ### Added
