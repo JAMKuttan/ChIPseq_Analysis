@@ -1,8 +1,8 @@
 #!/bin/bash
 #plotProfile.sh
 
-bws=`ls *.bw`
-gtf=`ls *.gtf *.bed`
+bws=$(ls *.bw)
+gtf=$(ls *.gtf *.bed)
 
 computeMatrix reference-point \
 	--referencePoint TSS \

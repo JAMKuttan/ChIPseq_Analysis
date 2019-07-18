@@ -116,6 +116,8 @@ diffPeaks | normcount_peaksets.txt | Use only for replicated samples; peak set v
 diffPeaks | pca.pdf | Use only for replicated samples; PCA of peak location and peak intensity
 diffPeaks | *_diffbind.bed | Use only for replicated samples; bed file of peak locations between replicates
 diffPeaks | *_diffbind.csv | Use only for replicated samples; CSV file of peaks between replicates
+plotProfile | plotProfile.png | Plot profile of the TSS region
+plotProfile | computeMatrix.gz | Compute Matrix from deeptools to create custom plots other than plotProfile
 
 ## Common Quality Control Metrics
   + These are the list of files that should be reviewed before continuing on with the CHIPseq experiment. If your experiment fails any of these metrics, you should pause and re-evaluate whether the data should remain in the study.
