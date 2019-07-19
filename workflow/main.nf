@@ -25,6 +25,7 @@ params.topPeakCount = 600
 params.astrocyte = false
 params.skipDiff = false
 params.skipMotif = false
+params.skipPlotProfile = false
 params.references = "$baseDir/../docs/references.md"
 params.multiqc =  "$baseDir/conf/multiqc_config.yaml"
 
@@ -35,6 +36,7 @@ if (params.astrocyte) {
   params.bwaIndex = "$referenceLocation/$params.genome"
   params.chromSizes = "$referenceLocation/$params.genome/genomefile.txt"
   params.fasta = "$referenceLocation/$params.genome/genome.fa"
+  params.gtf = "$referenceLocation/$params.genome/gencode.gtf"
   if (params.genome == 'GRCh37' || params.genome == 'GRCh38') {
     params.genomeSize = 'hs'
   } else if (params.genome == 'GRCm38') {
@@ -45,6 +47,7 @@ if (params.astrocyte) {
     params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
     params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
     params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
+    params.gtf = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 }
 
 
@@ -78,8 +81,10 @@ extendReadsLen = params.extendReadsLen
 topPeakCount = params.topPeakCount
 skipDiff = params.skipDiff
 skipMotif = params.skipMotif
+skipPlotProfile = params.skipPlotProfile
 references = params.references
 multiqc = params.multiqc
+gtfFile = Channel.fromPath(params.gtf)
 
 // Check design file for errors
 process checkDesignFile {
@@ -424,6 +429,7 @@ process callPeaksMACS {
   set sampleId, file('*.narrowPeak'), file('*.fc_signal.bw'), file('*.pvalue_signal.bw'), experimentId, biosample, factor, treatment, replicate, controlId into experimentPeaks
   file '*.xls' into callPeaksMACSsummit
   file('version_*.txt') into callPeaksMACSVersions
+  file("*.fc_signal.bw") into bigwigs
 
   script:
 
@@ -455,6 +461,30 @@ peaksDesign = experimentPeaks
               .map{ sampleId, peak, fcSignal, pvalueSignal, experimentId, biosample, factor, treatment, replicate, controlId ->
               "$sampleId\t$peak\t$fcSignal\t$pvalueSignal\t$experimentId\t$biosample\t$factor\t$treatment\t$replicate\t$controlId\n"}
               .collectFile(name:'design_peak.tsv', seed:"sample_id\tpeaks\tfc_signal\tpvalue_signal\texperiment_id\tbiosample\tfactor\ttreatment\treplicate\tcontrol_id\n", storeDir:"$outDir/design")
+
+//plotProfile
+process plotProfile {
+  publishDir "$outDir/experimentQC", mode: 'copy'
+
+  input:
+
+  file ("*.pooled.fc_signal.bw") from bigwigs.collect()
+  file gtf from gtfFile
+
+  output:
+
+  file '*.{png,gz}' into plotProfile
+
+  when:
+
+  !skipPlotProfile
+
+  script:
+  """
+  module load deeptools/2.5.0.1
+  bash $baseDir/scripts/plotProfile.sh
+  """
+}
 
 // Calculate Consensus Peaks
 process consensusPeaks {
@@ -575,7 +605,6 @@ process diffPeaks {
 
 // Generate Multiqc Report, gerernate Software Versions and references
 process multiqcReport {
-
   publishDir "$outDir/${task.process}", mode: 'copy'
 
   input:
@@ -611,6 +640,7 @@ process multiqcReport {
   module load multiqc/1.7
   echo $workflow.nextflow.version > version_nextflow.txt
   multiqc --version > version_multiqc.txt
+  python --version &> version_python.txt
   python3 $baseDir/scripts/generate_references.py -r $references -o software_references
   python3 $baseDir/scripts/generate_versions.py -o software_versions
   multiqc -c $multiqc .

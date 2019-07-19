@@ -301,54 +301,55 @@ def main():
         # if so replace with pool_control
         # unless single control was used
 
-        if not single_control:
-            path_to_pool_control = cwd + '/' + pool_control
-            if control_df.values.max() > cutoff_ratio:
-                logger.info("Number of reads in controls differ by " +
-                            " > factor of %f. Using pooled controls." % (cutoff_ratio))
-                design_new_df['control_tag_align'] = path_to_pool_control
-            else:
-                for index, row in design_new_df.iterrows():
-                    exp_no_reads = utils.count_lines(row['tag_align'])
-                    con_no_reads = utils.count_lines(row['control_tag_align'])
-                    if con_no_reads < exp_no_reads:
-                        logger.info("Fewer reads in control than experiment." +
-                                    "Using pooled controls for replicate %s."
-                                    % row['replicate'])
-                        design_new_df.loc[index, 'control_tag_align'] = \
-                                                            path_to_pool_control
-                    else:
-                        if paired:
-                            control = row['control_tag_align']
-                            control_basename = os.path.basename(
-                                utils.strip_extensions(control, STRIP_EXTENSIONS))
-                            control_tmp = bedpe_to_tagalign(control, control_basename)
-                            path_to_control = cwd + '/' + control_tmp
-                            design_new_df.loc[index, 'control_tag_align'] = \
-                                                                path_to_control
 
-        else:
-            path_to_pool_control = cwd + '/' +  pool_control
+    if not single_control:
+        path_to_pool_control = cwd + '/' + pool_control
+        if control_df.values.max() > cutoff_ratio:
+            logger.info("Number of reads in controls differ by " +
+                        " > factor of %f. Using pooled controls." % (cutoff_ratio))
             design_new_df['control_tag_align'] = path_to_pool_control
+        else:
+            for index, row in design_new_df.iterrows():
+                exp_no_reads = utils.count_lines(row['tag_align'])
+                con_no_reads = utils.count_lines(row['control_tag_align'])
+                if con_no_reads < exp_no_reads:
+                    logger.info("Fewer reads in control than experiment." +
+                                "Using pooled controls for replicate %s."
+                                % row['replicate'])
+                    design_new_df.loc[index, 'control_tag_align'] = \
+                                                        path_to_pool_control
+                else:
+                    if paired:
+                        control = row['control_tag_align']
+                        control_basename = os.path.basename(
+                            utils.strip_extensions(control, STRIP_EXTENSIONS))
+                        control_tmp = bedpe_to_tagalign(control, control_basename)
+                        path_to_control = cwd + '/' + control_tmp
+                        design_new_df.loc[index, 'control_tag_align'] = \
+                                                            path_to_control
 
-        # Add in pseudo replicates
-        tmp_metadata = design_new_df.loc[0].copy()
-        tmp_metadata['control_tag_align'] = path_to_pool_control
-        for rep, pseudorep_file in pool_pseudoreplicates_dict.items():
-            tmp_metadata['sample_id'] = experiment_id + '_pr' + str(rep)
-            tmp_metadata['replicate'] = str(rep) + '_pr'
-            tmp_metadata['xcor'] = 'Calculate'
-            path_to_file = cwd + '/' + pseudorep_file
-            tmp_metadata['tag_align'] = path_to_file
-            design_new_df = design_new_df.append(tmp_metadata)
+    else:
+        path_to_pool_control = cwd + '/' +  pool_control
+        design_new_df['control_tag_align'] = path_to_pool_control
 
-        # Add in pool experiment
-        tmp_metadata['sample_id'] = experiment_id + '_pooled'
-        tmp_metadata['replicate'] = 'pooled'
+    # Add in pseudo replicates
+    tmp_metadata = design_new_df.loc[0].copy()
+    tmp_metadata['control_tag_align'] = path_to_pool_control
+    for rep, pseudorep_file in pool_pseudoreplicates_dict.items():
+        tmp_metadata['sample_id'] = experiment_id + '_pr' + str(rep)
+        tmp_metadata['replicate'] = str(rep) + '_pr'
         tmp_metadata['xcor'] = 'Calculate'
-        path_to_file = cwd + '/' + pool_experiment_se
+        path_to_file = cwd + '/' + pseudorep_file
         tmp_metadata['tag_align'] = path_to_file
         design_new_df = design_new_df.append(tmp_metadata)
+
+    # Add in pool experiment
+    tmp_metadata['sample_id'] = experiment_id + '_pooled'
+    tmp_metadata['replicate'] = 'pooled'
+    tmp_metadata['xcor'] = 'Calculate'
+    path_to_file = cwd + '/' + pool_experiment_se
+    tmp_metadata['tag_align'] = path_to_file
+    design_new_df = design_new_df.append(tmp_metadata)
 
     # Write out new dataframe
     design_new_df.to_csv(experiment_id + '_ppr.tsv',
