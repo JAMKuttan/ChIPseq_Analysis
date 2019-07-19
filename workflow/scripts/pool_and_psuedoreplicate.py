@@ -312,24 +312,24 @@ def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_con
         path_to_pool_control = cwd + '/' +  pool_control
         design_new_df['control_tag_align'] = path_to_pool_control
 
-    # Add in pseudo replicates
-    tmp_metadata = design_new_df.loc[0].copy()
-    tmp_metadata['control_tag_align'] = path_to_pool_control
-    for rep, pseudorep_file in pool_pseudoreplicates_dict.items():
-        tmp_metadata['sample_id'] = experiment_id + '_pr' + str(rep)
-        tmp_metadata['replicate'] = str(rep) + '_pr'
+        # Add in pseudo replicates
+        tmp_metadata = design_new_df.loc[0].copy()
+        tmp_metadata['control_tag_align'] = path_to_pool_control
+        for rep, pseudorep_file in pool_pseudoreplicates_dict.items():
+            tmp_metadata['sample_id'] = experiment_id + '_pr' + str(rep)
+            tmp_metadata['replicate'] = str(rep) + '_pr'
+            tmp_metadata['xcor'] = 'Calculate'
+            path_to_file = cwd + '/' + pseudorep_file
+            tmp_metadata['tag_align'] = path_to_file
+            design_new_df = design_new_df.append(tmp_metadata)
+
+        # Add in pool experiment
+        tmp_metadata['sample_id'] = experiment_id + '_pooled'
+        tmp_metadata['replicate'] = 'pooled'
         tmp_metadata['xcor'] = 'Calculate'
-        path_to_file = cwd + '/' + pseudorep_file
+        path_to_file = cwd + '/' + pool_experiment_se
         tmp_metadata['tag_align'] = path_to_file
         design_new_df = design_new_df.append(tmp_metadata)
-
-    # Add in pool experiment
-    tmp_metadata['sample_id'] = experiment_id + '_pooled'
-    tmp_metadata['replicate'] = 'pooled'
-    tmp_metadata['xcor'] = 'Calculate'
-    path_to_file = cwd + '/' + pool_experiment_se
-    tmp_metadata['tag_align'] = path_to_file
-    design_new_df = design_new_df.append(tmp_metadata)
 
     return design_new_df
 
