@@ -28,7 +28,6 @@ params.skipMotif = false
 params.skipPlotProfile = false
 params.references = "$baseDir/../docs/references.md"
 params.multiqc =  "$baseDir/conf/multiqc_config.yaml"
-params.gtf = "/project/shared/bicf_workflow_ref/$params.genome/gencode.gtf"
 
 // Assign variables if astrocyte
 if (params.astrocyte) {
@@ -37,6 +36,7 @@ if (params.astrocyte) {
   params.bwaIndex = "$referenceLocation/$params.genome"
   params.chromSizes = "$referenceLocation/$params.genome/genomefile.txt"
   params.fasta = "$referenceLocation/$params.genome/genome.fa"
+  params.gtf = "$referenceLocation/$params.genome/gencode.gtf"
   if (params.genome == 'GRCh37' || params.genome == 'GRCh38') {
     params.genomeSize = 'hs'
   } else if (params.genome == 'GRCm38') {
@@ -47,6 +47,7 @@ if (params.astrocyte) {
     params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
     params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
     params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
+    params.gtf = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 }
 
 
@@ -463,12 +464,16 @@ peaksDesign = experimentPeaks
 
 //plotProfile
 process plotProfile {
-  publishDir "$outDir/${task.process}", mode: 'copy'
+  publishDir "$outDir/experimentQC", mode: 'copy'
 
   input:
 
   file ("*.pooled.fc_signal.bw") from bigwigs.collect()
   file gtf from gtfFile
+
+  output:
+
+  file '*.{png,gz}' into plotProfile
 
   when:
 
