@@ -70,8 +70,7 @@ def test_single_rep(design_experiment_2):
     shutil.copy(test_design_path + 'A_1.tagAlign.gz', cwd)
     shutil.copy(test_design_path + 'B_1.tagAlign.gz', cwd)
     single_rep = pool_and_psuedoreplicate.generate_design('false', 1.2, design_experiment_2, cwd, 1, 1)
-    design_df = pd.read_csv(single_rep, sep="\t")
-    assert design_df.shape[0] == 5
+    assert single_rep.shape[0] == 5
 
 @pytest.mark.singleend
 def test_pool_and_psuedoreplicate_singleend():
