@@ -37,6 +37,7 @@ if (params.astrocyte) {
   params.bwaIndex = "$referenceLocation/$params.genome"
   params.chromSizes = "$referenceLocation/$params.genome/genomefile.txt"
   params.fasta = "$referenceLocation/$params.genome/genome.fa"
+  params.gtf = "$referenceLocation/$params.genome/gencode.gtf"
   if (params.genome == 'GRCh37' || params.genome == 'GRCh38') {
     params.genomeSize = 'hs'
   } else if (params.genome == 'GRCm38') {
@@ -47,6 +48,7 @@ if (params.astrocyte) {
     params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
     params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
     params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
+    params.gtf = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 }
 
 
