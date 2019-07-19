@@ -28,7 +28,6 @@ params.skipMotif = false
 params.skipPlotProfile = false
 params.references = "$baseDir/../docs/references.md"
 params.multiqc =  "$baseDir/conf/multiqc_config.yaml"
-params.gtf = "/project/shared/bicf_workflow_ref/$params.genome/gencode.gtf"
 
 // Assign variables if astrocyte
 if (params.astrocyte) {
