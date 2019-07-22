@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 - Fix references.md link in citation of README.md
 - Add Nextflow to references.md
 - Fix pool_and_psuedoreplicate.py to run single experiment
-- Add test data
+- Add test data for test_pool_and_pseudoreplicate
 - Add PlotProfile Option
 - Add Python version to MultiQC
 - Add and Update tests
