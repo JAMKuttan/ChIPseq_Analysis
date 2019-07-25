@@ -233,7 +233,7 @@ def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_con
         self_pseudoreplicates_dict = {}
         for rep, tag_file in zip(design_df['replicate'], design_df['tag_align']):
             replicate_prefix = experiment_id + '_' + str(rep)
-            self_pseudoreplicates_dict = self_psuedoreplication(tag_file, replicate_prefix, paired)
+            self_pseudoreplicates_dict[rep] = self_psuedoreplication(tag_file, replicate_prefix, paired)
 	    
 
         # Update design to include new self pseudo replicates
