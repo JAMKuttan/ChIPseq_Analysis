@@ -209,7 +209,7 @@ def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_con
         # Duplicate rows and update for pool and psuedoreplicates and update tagAlign with single end data
         experiment_id = design_df.at[0, 'experiment_id']
         replicate = design_df.at[0, 'replicate']
-        design_new_df = design_df.loc[np.repeat(design_df.index, 4)].reset_index()
+        design_new_df = design_df #.loc[np.repeat(design_df.index, 4)].reset_index()
         pool_experiment = design_df.tag_align.unique()
 
         # Update tagAlign with single end data
@@ -272,9 +272,6 @@ def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_con
         if paired:
             design_new_df['tag_align'] = design_new_df['se_tag_align']
         design_new_df.drop(labels='se_tag_align', axis=1, inplace=True)
-        # Check controls against cutoff_ratio
-        # if so replace with pool_control
-        # unless single control was used
 
     # If paired change to single End
     if paired:
@@ -282,6 +279,9 @@ def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_con
     else:
         pool_experiment_se = pool_experiment
 
+        # Check controls against cutoff_ratio
+        # if so replace with pool_control
+        # unless single control was used
     if not single_control:
         path_to_pool_control = cwd + '/' + pool_control
         if control_df.values.max() > cutoff_ratio:
