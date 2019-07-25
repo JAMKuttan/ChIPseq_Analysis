@@ -242,7 +242,7 @@ def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_con
             path_to_file = cwd + '/' + pseudorep_file
             replicate = rep + 1
             design_new_df.loc[replicate, 'tag_align'] = path_to_file
-	    pool_pseudoreplicates_dict[replicate] = path_to_file
+            pool_pseudoreplicates_dict[replicate] = path_to_file
 
         # Drop index column
         design_new_df.drop(labels='index', axis=1, inplace=True)
