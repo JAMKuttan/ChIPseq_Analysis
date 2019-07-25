@@ -209,7 +209,7 @@ def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_con
         # Duplicate rows and update for pool and psuedoreplicates and update tagAlign with single end data
         experiment_id = design_df.at[0, 'experiment_id']
         replicate = design_df.at[0, 'replicate']
-        design_new_df = design_df #.loc[np.repeat(design_df.index, 4)].reset_index()
+        design_new_df = design_df.loc[np.repeat(design_df.index, 4)].reset_index()
         pool_experiment = design_df.tag_align.unique()
 
         # Update tagAlign with single end data
@@ -233,7 +233,7 @@ def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_con
         pool_pseudoreplicates_dict = {}
         for rep, tag_file in zip(design_df['replicate'], design_df['tag_align']):
             replicate_prefix = experiment_id + '_' + str(rep)
-            pool_pseudoreplicates_dict = \
+            pool_pseudoreplicates_dict[rep] = \
                 self_psuedoreplication(tag_file, replicate_prefix, paired)
 
         # Update design to include new self pseudo replicates
