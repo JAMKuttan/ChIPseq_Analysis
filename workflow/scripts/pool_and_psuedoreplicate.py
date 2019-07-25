@@ -237,8 +237,9 @@ def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_con
 	    
 
         # Update design to include new self pseudo replicates
+        self_pseudoreplicates_df = pd.DataFrame.from_dict(self_pseudoreplicates_dict)
         pool_pseudoreplicates_dict = {}
-        for rep, pseudorep_file in self_pseudoreplicates_dict.items():
+        for rep, pseudorep_file in self_pseudoreplicates_df.iterrows():
             path_to_file = cwd + '/' + pseudorep_file
             replicate = rep + 1
             design_new_df.loc[replicate, 'tag_align'] = path_to_file
