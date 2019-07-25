@@ -210,6 +210,7 @@ def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_con
         experiment_id = design_df.at[0, 'experiment_id']
         replicate = design_df.at[0, 'replicate']
         design_new_df = design_df.loc[np.repeat(design_df.index, 4)].reset_index()
+        pool_experiment = design_df.tag_align.unique()
 
         # Update tagAlign with single end data
         if paired:
@@ -250,12 +251,6 @@ def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_con
         experiment_id = design_df.at[0, 'experiment_id']
         pool_experiment = pool(replicate_files, experiment_id + "_pooled", paired)
 
-        # If paired change to single End
-        if paired:
-            pool_experiment_se = bedpe_to_tagalign(pool_experiment, experiment_id + "_pooled")
-        else:
-            pool_experiment_se = pool_experiment
-
         # Make self psuedoreplicates equivalent to number of replicates
         pseudoreplicates_dict = {}
         for rep, tag_file in zip(design_df['replicate'], design_df['tag_align']):
@@ -281,6 +276,11 @@ def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_con
         # if so replace with pool_control
         # unless single control was used
 
+    # If paired change to single End
+    if paired:
+        pool_experiment_se = bedpe_to_tagalign(pool_experiment, experiment_id + "_pooled")
+    else:
+        pool_experiment_se = pool_experiment
 
     if not single_control:
         path_to_pool_control = cwd + '/' + pool_control
