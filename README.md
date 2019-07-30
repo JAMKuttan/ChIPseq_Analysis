@@ -135,22 +135,22 @@ If you find an error, please let the [BICF](mailto:BICF@UTSouthwestern.edu) know
 Please cite individual programs and versions used [HERE](docs/references.md), and the pipeline doi:[10.5281/zenodo.2648844](https://doi.org/10.5281/zenodo.2648844). Please cite in publications: Pipeline was developed by BICF from funding provided by Cancer Prevention and Research Institute of Texas (RP150596).
 
 ## Programs and Versions
-  + python/3.6.1-2-anaconda [website](https://www.anaconda.com/download/#linux) [citation](docs/references.txt)
-  + trimgalore/0.4.1 [website](https://github.com/FelixKrueger/TrimGalore) [citation](docs/references.txt)
-  + cutadapt/1.9.1 [website](https://cutadapt.readthedocs.io/en/stable/index.html) [citation](docs/references.txt)
-  + bwa/intel/0.7.12 [website](http://bio-bwa.sourceforge.net/) [citation](docs/references.txt)
-  + samtools/1.6 [website](http://samtools.sourceforge.net/) [citation](docs/references.txt)
-  + sambamba/0.6.6 [website](http://lomereiter.github.io/sambamba/) [citation](docs/references.txt)
-  + bedtools/2.26.0 [website](https://bedtools.readthedocs.io/en/latest/) [citation](docs/references.txt)
-  + deeptools/2.5.0.1 [website](https://deeptools.readthedocs.io/en/develop/) [citation](docs/references.txt)
-  + phantompeakqualtools/1.2 [website](https://github.com/kundajelab/phantompeakqualtools) [citation](docs/references.txt)
-  + macs/2.1.0-20151222 [website](http://liulab.dfci.harvard.edu/MACS/) [citation](docs/references.txt)
-  + UCSC_userApps/v317 [website](https://genome.ucsc.edu/util.html) [citation](docs/references.txt)
-  + R/3.4.1 [website](https://www.r-project.org/) [citation](docs/references.txt)
+  + python/3.6.1-2-anaconda [website](https://www.anaconda.com/download/#linux) [citation](docs/references.md)
+  + trimgalore/0.4.1 [website](https://github.com/FelixKrueger/TrimGalore) [citation](docs/references.md)
+  + cutadapt/1.9.1 [website](https://cutadapt.readthedocs.io/en/stable/index.html) [citation](docs/references.md)
+  + bwa/intel/0.7.12 [website](http://bio-bwa.sourceforge.net/) [citation](docs/references.md)
+  + samtools/1.6 [website](http://samtools.sourceforge.net/) [citation](docs/references.md)
+  + sambamba/0.6.6 [website](http://lomereiter.github.io/sambamba/) [citation](docs/references.md)
+  + bedtools/2.26.0 [website](https://bedtools.readthedocs.io/en/latest/) [citation](docs/references.md)
+  + deeptools/2.5.0.1 [website](https://deeptools.readthedocs.io/en/develop/) [citation](docs/references.md)
+  + phantompeakqualtools/1.2 [website](https://github.com/kundajelab/phantompeakqualtools) [citation](docs/references.md)
+  + macs/2.1.0-20151222 [website](http://liulab.dfci.harvard.edu/MACS/) [citation](docs/references.md)
+  + UCSC_userApps/v317 [website](https://genome.ucsc.edu/util.html) [citation](docs/references.md)
+  + R/3.4.1 [website](https://www.r-project.org/) [citation](docs/references.md)
   + SPP/1.14
-  + meme/4.11.1-gcc-openmpi [website](http://meme-suite.org/doc/install.html?man_type=web) [citation](docs/references.txt)
-  + ChIPseeker [website](https://bioconductor.org/packages/release/bioc/html/ChIPseeker.html) [citation](docs/references.txt)
-  + DiffBind [website](https://bioconductor.org/packages/release/bioc/html/DiffBind.html) [citation](docs/references.txt)
+  + meme/4.11.1-gcc-openmpi [website](http://meme-suite.org/doc/install.html?man_type=web) [citation](docs/references.md)
+  + ChIPseeker [website](https://bioconductor.org/packages/release/bioc/html/ChIPseeker.html) [citation](docs/references.md)
+  + DiffBind [website](https://bioconductor.org/packages/release/bioc/html/DiffBind.html) [citation](docs/references.md)
 
 
 

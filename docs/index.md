@@ -125,3 +125,6 @@ Please cite in publications: Pipeline was developed by BICF from funding provide
   + meme/4.11.1-gcc-openmpi [website](http://meme-suite.org/doc/install.html?man_type=web) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
   + ChIPseeker [website](https://bioconductor.org/packages/release/bioc/html/ChIPseeker.html) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
   + DiffBind [website](https://bioconductor.org/packages/release/bioc/html/DiffBind.html) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + MultiQC [website](https://multiqc.info/) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + BICFChip-seqAnalysisWorkflow [website](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)
+  + Nextflow [website](https://www.nextflow.io/) [citation](https://git.biohpc.swmed.edu/BICF/Astrocyte/chipseq_analysis/blob/master/docs/references.md)

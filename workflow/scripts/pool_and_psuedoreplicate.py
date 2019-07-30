@@ -172,26 +172,7 @@ def self_psuedoreplication(tag_file, prefix, paired):
     return pseudoreplicate_dict
 
 
-def main():
-    args = get_args()
-    paired = args.paired
-    design = args.design
-    cutoff_ratio = args.cutoff
-
-    # Create a file handler
-    handler = logging.FileHandler('experiment_generation.log')
-    logger.addHandler(handler)
-
-    # Read files as dataframes
-    design_df = pd.read_csv(design, sep='\t')
-
-    # Get current directory to build paths
-    cwd = os.getcwd()
-
-    # Check Number of replicates and replicates
-    no_reps = check_replicates(design_df)
-    no_unique_controls = check_controls(design_df)
-
+def generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_controls):
     if no_reps == 1:
         logger.info("No other replicate specified "
                     "so processing as an unreplicated experiment.")
@@ -223,85 +204,42 @@ def main():
         pool_control_tmp = bedpe_to_tagalign(pool_control, "pool_control")
         pool_control = pool_control_tmp
 
-    # Psuedoreplicate and update design accordingly
-    if not replicated:
+    # Duplicate rows and update for pool and psuedoreplicates and update tagAlign with single end data
+    experiment_id = design_df.at[0, 'experiment_id']
+    replicate_files = design_df.tag_align.unique()
+    pool_experiment = pool(replicate_files, experiment_id + "_pooled", paired)
 
-        # Duplicate rows and update for pool and psuedoreplicates and update tagAlign with single end data
-        experiment_id = design_df.at[0, 'experiment_id']
-        replicate = design_df.at[0, 'replicate']
-        design_new_df = design_df.loc[np.repeat(design_df.index, 4)].reset_index()
+    # Make 2 self psuedoreplicates
+    pseudoreplicates_dict = {}
+    for rep, tag_file in zip(design_df['replicate'], design_df['tag_align']):
+        replicate_prefix = experiment_id + '_' + str(rep)
+        pr_dict = self_psuedoreplication(tag_file, replicate_prefix, paired)
+        pseudoreplicates_dict[rep] = pr_dict
 
-        # Update tagAlign with single end data
-        if paired:
-            design_new_df['tag_align'] = design_new_df['se_tag_align']
-        design_new_df.drop(labels='se_tag_align', axis=1, inplace=True)
+    # Update design to include new self pseudo replicates
+    pseudoreplicates_df = pd.DataFrame.from_dict(pseudoreplicates_dict)
+    pool_pseudoreplicates_dict = {}
+    for index, row in pseudoreplicates_df.iterrows():
+        replicate_id = index + 1
+        pr_filename = experiment_id + ".pr" + str(replicate_id) + '.tagAlign.gz'
+        pool_replicate = pool(row, pr_filename, False)
+        pool_pseudoreplicates_dict[replicate_id] = pool_replicate
 
-        design_new_df['replicate'] = design_new_df['replicate'].astype(str)
-        design_new_df.at[1, 'sample_id'] = experiment_id + '_pr1'
-        design_new_df.at[1, 'replicate'] = '1_pr'
-        design_new_df.at[1, 'xcor'] = 'Calculate'
-        design_new_df.at[2, 'sample_id'] = experiment_id + '_pr2'
-        design_new_df.at[2, 'replicate'] = '2_pr'
-        design_new_df.at[2, 'xcor'] = 'Calculate'
-        design_new_df.at[3, 'sample_id'] = experiment_id + '_pooled'
-        design_new_df.at[3, 'replicate'] = 'pooled'
-        design_new_df.at[3, 'xcor'] = 'Calculate'
-        design_new_df.at[3, 'tag_align'] = design_new_df.at[0, 'tag_align']
+    design_new_df = design_df #.loc[np.repeat(design_df.index, 4)].reset_index()
+    # Update tagAlign with single end data
+    if paired:
+        design_new_df['tag_align'] = design_new_df['se_tag_align']
+    design_new_df.drop(labels='se_tag_align', axis=1, inplace=True)
 
-        # Make 2 self psuedoreplicates
-        self_pseudoreplicates_dict = {}
-        for rep, tag_file in zip(design_df['replicate'], design_df['tag_align']):
-            replicate_prefix = experiment_id + '_' + str(rep)
-            self_pseudoreplicates_dict = \
-                self_psuedoreplication(tag_file, replicate_prefix, paired)
-
-        # Update design to include new self pseudo replicates
-        for rep, pseudorep_file in self_pseudoreplicates_dict.items():
-            path_to_file = cwd + '/' + pseudorep_file
-            replicate = rep + 1
-            design_new_df.loc[replicate, 'tag_align'] = path_to_file
-
-        # Drop index column
-        design_new_df.drop(labels='index', axis=1, inplace=True)
-
+    # If paired change to single End
+    if paired:
+        pool_experiment_se = bedpe_to_tagalign(pool_experiment, experiment_id + "_pooled")
     else:
-        # Make pool of replicates
-        replicate_files = design_df.tag_align.unique()
-        experiment_id = design_df.at[0, 'experiment_id']
-        pool_experiment = pool(replicate_files, experiment_id + "_pooled", paired)
+        pool_experiment_se = pool_experiment
 
-        # If paired change to single End
-        if paired:
-            pool_experiment_se = bedpe_to_tagalign(pool_experiment, experiment_id + "_pooled")
-        else:
-            pool_experiment_se = pool_experiment
-
-        # Make self psuedoreplicates equivalent to number of replicates
-        pseudoreplicates_dict = {}
-        for rep, tag_file in zip(design_df['replicate'], design_df['tag_align']):
-            replicate_prefix = experiment_id + '_' + str(rep)
-            pr_dict = self_psuedoreplication(tag_file, replicate_prefix, paired)
-            pseudoreplicates_dict[rep] = pr_dict
-
-        # Merge self psuedoreplication for each true replicate
-        pseudoreplicates_df = pd.DataFrame.from_dict(pseudoreplicates_dict)
-        pool_pseudoreplicates_dict = {}
-        for index, row in pseudoreplicates_df.iterrows():
-            replicate_id = index + 1
-            pr_filename = experiment_id + ".pr" + str(replicate_id) + '.tagAlign.gz'
-            pool_replicate = pool(row, pr_filename, False)
-            pool_pseudoreplicates_dict[replicate_id] = pool_replicate
-
-        design_new_df = design_df
-        # Update tagAlign with single end data
-        if paired:
-            design_new_df['tag_align'] = design_new_df['se_tag_align']
-        design_new_df.drop(labels='se_tag_align', axis=1, inplace=True)
         # Check controls against cutoff_ratio
         # if so replace with pool_control
         # unless single control was used
-
-
     if not single_control:
         path_to_pool_control = cwd + '/' + pool_control
         if control_df.values.max() > cutoff_ratio:
@@ -351,7 +289,34 @@ def main():
     tmp_metadata['tag_align'] = path_to_file
     design_new_df = design_new_df.append(tmp_metadata)
 
+    return design_new_df
+
+
+def main():
+    args = get_args()
+    paired = args.paired
+    design = args.design
+    cutoff_ratio = args.cutoff
+
+    # Create a file handler
+    handler = logging.FileHandler('experiment_generation.log')
+    logger.addHandler(handler)
+
+    # Read files as dataframes
+    design_df = pd.read_csv(design, sep='\t')
+
+    # Get current directory to build paths
+    cwd = os.getcwd() 
+
+    # Check Number of replicates and replicates
+    no_reps = check_replicates(design_df)
+    no_unique_controls = check_controls(design_df)
+
+    # Generate new design file
+    design_new_df = generate_design(paired, cutoff_ratio, design_df, cwd, no_reps, no_unique_controls)
+
     # Write out new dataframe
+    experiment_id = design_df.at[0, 'experiment_id']
     design_new_df.to_csv(experiment_id + '_ppr.tsv',
                          header=True, sep='\t', index=False)
 

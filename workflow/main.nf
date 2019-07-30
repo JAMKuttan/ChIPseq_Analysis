@@ -47,7 +47,7 @@ if (params.astrocyte) {
     params.genomeSize = params.genome ? params.genomes[ params.genome ].genomesize ?: false : false
     params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
     params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
-    params.gtf = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
+    params.gtf = params.genome ? params.genomes[ params.genome ].gtf ?: false : false
 }
 
 
