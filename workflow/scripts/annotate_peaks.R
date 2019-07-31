@@ -6,17 +6,11 @@
 #* --------------------------------------------------------------------------
 #*
 
+#Currently Human or Mouse
+
 # Load libraries
 library("ChIPseeker")
-
-# Currently mouse or human
-
-library("TxDb.Hsapiens.UCSC.hg19.knownGene")
-library("TxDb.Mmusculus.UCSC.mm10.knownGene")
-library("TxDb.Hsapiens.UCSC.hg38.knownGene")
-library("org.Hs.eg.db")
-library("org.Mm.eg.db")
-
+library(GenomicFeatures)
 
 # Create parser object
 args <- commandArgs(trailingOnly=TRUE)
@@ -31,14 +25,14 @@ genome_assembly <- args[2]
 
 # Load UCSC Known Genes
 if(genome_assembly=='GRCh37') {
-    txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-    annodb <- 'org.Hs.eg.db'
+    txdb <- makeTxDbFromGFF("/project/shared/bicf_workflow_ref/human/GRCh37/gencode.v19.chr_patch_hapl_scaff.annotation.gtf")
+    sym <- read.table("/project/shared/bicf_workflow_ref/human/GRCh37/genenames.txt", header=T, sep='\t') [,4:5]
 } else if(genome_assembly=='GRCm38')  {
-    txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
-    annodb <- 'org.Mm.eg.db'
+    txdb <- makeTxDbFromGFF("/project/shared/bicf_workflow_ref/mouse/GRCm38/gencode.vM20.annotation.gtf")
+    sym <- read.table("/project/shared/bicf_workflow_ref/mouse/GRCm38/genenames.txt", header=T, sep='\t') [,4:5]
 } else if(genome_assembly=='GRCh38')  {
-    txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
-    annodb <- 'org.Hs.eg.db'
+    txdb <- makeTxDbFromGFF("/project/shared/bicf_workflow_ref/human/GRCh38/gencode.v25.chr_patch_hapl_scaff.annotation.gtf")
+    sym <- read.table("/project/shared/bicf_workflow_ref/human/GRCh38/genenames.txt", header=T, sep='\t') [,4:5]
 }
 
 # Output version of ChIPseeker
@@ -54,18 +48,18 @@ names(files) <- design$Condition
 # Granges of files
 
 peaks <- lapply(files, readPeakFile, as = "GRanges", header = FALSE)
-peakAnnoList <- lapply(peaks, annotatePeak, TxDb=txdb, annoDb=annodb, tssRegion=c(-3000, 3000), verbose=FALSE)
+peakAnnoList <- lapply(peaks, annotatePeak, TxDb=txdb, tssRegion=c(-3000, 3000), verbose=FALSE)
 
 column_names <- c("chr", "start", "end", "width", "strand_1", "name", "score", "strand", "signalValue",
                   "pValue", "qValue", "peak", "annotation", "geneChr", "geneStart", "geneEnd",
-                  "geneLength" ,"geneStrand", "geneId", "transcriptId", "distanceToTSS",
-                  "ENSEMBL", "symbol", "geneName")
+                  "geneLength" ,"geneStrand", "geneId", "transcriptId", "distanceToTSS", "symbol")
 
 for(index in c(1:length(peakAnnoList))) {
   filename <- paste(names(peaks)[index], ".chipseeker_annotation.tsv", sep="")
   df <- as.data.frame(peakAnnoList[[index]])
-  colnames(df) <- column_names
-  write.table(df[ , !(names(df) %in% c('strand_1'))], filename, sep="\t" ,quote=F, row.names=F)
+  df_final <- merge(df, sym, by.x="geneId", by.y="ensembl", all.x=T)
+  colnames(df_final) <- column_names
+  write.table(df_final[ , !(names(df_final) %in% c('strand_1'))], filename, sep="\t" ,quote=F, row.names=F)
 
   # Draw individual plots
 

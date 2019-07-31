@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Add PlotProfile Option
 - Add Python version to MultiQC
 - Add and Update tests
+- Use GTF files instead of TxDb and org libraries in Annotate Peaks
 
 ## [publish_1.0.6 ] - 2019-05-31
 ### Added
