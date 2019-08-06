@@ -16,24 +16,18 @@ library(GenomicFeatures)
 args <- commandArgs(trailingOnly=TRUE)
 
 # Check input args
-if (length(args) != 2) {
-  stop("Usage: annotate_peaks.R annotate_design.tsv genome_assembly", call.=FALSE)
+if (length(args) != 4) {
+  stop("Usage: annotate_peaks.R annotate_design.tsv genome_assembly gtf geneNames", call.=FALSE)
 }
 
 design_file <- args[1]
 genome_assembly <- args[2]
+gtf <- args[3]
+geneNames <- args[4]
 
 # Load UCSC Known Genes
-if(genome_assembly=='GRCh37') {
-    txdb <- makeTxDbFromGFF("/project/shared/bicf_workflow_ref/human/GRCh37/gencode.v19.chr_patch_hapl_scaff.annotation.gtf")
-    sym <- read.table("/project/shared/bicf_workflow_ref/human/GRCh37/genenames.txt", header=T, sep='\t') [,4:5]
-} else if(genome_assembly=='GRCm38')  {
-    txdb <- makeTxDbFromGFF("/project/shared/bicf_workflow_ref/mouse/GRCm38/gencode.vM20.annotation.gtf")
-    sym <- read.table("/project/shared/bicf_workflow_ref/mouse/GRCm38/genenames.txt", header=T, sep='\t') [,4:5]
-} else if(genome_assembly=='GRCh38')  {
-    txdb <- makeTxDbFromGFF("/project/shared/bicf_workflow_ref/human/GRCh38/gencode.v25.chr_patch_hapl_scaff.annotation.gtf")
-    sym <- read.table("/project/shared/bicf_workflow_ref/human/GRCh38/genenames.txt", header=T, sep='\t') [,4:5]
-}
+txdb <- makeTxDbFromGFF(gtf)
+sym <- read.table(geneNames, header=T, sep='\t') [,4:5]
 
 # Output version of ChIPseeker
 chipseeker_version = packageVersion('ChIPseeker')
