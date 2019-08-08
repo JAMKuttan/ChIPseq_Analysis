@@ -552,7 +552,7 @@ process peakAnnotation {
 
   """
   module load R/3.3.2-gccmkl
-  Rscript $baseDir/scripts/annotate_peaks.R $designAnnotatePeaks $genome $gtf $geneNames
+  Rscript $baseDir/scripts/annotate_peaks.R $designAnnotatePeaks $gtf $geneNames
   """
 
 }

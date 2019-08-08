@@ -16,14 +16,13 @@ library(GenomicFeatures)
 args <- commandArgs(trailingOnly=TRUE)
 
 # Check input args
-if (length(args) != 4) {
-  stop("Usage: annotate_peaks.R annotate_design.tsv genome_assembly gtf geneNames", call.=FALSE)
+if (length(args) != 3) {
+  stop("Usage: annotate_peaks.R annotate_design.tsv gtf geneNames", call.=FALSE)
 }
 
 design_file <- args[1]
-genome_assembly <- args[2]
-gtf <- args[3]
-geneNames <- args[4]
+gtf <- args[2]
+geneNames <- args[3]
 
 # Load UCSC Known Genes
 txdb <- makeTxDbFromGFF(gtf)
