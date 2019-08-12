@@ -41,4 +41,4 @@ def test_upsetplot_pairedend():
 def test_annotation_pairedend():
     annotation_file = test_output_path + 'ENCSR729LGA.chipseeker_annotation.tsv'
     assert os.path.exists(annotation_file)
-    assert utils.count_lines(annotation_file) >= 25494
+    assert utils.count_lines(annotation_file) >= 25466

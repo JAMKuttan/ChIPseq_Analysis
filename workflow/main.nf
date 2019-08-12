@@ -33,14 +33,27 @@ params.multiqc =  "$baseDir/conf/multiqc_config.yaml"
 if (params.astrocyte) {
   print("Running under astrocyte")
   referenceLocation = "/project/shared/bicf_workflow_ref"
-  params.bwaIndex = "$referenceLocation/$params.genome"
-  params.chromSizes = "$referenceLocation/$params.genome/genomefile.txt"
-  params.fasta = "$referenceLocation/$params.genome/genome.fa"
-  params.gtf = "$referenceLocation/$params.genome/gencode.gtf"
-  if (params.genome == 'GRCh37' || params.genome == 'GRCh38') {
+  if (params.genome == 'GRCh37') {
+    params.bwaIndex = "$referenceLocation/human/$params.genome"
+    params.chromSizes = "$referenceLocation/human/$params.genome/genomefile.txt"
+    params.fasta = "$referenceLocation/human/$params.genome/genome.fa"
+    params.gtf = "$referenceLocation/human/$params.genome/gencode.v19.chr_patch_hapl_scaff.annotation.gtf"
+    params.geneNames = "$referenceLocation/human/$params.genome/genenames.txt"
     params.genomeSize = 'hs'
   } else if (params.genome == 'GRCm38') {
+    params.bwaIndex = "$referenceLocation/mouse/$params.genome"
+    params.chromSizes = "$referenceLocation/mouse/$params.genome/genomefile.txt"
+    params.fasta = "$referenceLocation/mouse/$params.genome/genome.fa"
+    params.gtf = "$referenceLocation/mouse/$params.genome/gencode.vM20.annotation.gtf"
+    params.geneNames = "$referenceLocation/mouse/$params.genome/genenames.txt"
     params.genomeSize = 'mm'
+  } else if (params.genome == 'GRCh38') {
+    params.bwaIndex = "$referenceLocation/human/$params.genome"
+    params.chromSizes = "$referenceLocation/human/$params.genome/genomefile.txt"
+    params.fasta = "$referenceLocation/human/$params.genome/genome.fa"
+    params.gtf = "$referenceLocation/human/$params.genome/gencode.v25.chr_patch_hapl_scaff.annotation.gtf"
+    params.geneNames = "$referenceLocation/human/$params.genome/genenames.txt"
+    params.genomeSize = 'hs'
   }
 } else {
     params.bwaIndex = params.genome ? params.genomes[ params.genome ].bwa ?: false : false
@@ -48,6 +61,7 @@ if (params.astrocyte) {
     params.chromSizes = params.genome ? params.genomes[ params.genome ].chromsizes ?: false : false
     params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
     params.gtf = params.genome ? params.genomes[ params.genome ].gtf ?: false : false
+    params.geneNames = params.genome ? params.genomes[ params.genome ].geneNames ?: false : false
 }
 
 
@@ -84,7 +98,9 @@ skipMotif = params.skipMotif
 skipPlotProfile = params.skipPlotProfile
 references = params.references
 multiqc = params.multiqc
-gtfFile = Channel.fromPath(params.gtf)
+gtfFile_plotProfile = Channel.fromPath(params.gtf)
+gtfFile_annotPeaks = Channel.fromPath(params.gtf)
+geneNames = Channel.fromPath(params.geneNames)
 
 // Check design file for errors
 process checkDesignFile {
@@ -469,7 +485,7 @@ process plotProfile {
   input:
 
   file ("*.pooled.fc_signal.bw") from bigwigs.collect()
-  file gtf from gtfFile
+  file gtf from gtfFile_plotProfile
 
   output:
 
@@ -524,6 +540,8 @@ process peakAnnotation {
   input:
 
   file designAnnotatePeaks
+  file gtf from gtfFile_annotPeaks
+  file geneNames
 
   output:
 
@@ -534,7 +552,7 @@ process peakAnnotation {
 
   """
   module load R/3.3.2-gccmkl
-  Rscript $baseDir/scripts/annotate_peaks.R $designAnnotatePeaks $genome
+  Rscript $baseDir/scripts/annotate_peaks.R $designAnnotatePeaks $gtf $geneNames
   """
 
 }
