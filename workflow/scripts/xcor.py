@@ -107,10 +107,16 @@ def xcor(tag, paired):
     subsampled_tag_filename = \
         tag_basename + ".%d.tagAlign.gz" % (number_reads/1000000)
 
+    tag_extended = 'cat.tagAlign.gz'
+    out, err = utils.run_pipe([
+        "zcat %s %s %s" %
+        (tag, tag, tag)
+    ], outfile=tag_extended)
+
     steps = [
         'zcat %s' % (tag),
         'grep -v "chrM"',
-        'shuf -n %d --random-source=%s' % (number_reads, tag)]
+        'shuf -n %d --random-source=%s' % (number_reads, tag_extended)]
 
     if paired:
         steps.extend([r"""awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}'"""])
