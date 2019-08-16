@@ -10,6 +10,7 @@ computeMatrix reference-point \
 	-R $gtf \
 	--skipZeros \
 	-o computeMatrix.gz
+	-p max/2
 
 plotProfile -m computeMatrix.gz \
 	-out plotProfile.png \
