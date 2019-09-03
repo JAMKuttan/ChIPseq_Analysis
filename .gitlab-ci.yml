@@ -57,6 +57,7 @@ single_end_diff:
     - master
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' --astrocyte false -resume
+  - pytest -m singleend
   - pytest -m singlediff
   artifacts:
     expire_in: 2 days
@@ -67,6 +68,7 @@ paired_end_diff:
   stage: multiple
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_PE.txt" --genome 'GRCh38' --pairedEnd true --astrocyte false -resume
+  - pytest -m pairedend
   - pytest -m paireddiff
   artifacts:
     expire_in: 2 days

@@ -103,7 +103,7 @@ def xcor(tag, paired):
     uncompressed_tag_filename = tag_basename
 
     # Subsample tagAlign file
-    number_reads = 15000000
+    number_reads = 20000000
     subsampled_tag_filename = \
         tag_basename + ".%d.tagAlign.gz" % (number_reads/1000000)
 
