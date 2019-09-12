@@ -26,7 +26,7 @@ def test_peaks_xls_singleend():
 @pytest.mark.singleend
 def test_peaks_bed_singleend():
     peak_file = test_output_path +  'ENCSR238SGC/1/' + 'ENCLB144FDT.narrowPeak'
-    assert utils.count_lines(peak_file) == 227389
+    assert utils.count_lines(peak_file) == 226738
 
 
 @pytest.mark.pairedend
@@ -47,4 +47,4 @@ def test_peaks_xls_pairedend():
 @pytest.mark.pairedend
 def test_peaks_bed_pairedend():
     peak_file = test_output_path + 'ENCSR729LGA/2/' + 'ENCLB568IYX.narrowPeak'
-    assert utils.count_lines(peak_file) == 113821
+    assert utils.count_lines(peak_file) == 112631

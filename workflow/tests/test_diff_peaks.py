@@ -71,4 +71,4 @@ def test_diffbind_pairedend_single_rep():
         assert os.path.exists(os.path.join(test_output_path, 'ENCSR729LGA_vs_ENCSR757EMK_diffbind.bed'))
         diffbind_file = test_output_path + 'ENCSR729LGA_vs_ENCSR757EMK_diffbind.csv'
     assert os.path.exists(diffbind_file)
-    assert utils.count_lines(diffbind_file) >= 66201
+    assert utils.count_lines(diffbind_file) >= 65182

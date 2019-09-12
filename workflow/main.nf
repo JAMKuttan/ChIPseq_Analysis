@@ -653,14 +653,11 @@ process multiqcReport {
   script:
 
   """
-  module load python/3.6.1-2-anaconda
-  module load pandoc/2.7
-  module load multiqc/1.7
   echo $workflow.nextflow.version > version_nextflow.txt
-  multiqc --version > version_multiqc.txt
+  singularity exec /project/shared/bicf_workflow_ref/singularity_images/multiqc.sif multiqc --version > version_multiqc.txt
   python --version &> version_python.txt
   python3 $baseDir/scripts/generate_references.py -r $references -o software_references
   python3 $baseDir/scripts/generate_versions.py -o software_versions
-  multiqc -c $multiqc .
+  singularity exec /project/shared/bicf_workflow_ref/singularity_images/multiqc.sif multiqc -c $multiqc .
   """
 }
