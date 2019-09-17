@@ -15,7 +15,7 @@ def test_diff_peaks_singleend_single_rep():
     assert os.path.isdir(test_output_path) == False
 
 
-@pytest.mark.pairedend
+@pytest.mark.pairedendskip_true
 def test_diff_peaks_pairedend_single_rep():
     assert os.path.isdir(test_output_path) == False
 

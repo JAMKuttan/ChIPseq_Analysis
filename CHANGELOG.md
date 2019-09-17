@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Use GTF files instead of TxDb and org libraries in Annotate Peaks
 - Make gtf and geneName files as param inputs
 - Fix xcor to increase file size for --random-source
+- Fix skip diff test for paired-end data
 
 ## [publish_1.0.6 ] - 2019-05-31
 ### Added
