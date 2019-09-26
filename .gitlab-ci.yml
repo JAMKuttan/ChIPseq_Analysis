@@ -34,8 +34,6 @@ single_end_mouse:
   script:
   - nextflow run workflow/main.nf --astrocyte true -resume
   - pytest -m singleend
-  artifacts:
-    expire_in: 2 days
 
 paired_end_human:
   stage: single
@@ -46,8 +44,6 @@ paired_end_human:
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_ENCSR729LGA_PE.txt" --genome 'GRCh38' --pairedEnd true --astrocyte false -resume
   - pytest -m pairedend
-  artifacts:
-    expire_in: 2 days
 
 single_end_diff:
   stage: multiple
@@ -59,8 +55,6 @@ single_end_diff:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' --astrocyte false -resume
   - pytest -m singleend
   - pytest -m singlediff
-  artifacts:
-    expire_in: 2 days
 
 paired_end_diff:
   only:
@@ -70,8 +64,6 @@ paired_end_diff:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_PE.txt" --genome 'GRCh38' --pairedEnd true --astrocyte false -resume
   - pytest -m pairedend
   - pytest -m paireddiff
-  artifacts:
-    expire_in: 2 days
 
 single_end_skip:
   stage: skip
@@ -80,5 +72,3 @@ single_end_skip:
   script:
   - nextflow run workflow/main.nf --designFile "$CI_PROJECT_DIR/test_data/design_diff_SE.txt" --genome 'GRCm38' --skipDiff true --skipMotif true --skipPlotProfile true --astrocyte false -resume
   - pytest -m singleskip_true
-  artifacts:
-    expire_in: 2 days
